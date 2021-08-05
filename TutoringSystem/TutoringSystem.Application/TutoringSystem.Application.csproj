@@ -13,4 +13,8 @@
     <Folder Include="Service\Interfaces\" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\TutoringSystem.Domain\TutoringSystem.Domain.csproj" />
+  </ItemGroup>
+
 </Project>
