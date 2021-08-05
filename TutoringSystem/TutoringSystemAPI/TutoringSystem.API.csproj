@@ -10,6 +10,11 @@
 
   <ItemGroup>
     <Folder Include="Controllers\" />
+    <Folder Include="Installers\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\TutoringSystem.Application\TutoringSystem.Application.csproj" />
   </ItemGroup>
 
 </Project>
