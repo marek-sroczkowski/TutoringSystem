@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using TutoringSystem.Infrastructure.Data;
 
 namespace TutoringSystem.API.Installers
 {
@@ -8,8 +9,8 @@ namespace TutoringSystem.API.Installers
     {
         public void InstallServices(IServiceCollection services, IConfiguration configuration)
         {
-            //services.AddDbContext<AppDbContext>(options =>
-            //    options.UseSqlServer(configuration.GetConnectionString("DefaultConnection")));
+            services.AddDbContext<AppDbContext>(options =>
+                options.UseSqlServer(configuration.GetConnectionString("DefaultConnection")));
         }
     }
 }

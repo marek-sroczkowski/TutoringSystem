@@ -24,6 +24,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\TutoringSystem.Application\TutoringSystem.Application.csproj" />
+    <ProjectReference Include="..\TutoringSystem.Infrastructure\TutoringSystem.Infrastructure.csproj" />
   </ItemGroup>
 
 </Project>
