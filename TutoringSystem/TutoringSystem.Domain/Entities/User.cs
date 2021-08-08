@@ -13,6 +13,7 @@ namespace TutoringSystem.Domain.Entities
         public string LastName { get; set; }
         public DateTime? LastLoginDate { get; set; }
         public DateTime RegistrationDate { get; set; }
+        public bool IsActiv { get; set; }
         public Role Role { get; set; }
 
         public virtual Contact Contact { get; set; }
