@@ -7,12 +7,10 @@ namespace TutoringSystem.API.Installers
 {
     public class MvcInstaller : IInstaller
     {
-        public void InstallServices(IServiceCollection services, IConfiguration Configuration)
+        public void InstallServices(IServiceCollection services, IConfiguration configuration)
         {
-            services.AddApplication();
+            services.AddApplication(configuration);
             services.AddInfrastructure();
-
-            services.AddControllers();
         }
     }
 }
