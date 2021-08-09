@@ -21,5 +21,11 @@ namespace TutoringSystem.Domain.Entities
 
         public ICollection<Message> MessagesSent { get; set; }
         public ICollection<Message> MessagesRecived { get; set; }
+
+        public User()
+        {
+            IsActiv = true;
+            RegistrationDate = DateTime.Now;
+        }
     }
 }
