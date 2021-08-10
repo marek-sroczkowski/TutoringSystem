@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using TutoringSystem.Domain.Entities.Enums;
 
 namespace TutoringSystem.Domain.Entities
 {
@@ -8,5 +9,10 @@ namespace TutoringSystem.Domain.Entities
         public virtual School School { get; set; }
         public virtual ICollection<Reservation> Reservations { get; set; }
         public virtual ICollection<Tutor> Tutors { get; set; }
+
+        public Student()
+        {
+            Role = Role.Student;
+        }
     }
 }
