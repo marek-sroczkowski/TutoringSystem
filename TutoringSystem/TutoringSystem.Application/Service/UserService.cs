@@ -1,7 +1,9 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Identity;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using TutoringSystem.Application.Dtos.AccountDtos;
+using TutoringSystem.Application.Dtos.Enums;
 using TutoringSystem.Application.Service.Interfaces;
 using TutoringSystem.Domain.Entities;
 using TutoringSystem.Domain.Entities.Enums;
@@ -30,14 +32,36 @@ namespace TutoringSystem.Application.Service
             this.passwordHasher = passwordHasher;
         }
 
-        public async Task<UserDto> GetUser(LoginUserDto userModel)
+        public async Task<ICollection<WrongPasswordStatus>> ChangePasswordAsync(long userId, PasswordDto passwordModel)
+        {
+            var user = await userRepository.GetUserByIdAsync(userId);
+            var validationResult = ValidatePassword(user, passwordModel);
+
+            if (validationResult.Count == 0)
+            {
+                user.PasswordHash = passwordHasher.HashPassword(user, passwordModel.NewPassword);
+                var changed = await userRepository.UpdateUser(user);
+
+                if (!changed)
+                {
+                    validationResult.Add(WrongPasswordStatus.DatabaseError);
+                    return validationResult;
+                }
+
+                return null;
+            }
+
+            return validationResult;
+        }
+
+        public async Task<UserDto> GetUserAsync(LoginUserDto userModel)
         {
             var user = await userRepository.GetUserByUsernameAsync(userModel.Username);
 
             return mapper.Map<UserDto>(user);
         }
 
-        public async Task<Role> GetUserRole(long userId)
+        public async Task<Role> GetUserRoleAsync(long userId)
         {
             var user = await userRepository.GetUserByIdAsync(userId);
 
@@ -60,11 +84,35 @@ namespace TutoringSystem.Application.Service
             return await tutorRepository.AddTutorAsync(newTutor);
         }
 
-        public async Task<PasswordVerificationResult> ValidatePassword(LoginUserDto loginModel)
+        public async Task<PasswordVerificationResult> ValidatePasswordAsync(LoginUserDto loginModel)
         {
             var user = await userRepository.GetUserByUsernameAsync(loginModel.Username);
 
             return passwordHasher.VerifyHashedPassword(user, user.PasswordHash, loginModel.Password);
+        }
+
+        private ICollection<WrongPasswordStatus> ValidatePassword(User user, PasswordDto passwordModel)
+        {
+            var result = new List<WrongPasswordStatus>();
+            var passwordVerificationResult = passwordHasher.VerifyHashedPassword(user, user.PasswordHash, passwordModel.OldPassword);
+
+            if (!passwordVerificationResult.Equals(PasswordVerificationResult.Success))
+            {
+                result.Add(WrongPasswordStatus.InvalidOldPassword);
+                return result;
+            }
+
+            if (!passwordModel.NewPassword.Equals(passwordModel.ConfirmPassword))
+                result.Add(WrongPasswordStatus.PasswordsVary);
+
+            if (passwordModel.NewPassword.Length < 4)
+                result.Add(WrongPasswordStatus.TooShort);
+
+            passwordVerificationResult = passwordHasher.VerifyHashedPassword(user, user.PasswordHash, passwordModel.NewPassword);
+            if (passwordVerificationResult.Equals(PasswordVerificationResult.Success))
+                result.Add(WrongPasswordStatus.DuplicateOfOld);
+
+            return result;
         }
     }
 }

@@ -46,5 +46,11 @@ namespace TutoringSystem.Infrastructure.Repositories
 
             return user;
         }
+
+        public async Task<bool> UpdateUser(User user)
+        {
+            dbContext.Users.Update(user);
+            return (await dbContext.SaveChangesAsync()) > 0;
+        }
     }
 }
