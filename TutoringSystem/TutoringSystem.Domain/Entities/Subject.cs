@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using TutoringSystem.Domain.Entities.Enums;
 
 namespace TutoringSystem.Domain.Entities
 {
@@ -6,6 +7,7 @@ namespace TutoringSystem.Domain.Entities
     {
         public long Id { get; set; }
         public string Name { get; set; }
+        public SubjectCategory SubjectCategory { get; set; }
 
         public virtual ICollection<Reservation> Reservations { get; set; }
 
