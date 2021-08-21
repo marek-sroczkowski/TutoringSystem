@@ -2,18 +2,16 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
-using System.Collections.Generic;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using TutoringSystem.Application.Dtos.AccountDtos;
-using TutoringSystem.Application.Dtos.Enums;
 using TutoringSystem.Application.Identity;
 using TutoringSystem.Application.Service.Interfaces;
 using TutoringSystem.Domain.Entities.Enums;
 
 namespace TutoringSystem.API.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/account")]
     [ApiController]
     [Authorize]
     public class AccountController: ControllerBase
@@ -28,7 +26,7 @@ namespace TutoringSystem.API.Controllers
         }
 
         [SwaggerOperation(Summary = "Creates a new tutor")]
-        [HttpPost("registerTutor")]
+        [HttpPost("register/tutor")]
         [AllowAnonymous]
         public async Task<ActionResult> RegisterTutor([FromBody] RegisterTutorDto model)
         {
@@ -40,7 +38,7 @@ namespace TutoringSystem.API.Controllers
         }
 
         [SwaggerOperation(Summary = "Creates a new student")]
-        [HttpPost("registerStudent")]
+        [HttpPost("register/student")]
         [Authorize(Roles = "Admin,Tutor")]
         public async Task<ActionResult> RegisterStudent([FromBody] RegisterStudentDto model)
         {
@@ -71,7 +69,7 @@ namespace TutoringSystem.API.Controllers
         }
 
         [SwaggerOperation(Summary = "Gets role of the currently logged user")]
-        [HttpGet("getUserRole")]
+        [HttpGet("role")]
         [Authorize(Roles = "Admin,Tutor,Student")]
         public async Task<ActionResult<Role>> GetUserRole()
         {
@@ -82,7 +80,7 @@ namespace TutoringSystem.API.Controllers
         }
 
         [SwaggerOperation(Summary = "Changes password of the currently logged user")]
-        [HttpPost("changePassword")]
+        [HttpPost("password")]
         [Authorize(Roles = "Admin,Tutor,Student")]
         public async Task<ActionResult> ChangePassword([FromBody] PasswordDto passwordModel)
         {
