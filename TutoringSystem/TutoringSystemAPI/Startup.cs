@@ -4,6 +4,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using TutoringSystem.API.Installers;
+using TutoringSystem.Infrastructure.Data;
 
 namespace TutoringSystemAPI
 {
@@ -21,7 +22,7 @@ namespace TutoringSystemAPI
             services.InstallServicesAssembly(Configuration);
         }
 
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, Seeder seeder)
         {
             if (env.IsDevelopment())
             {
@@ -42,6 +43,8 @@ namespace TutoringSystemAPI
             {
                 endpoints.MapControllers();
             });
+
+            seeder.Seed();
         }
     }
 }

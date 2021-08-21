@@ -3,6 +3,7 @@ using FluentValidation.AspNetCore;
 using Microsoft.Extensions.DependencyInjection;
 using TutoringSystem.Application.Dtos.AccountDtos;
 using TutoringSystem.Domain.Repositories;
+using TutoringSystem.Infrastructure.Data;
 using TutoringSystem.Infrastructure.Repositories;
 using TutoringSystem.Infrastructure.Validators;
 
@@ -14,6 +15,8 @@ namespace TutoringSystem.Infrastructure.DependencyInjection
         {
             services.AddRepositories();
             services.AddValidators();
+
+            services.AddScoped<Seeder>();
 
             return services;
         }
