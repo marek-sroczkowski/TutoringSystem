@@ -35,6 +35,7 @@ namespace TutoringSystem.Infrastructure.Data
                     IsPaid = false,
                     ReceiptDate = new DateTime(2021, 06, 12),
                     Deadline = new DateTime(2021, 07, 01),
+                    Status = AdditionalOrderStatus.Realized,
                     Description = "Projekt programistyczny dotyczący stworzenia bazodanowego projektu okienkowego \"Terminarz\""
                 },
                 new AdditionalOrder
@@ -44,6 +45,7 @@ namespace TutoringSystem.Infrastructure.Data
                     IsPaid = false,
                     ReceiptDate = new DateTime(2021, 06, 28),
                     Deadline = new DateTime(2021, 07, 16),
+                    Status = AdditionalOrderStatus.Realized,
                     Description = "Projekt programistyczny mający na celu stworzenie aplikacji do obsługi biura matrymonialnego"
                 }
             };
@@ -51,12 +53,12 @@ namespace TutoringSystem.Infrastructure.Data
             var programming = new Subject
             {
                 Name = "Programowanie",
-                SubjectCategory = SubjectCategory.Informatics
+                Category = SubjectCategory.Informatics
             };
             var math = new Subject
             {
                 Name = "Matematyka",
-                SubjectCategory = SubjectCategory.Math
+                Category = SubjectCategory.Math
             };
 
             var programmingLesson = new Lesson

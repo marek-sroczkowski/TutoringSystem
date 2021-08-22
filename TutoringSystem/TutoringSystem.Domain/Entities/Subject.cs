@@ -7,7 +7,7 @@ namespace TutoringSystem.Domain.Entities
     {
         public long Id { get; set; }
         public string Name { get; set; }
-        public SubjectCategory SubjectCategory { get; set; }
+        public SubjectCategory Category { get; set; }
 
         public virtual ICollection<Reservation> Reservations { get; set; }
 

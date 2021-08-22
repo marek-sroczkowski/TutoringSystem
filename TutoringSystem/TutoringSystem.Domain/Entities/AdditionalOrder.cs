@@ -1,4 +1,5 @@
 ﻿using System;
+using TutoringSystem.Domain.Entities.Enums;
 
 namespace TutoringSystem.Domain.Entities
 {
@@ -11,8 +12,16 @@ namespace TutoringSystem.Domain.Entities
         public string Description { get; set; }
         public double Cost { get; set; }
         public bool IsPaid { get; set; }
+        public AdditionalOrderStatus Status { get; set; }
 
         public long TutorId { get; set; }
         public virtual Tutor Tutor { get; set; }
+
+        public AdditionalOrder()
+        {
+            ReceiptDate = DateTime.Now;
+            Status = AdditionalOrderStatus.Pending;
+            IsPaid = false;
+        }
     }
 }
