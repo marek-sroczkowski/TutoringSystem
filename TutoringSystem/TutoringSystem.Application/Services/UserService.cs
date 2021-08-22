@@ -4,12 +4,12 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using TutoringSystem.Application.Dtos.AccountDtos;
 using TutoringSystem.Application.Dtos.Enums;
-using TutoringSystem.Application.Service.Interfaces;
+using TutoringSystem.Application.Services.Interfaces;
 using TutoringSystem.Domain.Entities;
 using TutoringSystem.Domain.Entities.Enums;
 using TutoringSystem.Domain.Repositories;
 
-namespace TutoringSystem.Application.Service
+namespace TutoringSystem.Application.Services
 {
     public class UserService : IUserService
     {

@@ -5,7 +5,7 @@ using TutoringSystem.Application.Dtos.AccountDtos;
 using TutoringSystem.Application.Dtos.Enums;
 using TutoringSystem.Domain.Entities.Enums;
 
-namespace TutoringSystem.Application.Service.Interfaces
+namespace TutoringSystem.Application.Services.Interfaces
 {
     public interface IUserService
     {
