@@ -1,13 +1,14 @@
-﻿using FluentValidation.AspNetCore;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 using System.Reflection;
 using System.Text;
+using TutoringSystem.Application.Authorization;
 using TutoringSystem.Application.Identity;
-using TutoringSystem.Application.Service;
-using TutoringSystem.Application.Service.Interfaces;
+using TutoringSystem.Application.Services;
+using TutoringSystem.Application.Services.Interfaces;
 using TutoringSystem.Domain.Entities;
 
 namespace TutoringSystem.Application.DependencyInjection
@@ -27,6 +28,7 @@ namespace TutoringSystem.Application.DependencyInjection
         public static IServiceCollection AddApplicationServices(this IServiceCollection services)
         {
             services.AddScoped<IUserService, UserService>();
+            services.AddScoped<IAdditionalOrderService, AdditionalOrderService>();
 
             return services;
         }
@@ -67,7 +69,7 @@ namespace TutoringSystem.Application.DependencyInjection
 
         public static IServiceCollection AddAuthorization(this IServiceCollection services)
         {
-            
+            services.AddScoped<IAuthorizationHandler, OrderResourceOperationHandler>();
 
             return services;
         }
