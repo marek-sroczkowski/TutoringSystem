@@ -2,6 +2,7 @@
 using System;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Threading.Tasks;
 using TutoringSystem.Domain.Repositories;
 using TutoringSystem.Infrastructure.Data;
 
@@ -43,5 +44,12 @@ namespace TutoringSystem.Infrastructure.Repositories
 		{
 			DbContext.Set<T>().Remove(entity);
 		}
+
+		public async Task<bool> SaveChangedAsync()
+        {
+			var changesCount = await DbContext.SaveChangesAsync();
+
+			return changesCount > 0;
+        }
 	}
 }
