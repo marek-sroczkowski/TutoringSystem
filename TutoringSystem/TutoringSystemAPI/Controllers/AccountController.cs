@@ -6,7 +6,7 @@ using System.Security.Claims;
 using System.Threading.Tasks;
 using TutoringSystem.Application.Dtos.AccountDtos;
 using TutoringSystem.Application.Identity;
-using TutoringSystem.Application.Service.Interfaces;
+using TutoringSystem.Application.Services.Interfaces;
 using TutoringSystem.Domain.Entities.Enums;
 
 namespace TutoringSystem.API.Controllers
