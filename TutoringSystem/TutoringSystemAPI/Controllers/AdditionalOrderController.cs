@@ -10,6 +10,7 @@ using TutoringSystem.Application.Services.Interfaces;
 using TutoringSystem.Domain.Parameters;
 using TutoringSystem.Application.Filters;
 using TutoringSystem.Application.Authorization;
+using TutoringSystem.Domain.Entities.Enums;
 
 namespace TutoringSystem.API.Controllers
 {
@@ -115,6 +116,40 @@ namespace TutoringSystem.API.Controllers
                 return BadRequest("Order could be not deleted");
 
             return NoContent();
+        }
+
+        [SwaggerOperation(Summary = "Changes order status to in progress")]
+        [HttpGet("setInProgress/{orderId}")]
+        [ValidateOrderExistence]
+        public async Task<ActionResult> SetInProgressStatus(int orderId)
+        {
+            var order = await additionalOrderService.GetAdditionalOrderByIdAsync(orderId);
+            var authorizationResult = authorizationService.AuthorizeAsync(User, order, new ResourceOperationRequirement(OperationType.Read)).Result;
+            if (!authorizationResult.Succeeded)
+                return Forbid();
+
+            var changed = await additionalOrderService.ChangeOrderStatusAsync(orderId, AdditionalOrderStatus.InProgress);
+            if (!changed)
+                return BadRequest("Order status could be not changed");
+
+            return Ok();
+        }
+
+        [SwaggerOperation(Summary = "Changes order status to realized")]
+        [HttpGet("setRealized/{orderId}")]
+        [ValidateOrderExistence]
+        public async Task<ActionResult> SetRealizedStatus(int orderId)
+        {
+            var order = await additionalOrderService.GetAdditionalOrderByIdAsync(orderId);
+            var authorizationResult = authorizationService.AuthorizeAsync(User, order, new ResourceOperationRequirement(OperationType.Read)).Result;
+            if (!authorizationResult.Succeeded)
+                return Forbid();
+
+            var changed = await additionalOrderService.ChangeOrderStatusAsync(orderId, AdditionalOrderStatus.Realized);
+            if (!changed)
+                return BadRequest("Order status could be not changed");
+
+            return Ok();
         }
     }
 }
