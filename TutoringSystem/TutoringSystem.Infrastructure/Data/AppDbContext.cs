@@ -11,7 +11,6 @@ namespace TutoringSystem.Infrastructure.Data
         public virtual DbSet<Student> Students { get; set; }
         public virtual DbSet<Tutor> Tutors { get; set; }
         public virtual DbSet<Reservation> Reservations { get; set; }
-        public virtual DbSet<Lesson> Lessons { get; set; }
         public virtual DbSet<Subject> Subjects { get; set; }
         public virtual DbSet<Contact> Contacts { get; set; }
         public virtual DbSet<PhoneNumber> PhoneNumbers { get; set; }

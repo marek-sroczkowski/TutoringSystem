@@ -61,17 +61,6 @@ namespace TutoringSystem.Infrastructure.Data
                 Category = SubjectCategory.Math
             };
 
-            var programmingLesson = new Lesson
-            {
-                Description = "Omówienie tablic w języku C++",
-                Duration = 2.0,
-            };
-            var mathLesson = new Lesson
-            {
-                Description = "Ciągi arytmetyczne",
-                Duration = 1.5,
-            };
-
             var tutor1 = new Tutor
             {
                 AdditionalOrders = orders,
@@ -157,27 +146,27 @@ namespace TutoringSystem.Infrastructure.Data
             var r1 = new Reservation
             {
                 StartTime = new DateTime(2021, 09, 04),
-                Lesson = mathLesson,
+                Description = "Ciągi arytmetyczne",
+                Duration = 1.5,
                 Student = janKowalski,
                 Tutor = tutor1,
                 Place = Place.AtTutor,
                 Subject = math
             };
-            r1.Cost = r1.Lesson.Duration * r1.Student.HourlRate;
+            r1.Cost = r1.Duration * r1.Student.HourlRate;
             math.Reservations = new List<Reservation> { r1 };
-            mathLesson.Reservation = r1;
 
             var r2 = new Reservation
             {
                 StartTime = new DateTime(2021, 09, 05),
-                Lesson = programmingLesson,
+                Description = "Omówienie tablic w języku C++",
+                Duration = 2.0,
                 Student = jacekNowak,
                 Tutor = tutor1,
                 Place = Place.Online
             };
-            r2.Cost = r2.Lesson.Duration * r2.Student.HourlRate;
+            r2.Cost = r2.Duration * r2.Student.HourlRate;
             programming.Reservations = new List<Reservation> { r2 };
-            programmingLesson.Reservation = r2;
 
             tutor1.Reservations = new List<Reservation> { r1, r2 };
             janKowalski.Reservations = new List<Reservation> { r1 };

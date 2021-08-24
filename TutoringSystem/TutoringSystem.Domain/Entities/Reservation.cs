@@ -8,9 +8,9 @@ namespace TutoringSystem.Domain.Entities
         public long Id { get; set; }
         public double Cost { get; set; }
         public DateTime StartTime { get; set; }
+        public double Duration { get; set; }
+        public string Description { get; set; }
         public Place Place { get; set; }
-
-        public virtual Lesson Lesson { get; set; }
 
         public long SubjectId { get; set; }
         public virtual Subject Subject { get; set; }
