@@ -54,15 +54,15 @@ namespace TutoringSystem.API.Controllers
         [HttpGet("{orderId}")]
         [Authorize(Roles = "Tutor")]
         [ValidateOrderExistence]
-        public async Task<ActionResult<OrderDetailsDto>> Get(int orderId)
+        public async Task<ActionResult<OrderDetailsDto>> Get(long orderId)
         {
-            var album = await additionalOrderService.GetAdditionalOrderByIdAsync(orderId);
+            var order = await additionalOrderService.GetAdditionalOrderByIdAsync(orderId);
 
-            var authorizationResult = authorizationService.AuthorizeAsync(User, album, new ResourceOperationRequirement(OperationType.Read)).Result;
+            var authorizationResult = authorizationService.AuthorizeAsync(User, order, new ResourceOperationRequirement(OperationType.Read)).Result;
             if (!authorizationResult.Succeeded)
                 return Forbid();
 
-            return Ok(album);
+            return Ok(order);
         }
 
         [SwaggerOperation(Summary = "Creates a new order")]

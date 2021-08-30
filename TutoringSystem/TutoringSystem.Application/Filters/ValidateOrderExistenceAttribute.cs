@@ -24,7 +24,7 @@ namespace TutoringSystem.Application.Filters
             {
                 if (context.ActionArguments.ContainsKey("orderId"))
                 {
-                    var orderId = context.ActionArguments["orderId"] as int?;
+                    var orderId = context.ActionArguments["orderId"] as long?;
                     if (orderId.HasValue)
                     {
                         if ((await additionalOrderRepository.GetAdditionalOrderByIdAsync(orderId.Value)) == null)
