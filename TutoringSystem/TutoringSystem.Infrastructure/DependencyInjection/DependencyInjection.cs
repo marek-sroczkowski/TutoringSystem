@@ -27,6 +27,11 @@ namespace TutoringSystem.Infrastructure.DependencyInjection
             services.AddScoped<IStudentRepository, StudentRepository>();
             services.AddScoped<ITutorRepository, TutorRepository>();
             services.AddScoped<IAdditionalOrderRepository, AdditionalOrderRepository>();
+            services.AddScoped<IAddressRepository, AddressRepository>();
+            services.AddScoped<IAvailabilityRepository, AvailabilityRepository>();
+            services.AddScoped<IContactRepository, ContactRepository>();
+            services.AddScoped<IReservationRepository, ReservationRepository>();
+            services.AddScoped<ISchoolRepository, SchoolRepository>();
 
             return services;
         }
