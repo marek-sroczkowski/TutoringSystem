@@ -54,13 +54,9 @@ namespace TutoringSystem.API.Controllers
         [AllowAnonymous]
         public async Task<ActionResult> Login([FromBody] LoginUserDto model)
         {
-            var user = await userService.GetUserAsync(model);
+            var user = await userService.TryLoginAsync(model);
             if (user == null)
                 return BadRequest("Invalid username or password");
-
-            var passwordVerificationResult = await userService.ValidatePasswordAsync(model);
-            if (passwordVerificationResult == PasswordVerificationResult.Failed)
-                return BadRequest("Invalid username of password!");
 
             var token = jwtProvider.GenerateJwtToken(user);
             Response.Headers.Add("Authorization", token);

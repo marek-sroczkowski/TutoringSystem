@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Identity;
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using TutoringSystem.Application.Dtos.AccountDtos;
@@ -32,31 +33,15 @@ namespace TutoringSystem.Application.Services
             this.passwordHasher = passwordHasher;
         }
 
-        public async Task<ICollection<WrongPasswordStatus>> ChangePasswordAsync(long userId, PasswordDto passwordModel)
+        public async Task<UserDto> TryLoginAsync(LoginUserDto userModel)
         {
-            var user = await userRepository.GetUserByIdAsync(userId);
-            var validationResult = ValidatePassword(user, passwordModel);
-
-            if (validationResult.Count == 0)
-            {
-                user.PasswordHash = passwordHasher.HashPassword(user, passwordModel.NewPassword);
-                var changed = await userRepository.UpdateUser(user);
-
-                if (!changed)
-                {
-                    validationResult.Add(WrongPasswordStatus.DatabaseError);
-                    return validationResult;
-                }
-
+            var passwordVerificationResult = await ValidatePasswordAsync(userModel);
+            if (passwordVerificationResult == PasswordVerificationResult.Failed)
                 return null;
-            }
 
-            return validationResult;
-        }
-
-        public async Task<UserDto> GetUserAsync(LoginUserDto userModel)
-        {
             var user = await userRepository.GetUserByUsernameAsync(userModel.Username);
+            if (user != null)
+                await SetLastLoginDate(user);
 
             return mapper.Map<UserDto>(user);
         }
@@ -84,11 +69,35 @@ namespace TutoringSystem.Application.Services
             return await tutorRepository.AddTutorAsync(newTutor);
         }
 
-        public async Task<PasswordVerificationResult> ValidatePasswordAsync(LoginUserDto loginModel)
+        private async Task<PasswordVerificationResult> ValidatePasswordAsync(LoginUserDto loginModel)
         {
             var user = await userRepository.GetUserByUsernameAsync(loginModel.Username);
+            if (user is null)
+                return PasswordVerificationResult.Failed;
 
             return passwordHasher.VerifyHashedPassword(user, user.PasswordHash, loginModel.Password);
+        }
+
+        public async Task<ICollection<WrongPasswordStatus>> ChangePasswordAsync(long userId, PasswordDto passwordModel)
+        {
+            var user = await userRepository.GetUserByIdAsync(userId);
+            var validationResult = ValidatePassword(user, passwordModel);
+
+            if (validationResult.Count == 0)
+            {
+                user.PasswordHash = passwordHasher.HashPassword(user, passwordModel.NewPassword);
+                var changed = await userRepository.UpdateUser(user);
+
+                if (!changed)
+                {
+                    validationResult.Add(WrongPasswordStatus.DatabaseError);
+                    return validationResult;
+                }
+
+                return null;
+            }
+
+            return validationResult;
         }
 
         private ICollection<WrongPasswordStatus> ValidatePassword(User user, PasswordDto passwordModel)
@@ -113,6 +122,13 @@ namespace TutoringSystem.Application.Services
                 result.Add(WrongPasswordStatus.DuplicateOfOld);
 
             return result;
+        }
+
+        private async Task SetLastLoginDate(User user)
+        {
+            user.LastLoginDate = DateTime.Now;
+
+            await userRepository.UpdateUser(user);
         }
     }
 }

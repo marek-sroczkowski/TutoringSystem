@@ -9,10 +9,9 @@ namespace TutoringSystem.Application.Services.Interfaces
 {
     public interface IUserService
     {
-        Task<UserDto> GetUserAsync(LoginUserDto userModel);
+        Task<UserDto> TryLoginAsync(LoginUserDto userModel);
         Task<bool> RegisterStudentAsync(RegisterStudentDto student);
         Task<bool> RegisterTutorAsync(RegisterTutorDto tutor);
-        Task<PasswordVerificationResult> ValidatePasswordAsync(LoginUserDto loginModel);
         Task<Role> GetUserRoleAsync(long userId);
         Task<ICollection<WrongPasswordStatus>> ChangePasswordAsync(long userId, PasswordDto passwordModel);
     }
