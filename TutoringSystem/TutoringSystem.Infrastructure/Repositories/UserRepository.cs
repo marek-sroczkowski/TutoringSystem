@@ -8,30 +8,31 @@ using TutoringSystem.Infrastructure.Data;
 
 namespace TutoringSystem.Infrastructure.Repositories
 {
-    public class UserRepository : IUserRepository
+    public class UserRepository : RepositoryBase<User>, IUserRepository
     {
-        private readonly AppDbContext dbContext;
-
-        public UserRepository(AppDbContext dbContext)
+        public UserRepository(AppDbContext dbContext) : base(dbContext)
         {
-            this.dbContext = dbContext;
         }
 
         public async Task<bool> DeleteUserAsync(User user)
         {
             user.IsActiv = false;
-            dbContext.Users.Update(user);
+            Update(user);
 
-            return (await dbContext.SaveChangesAsync()) > 0;
+            return await SaveChangedAsync();
         }
 
-        public async Task<ICollection<User>> GetAllUsersAsync() => await dbContext.Users
-            .Where(u => u.IsActiv)
-            .ToListAsync();
+        public async Task<ICollection<User>> GetAllUsersAsync()
+        {
+            var users = await FindByCondition(u => u.IsActiv)
+                .ToListAsync();
+
+            return users;
+        }
 
         public async Task<User> GetUserByIdAsync(long id)
         {
-            var user = await dbContext.Users
+            var user = await DbContext.Users
                 .Where(u => u.IsActiv)
                 .FirstOrDefaultAsync(u => u.Id.Equals(id));
 
@@ -40,7 +41,7 @@ namespace TutoringSystem.Infrastructure.Repositories
 
         public async Task<User> GetUserByUsernameAsync(string username)
         {
-            var user = await dbContext.Users
+            var user = await DbContext.Users
                 .Where(u => u.IsActiv)
                 .FirstOrDefaultAsync(u => u.Username.Equals(username));
 
@@ -49,8 +50,9 @@ namespace TutoringSystem.Infrastructure.Repositories
 
         public async Task<bool> UpdateUser(User user)
         {
-            dbContext.Users.Update(user);
-            return (await dbContext.SaveChangesAsync()) > 0;
+            Update(user);
+
+            return await SaveChangedAsync();
         }
     }
 }

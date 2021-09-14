@@ -8,28 +8,30 @@ using TutoringSystem.Infrastructure.Data;
 
 namespace TutoringSystem.Infrastructure.Repositories
 {
-    public class TutorRepository : ITutorRepository
+    public class TutorRepository : RepositoryBase<Tutor>, ITutorRepository
     {
-        private readonly AppDbContext dbContext;
-
-        public TutorRepository(AppDbContext dbContext)
+        public TutorRepository(AppDbContext dbContext) : base(dbContext)
         {
-            this.dbContext = dbContext;
         }
 
         public async Task<bool> AddTutorAsync(Tutor tutor)
         {
-            await dbContext.Tutors.AddAsync(tutor);
-            return (await dbContext.SaveChangesAsync()) > 0;
+            Create(tutor);
+
+            return await SaveChangedAsync();
         }
 
-        public async Task<ICollection<Tutor>> GetAllTutorsAsync() => await dbContext.Tutors
-            .Where(s => s.IsActiv)
-            .ToListAsync();
+        public async Task<ICollection<Tutor>> GetAllTutorsAsync()
+        {
+            var tutors = await FindByCondition(t => t.IsActiv)
+                            .ToListAsync();
+
+            return tutors;
+        }
 
         public async Task<Tutor> GetTutorByIdAsync(long id)
         {
-            var tutor = await dbContext.Tutors
+            var tutor = await DbContext.Tutors
                 .Where(s => s.IsActiv)
                 .FirstOrDefaultAsync(s => s.Id.Equals(id));
 
@@ -38,8 +40,9 @@ namespace TutoringSystem.Infrastructure.Repositories
 
         public async Task<bool> UpdateTutorAsync(Tutor tutor)
         {
-            dbContext.Tutors.Update(tutor);
-            return (await dbContext.SaveChangesAsync()) > 0;
+            Update(tutor);
+
+            return await SaveChangedAsync();
         }
     }
 }

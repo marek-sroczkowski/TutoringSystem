@@ -8,38 +8,41 @@ using TutoringSystem.Infrastructure.Data;
 
 namespace TutoringSystem.Infrastructure.Repositories
 {
-    public class StudentRepository : IStudentRepository
+    public class StudentRepository : RepositoryBase<Student>, IStudentRepository
     {
-        private readonly AppDbContext dbContext;
-
-        public StudentRepository(AppDbContext dbContext)
+        public StudentRepository(AppDbContext dbContext) : base(dbContext)
         {
-            this.dbContext = dbContext;
         }
 
         public async Task<bool> AddStudentAsycn(Student student)
         {
-            await dbContext.Students.AddAsync(student);
-            return (await dbContext.SaveChangesAsync()) > 0;
+            Create(student);
+
+            return await SaveChangedAsync();
+        }
+
+        public async Task<ICollection<Student>> GetStudentsAsync()
+        {
+            var students = await FindByCondition(s => s.IsActiv)
+                .ToListAsync();
+
+            return students;
         }
 
         public async Task<Student> GetStudentByIdAsync(long id)
         {
-            var student = await dbContext.Students
+            var student = await DbContext.Students
                 .Where(s => s.IsActiv)
                 .FirstOrDefaultAsync(s => s.Id.Equals(id));
 
             return student;
         }
 
-        public async Task<ICollection<Student>> GetStudentsAsync() => await dbContext.Students
-            .Where(s => s.IsActiv)
-            .ToListAsync();
-
         public async Task<bool> UpdateStudentAsync(Student student)
         {
-            dbContext.Students.Update(student);
-            return (await dbContext.SaveChangesAsync()) > 0;
+            Update(student);
+
+            return await SaveChangedAsync();
         }
     }
 }
