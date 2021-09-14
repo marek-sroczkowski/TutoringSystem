@@ -22,9 +22,9 @@ namespace TutoringSystem.Infrastructure.Repositories
             return await SaveChangedAsync();
         }
 
-        public async Task<ICollection<User>> GetAllUsersAsync()
+        public async Task<ICollection<User>> GetAllUsersAsync(bool isActiv)
         {
-            var users = await FindByCondition(u => u.IsActiv)
+            var users = await FindByCondition(u => u.IsActiv.Equals(isActiv))
                 .ToListAsync();
 
             return users;

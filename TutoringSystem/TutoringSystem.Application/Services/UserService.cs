@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Identity;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using TutoringSystem.Application.Dtos.AccountDtos;
 using TutoringSystem.Application.Dtos.Enums;
@@ -69,13 +70,22 @@ namespace TutoringSystem.Application.Services
             return await tutorRepository.AddTutorAsync(newTutor);
         }
 
-        private async Task<PasswordVerificationResult> ValidatePasswordAsync(LoginUserDto loginModel)
+        public async Task<bool> DeactivateUserAsync(long userId)
         {
-            var user = await userRepository.GetUserByUsernameAsync(loginModel.Username);
-            if (user is null)
-                return PasswordVerificationResult.Failed;
+            var user = await userRepository.GetUserByIdAsync(userId);
 
-            return passwordHasher.VerifyHashedPassword(user, user.PasswordHash, loginModel.Password);
+            return await userRepository.DeleteUserAsync(user);
+        }
+
+        public async Task<bool> ActivateUserAsync(long userId)
+        {
+            var inactiveUsers = await userRepository.GetAllUsersAsync(false);
+            var user = inactiveUsers?.FirstOrDefault(u => u.Id.Equals(userId));
+            if (user is null)
+                return false;
+            user.IsActiv = true;
+
+            return await userRepository.UpdateUser(user);
         }
 
         public async Task<ICollection<WrongPasswordStatus>> ChangePasswordAsync(long userId, PasswordDto passwordModel)
@@ -122,6 +132,15 @@ namespace TutoringSystem.Application.Services
                 result.Add(WrongPasswordStatus.DuplicateOfOld);
 
             return result;
+        }
+
+        private async Task<PasswordVerificationResult> ValidatePasswordAsync(LoginUserDto loginModel)
+        {
+            var user = await userRepository.GetUserByUsernameAsync(loginModel.Username);
+            if (user is null)
+                return PasswordVerificationResult.Failed;
+
+            return passwordHasher.VerifyHashedPassword(user, user.PasswordHash, loginModel.Password);
         }
 
         private async Task SetLastLoginDate(User user)

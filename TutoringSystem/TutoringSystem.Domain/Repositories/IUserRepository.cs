@@ -10,6 +10,6 @@ namespace TutoringSystem.Domain.Repositories
         Task<bool> DeleteUserAsync(User user);
         Task<User> GetUserByIdAsync(long id);
         Task<User> GetUserByUsernameAsync(string username);
-        Task<ICollection<User>> GetAllUsersAsync();
+        Task<ICollection<User>> GetAllUsersAsync(bool isActiv);
     }
 }

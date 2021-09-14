@@ -1,5 +1,4 @@
-﻿using Microsoft.AspNetCore.Identity;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using TutoringSystem.Application.Dtos.AccountDtos;
 using TutoringSystem.Application.Dtos.Enums;
@@ -12,6 +11,8 @@ namespace TutoringSystem.Application.Services.Interfaces
         Task<UserDto> TryLoginAsync(LoginUserDto userModel);
         Task<bool> RegisterStudentAsync(RegisterStudentDto student);
         Task<bool> RegisterTutorAsync(RegisterTutorDto tutor);
+        Task<bool> DeactivateUserAsync(long userId);
+        Task<bool> ActivateUserAsync(long userId);
         Task<Role> GetUserRoleAsync(long userId);
         Task<ICollection<WrongPasswordStatus>> ChangePasswordAsync(long userId, PasswordDto passwordModel);
     }

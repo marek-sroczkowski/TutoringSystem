@@ -55,7 +55,7 @@ namespace TutoringSystem.API.Controllers
         public async Task<ActionResult> Login([FromBody] LoginUserDto model)
         {
             var user = await userService.TryLoginAsync(model);
-            if (user == null)
+            if (user is null)
                 return BadRequest("Invalid username or password");
 
             var token = jwtProvider.GenerateJwtToken(user);
@@ -87,6 +87,33 @@ namespace TutoringSystem.API.Controllers
                 return BadRequest(changedErrors);
 
             return Ok();
+        }
+
+        [SwaggerOperation(Summary = "Deactivates the account of the currently logged in user")]
+        [HttpDelete]
+        [Authorize(Roles = "Admin,Tutor,Student")]
+        public async Task<ActionResult> DeactivateAccount()
+        {
+            var userId = User.FindFirst(c => c.Type == ClaimTypes.NameIdentifier).Value;
+            var deleted = await userService.DeactivateUserAsync(long.Parse(userId));
+
+            if (!deleted)
+                return BadRequest("Account could be not deleted");
+
+            return NoContent();
+        }
+
+        [SwaggerOperation(Summary = "Activates the account of the specific user")]
+        [HttpGet("activate/{userId}")]
+        [Authorize(Roles = "Tutor")]
+        public async Task<ActionResult> ActivateAccount(long userId)
+        {
+            var activated = await userService.ActivateUserAsync(userId);
+
+            if (!activated)
+                return BadRequest("Account could be not activate");
+
+            return NoContent();
         }
     }
 }
