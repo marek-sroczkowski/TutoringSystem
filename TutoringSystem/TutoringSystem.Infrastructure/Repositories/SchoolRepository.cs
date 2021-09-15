@@ -26,7 +26,7 @@ namespace TutoringSystem.Infrastructure.Repositories
             return await SaveChangedAsync();
         }
 
-        public async Task<School> GetSchoolByIdAsync(int schoolId)
+        public async Task<School> GetSchoolByIdAsync(long schoolId)
         {
             var school = await DbContext.Schools
                 .Include(s => s.Student)

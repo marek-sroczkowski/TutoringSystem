@@ -26,7 +26,7 @@ namespace TutoringSystem.Infrastructure.Repositories
             return await SaveChangedAsync();
         }
 
-        public async Task<Contact> GetContactByIdAsync(int contactId)
+        public async Task<Contact> GetContactByIdAsync(long contactId)
         {
             var contact = await DbContext.Contacts
                 .Include(c => c.User)
@@ -36,7 +36,7 @@ namespace TutoringSystem.Infrastructure.Repositories
             return contact;
         }
 
-        public async Task<Contact> GetContactByUserIdAsync(int userId)
+        public async Task<Contact> GetContactByUserIdAsync(long userId)
         {
             var contact = await DbContext.Contacts
                 .Include(c => c.User)

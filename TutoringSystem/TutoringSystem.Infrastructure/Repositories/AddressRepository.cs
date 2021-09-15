@@ -26,7 +26,7 @@ namespace TutoringSystem.Infrastructure.Repositories
             return await SaveChangedAsync();
         }
 
-        public async Task<Address> GetAddressByIdAsync(int addressId)
+        public async Task<Address> GetAddressByIdAsync(long addressId)
         {
             var address = await DbContext.Addresses
                 .Include(a => a.User)

@@ -16,7 +16,7 @@ namespace TutoringSystem.Application.Authorization
 
             var tutorId = context.User.FindFirst(c => c.Type == ClaimTypes.NameIdentifier).Value;
 
-            if (resource.Tutor.Id == int.Parse(tutorId))
+            if (resource.Tutor.Id == long.Parse(tutorId))
             {
                 context.Succeed(requirement);
             }

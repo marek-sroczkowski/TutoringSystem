@@ -8,7 +8,7 @@ namespace TutoringSystem.Domain.Repositories
     {
         Task<bool> UpdateUser(User user);
         Task<bool> DeleteUserAsync(User user);
-        Task<User> GetUserByIdAsync(long id);
+        Task<User> GetUserByIdAsync(long userId);
         Task<User> GetUserByUsernameAsync(string username);
         Task<ICollection<User>> GetAllUsersAsync(bool isActiv);
     }

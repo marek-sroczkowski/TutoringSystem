@@ -28,7 +28,7 @@ namespace TutoringSystem.Infrastructure.Repositories
             return await SaveChangedAsync();
         }
 
-        public async Task<ICollection<Availability>> GetAvailabilitiesByTutorIdAsync(int tutorId)
+        public async Task<ICollection<Availability>> GetAvailabilitiesByTutorIdAsync(long tutorId)
         {
             var availabilities = await FindByCondition(a => a.TutorId.Equals(tutorId))
                 .Include(a => a.Intervals)
@@ -38,7 +38,7 @@ namespace TutoringSystem.Infrastructure.Repositories
             return availabilities;
         }
 
-        public async Task<Availability> GetAvailabilityByIdAsync(int availabilityId)
+        public async Task<Availability> GetAvailabilityByIdAsync(long availabilityId)
         {
             var availability = await DbContext.Availabilities
                .Include(a => a.Intervals)
@@ -48,7 +48,7 @@ namespace TutoringSystem.Infrastructure.Repositories
             return availability;
         }
 
-        public async Task<ICollection<Availability>> GetFutureAvailabilitiesByTutorIdAsync(int tutorId)
+        public async Task<ICollection<Availability>> GetFutureAvailabilitiesByTutorIdAsync(long tutorId)
         {
             var availabilities = await FindByCondition(a => a.Date > DateTime.Now && a.TutorId.Equals(tutorId))
                 .Include(a => a.Intervals)
@@ -58,7 +58,7 @@ namespace TutoringSystem.Infrastructure.Repositories
             return availabilities;
         }
 
-        public async Task<Availability> GetTodaysAvailabilityByTutorIdAsync(int tutorId)
+        public async Task<Availability> GetTodaysAvailabilityByTutorIdAsync(long tutorId)
         {
             var availability = await DbContext.Availabilities
                 .Include(a => a.Intervals)

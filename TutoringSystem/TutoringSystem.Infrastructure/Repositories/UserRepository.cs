@@ -30,11 +30,11 @@ namespace TutoringSystem.Infrastructure.Repositories
             return users;
         }
 
-        public async Task<User> GetUserByIdAsync(long id)
+        public async Task<User> GetUserByIdAsync(long userId)
         {
             var user = await DbContext.Users
                 .Where(u => u.IsActiv)
-                .FirstOrDefaultAsync(u => u.Id.Equals(id));
+                .FirstOrDefaultAsync(u => u.Id.Equals(userId));
 
             return user;
         }

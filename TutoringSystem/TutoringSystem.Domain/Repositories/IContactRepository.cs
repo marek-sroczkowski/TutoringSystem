@@ -6,8 +6,8 @@ namespace TutoringSystem.Domain.Repositories
     public interface IContactRepository
     {
         Task<bool> AddContactAsync(Contact contact);
-        Task<Contact> GetContactByIdAsync(int contactId);
-        Task<Contact> GetContactByUserIdAsync(int userId);
+        Task<Contact> GetContactByIdAsync(long contactId);
+        Task<Contact> GetContactByUserIdAsync(long userId);
         Task<bool> UpdateContactAsync(Contact updatedContact);
         Task<bool> DeleteContactAsync(Contact contact);
     }
