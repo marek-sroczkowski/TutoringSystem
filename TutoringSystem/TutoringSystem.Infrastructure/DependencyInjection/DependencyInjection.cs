@@ -32,6 +32,7 @@ namespace TutoringSystem.Infrastructure.DependencyInjection
             services.AddScoped<IContactRepository, ContactRepository>();
             services.AddScoped<IReservationRepository, ReservationRepository>();
             services.AddScoped<ISchoolRepository, SchoolRepository>();
+            services.AddScoped<ISubjectRepository, SubjectRepository>();
 
             return services;
         }
