@@ -30,6 +30,7 @@ namespace TutoringSystem.Application.DependencyInjection
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<IAdditionalOrderService, AdditionalOrderService>();
             services.AddScoped<IReservationService, ReservationService>();
+            services.AddScoped<ISubjectService, SubjectService>();
 
             return services;
         }
@@ -72,6 +73,7 @@ namespace TutoringSystem.Application.DependencyInjection
         {
             services.AddScoped<IAuthorizationHandler, OrderResourceOperationHandler>();
             services.AddScoped<IAuthorizationHandler, ReservationResourceOperationHandler>();
+            services.AddScoped<IAuthorizationHandler, SubjectResourceOperationHandler>();
 
             return services;
         }

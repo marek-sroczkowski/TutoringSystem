@@ -14,5 +14,10 @@ namespace TutoringSystem.Domain.Entities
 
         public long TutorId { get; set; }
         public virtual Tutor Tutor { get; set; }
+
+        public Subject()
+        {
+            IsActiv = true;
+        }
     }
 }
