@@ -116,11 +116,6 @@ namespace TutoringSystem.Infrastructure.Data
                         }
                     }
                 },
-                School = new School
-                {
-                    EducationLevel = EducationLevel.HighSchool,
-                    Year = 2,
-                }
             };
             janKowalski.PasswordHash = passwordHasher.HashPassword(janKowalski, "1234");
 
@@ -135,11 +130,6 @@ namespace TutoringSystem.Infrastructure.Data
                 {
                     DiscordName = "jacek#1234"
                 },
-                School = new School
-                {
-                    EducationLevel = EducationLevel.HighSchool,
-                    Year = 3,
-                }
             };
             jacekNowak.PasswordHash = passwordHasher.HashPassword(jacekNowak, "1234");
 

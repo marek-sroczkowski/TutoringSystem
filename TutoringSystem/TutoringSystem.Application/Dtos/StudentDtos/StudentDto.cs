@@ -1,5 +1,4 @@
 ﻿using AutoMapper;
-using TutoringSystem.Application.Dtos.SchoolDtos;
 using TutoringSystem.Application.Mapping;
 using TutoringSystem.Domain.Entities;
 
@@ -12,8 +11,6 @@ namespace TutoringSystem.Application.Dtos.StudentDtos
         public string FirstName { get; set; }
         public string LastName { get; set; }
         public double HourlRate { get; set; }
-
-        public SchoolDto School { get; set; }
 
         public void Mapping(Profile profile)
         {

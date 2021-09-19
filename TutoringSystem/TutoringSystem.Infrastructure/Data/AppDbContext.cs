@@ -15,7 +15,6 @@ namespace TutoringSystem.Infrastructure.Data
         public virtual DbSet<Contact> Contacts { get; set; }
         public virtual DbSet<PhoneNumber> PhoneNumbers { get; set; }
         public virtual DbSet<AdditionalOrder> AdditionalOrders { get; set; }
-        public virtual DbSet<School> Schools { get; set; }
         public virtual DbSet<Address> Addresses { get; set; }
         public virtual DbSet<Availability> Availabilities { get; set; }
         public virtual DbSet<Interval> Intervals { get; set; }
