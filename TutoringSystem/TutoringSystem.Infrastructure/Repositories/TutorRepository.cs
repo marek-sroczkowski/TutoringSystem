@@ -34,6 +34,7 @@ namespace TutoringSystem.Infrastructure.Repositories
             var tutor = await DbContext.Tutors
                 .Where(t => t.IsActiv)
                 .Include(t => t.Subjects)
+                .Include(t => t.Students)
                 .FirstOrDefaultAsync(t => t.Id.Equals(tutorId));
 
             return tutor;

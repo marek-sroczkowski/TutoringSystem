@@ -33,6 +33,7 @@ namespace TutoringSystem.Infrastructure.Repositories
         {
             var student = await DbContext.Students
                 .Where(s => s.IsActiv)
+                .Include(s => s.Tutors)
                 .FirstOrDefaultAsync(s => s.Id.Equals(studentId));
 
             return student;

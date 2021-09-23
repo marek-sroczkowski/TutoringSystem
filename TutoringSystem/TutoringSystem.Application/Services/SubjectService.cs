@@ -59,7 +59,7 @@ namespace TutoringSystem.Application.Services
 
         public async Task<ICollection<SubjectDto>> GetTutorSubjectsAsync(long tutorId, bool isActiv = true)
         {
-            var subjects = await subjectRepository.GetSubjectsByTutorAsync(tutorId);
+            var subjects = await subjectRepository.GetSubjectsByTutorAsync(tutorId, isActiv);
 
             return mapper.Map<ICollection<SubjectDto>>(subjects);
         }
