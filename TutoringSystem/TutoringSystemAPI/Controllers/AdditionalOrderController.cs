@@ -82,19 +82,19 @@ namespace TutoringSystem.API.Controllers
         }
 
         [SwaggerOperation(Summary = "Updates a existing order")]
-        [HttpPut("{orderId}")]
+        [HttpPut]
         [ValidateOrderExistence]
-        public async Task<ActionResult> Put(int orderId, [FromBody] UpdatedOrderDto model)
+        public async Task<ActionResult> Put([FromBody] UpdatedOrderDto model)
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            var order = await additionalOrderService.GetAdditionalOrderByIdAsync(orderId);
+            var order = await additionalOrderService.GetAdditionalOrderByIdAsync(model.Id);
             var authorizationResult = authorizationService.AuthorizeAsync(User, order, new ResourceOperationRequirement(OperationType.Update)).Result;
             if (!authorizationResult.Succeeded)
                 return Forbid();
 
-            var updated = await additionalOrderService.UpdateAdditionalOrderAsync(orderId, model);
+            var updated = await additionalOrderService.UpdateAdditionalOrderAsync(model);
             if (!updated)
                 return BadRequest("Order could be not updated");
 
