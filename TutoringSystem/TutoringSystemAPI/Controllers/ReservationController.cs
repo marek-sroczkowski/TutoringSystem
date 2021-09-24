@@ -119,20 +119,20 @@ namespace TutoringSystem.API.Controllers
         }
 
         [SwaggerOperation(Summary = "Updates a existing reservation")]
-        [HttpPut("{reservationId}")]
+        [HttpPut]
         [ValidateReservationExistence]
         [Authorize(Roles = "Tutor, Student")]
-        public async Task<ActionResult> UpdateReservation(int reservationId, [FromBody] UpdatedReservationDto model)
+        public async Task<ActionResult> UpdateReservation([FromBody] UpdatedReservationDto model)
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            var reservation = await reservationService.GetReservationByIdAsync(reservationId);
+            var reservation = await reservationService.GetReservationByIdAsync(model.Id);
             var authorizationResult = authorizationService.AuthorizeAsync(User, reservation, new ResourceOperationRequirement(OperationType.Update)).Result;
             if (!authorizationResult.Succeeded)
                 return Forbid();
 
-            var updated = await reservationService.UpdateReservationAsync(reservationId, model);
+            var updated = await reservationService.UpdateReservationAsync(model);
             if (!updated)
                 return BadRequest("Reservation could be not updated");
 
@@ -143,7 +143,7 @@ namespace TutoringSystem.API.Controllers
         [HttpDelete("{reservationId}")]
         [ValidateReservationExistence]
         [Authorize(Roles = "Tutor, Student")]
-        public async Task<ActionResult> DeleteReservation(int reservationId)
+        public async Task<ActionResult> DeleteReservation(long reservationId)
         {
             var reservation = await reservationService.GetReservationByIdAsync(reservationId);
             var authorizationResult = authorizationService.AuthorizeAsync(User, reservation, new ResourceOperationRequirement(OperationType.Delete)).Result;

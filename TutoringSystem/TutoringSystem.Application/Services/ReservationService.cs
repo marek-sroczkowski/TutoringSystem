@@ -88,9 +88,9 @@ namespace TutoringSystem.Application.Services
             return PagedList<ReservationDto>.ToPagedList(reservationDtos, parameters.PageNumber, parameters.PageSize);
         }
 
-        public async Task<bool> UpdateReservationAsync(long reservationId, UpdatedReservationDto updatedReservation)
+        public async Task<bool> UpdateReservationAsync(UpdatedReservationDto updatedReservation)
         {
-            var existingReservation = await reservationRepository.GetReservationByIdAsync(reservationId);
+            var existingReservation = await reservationRepository.GetReservationByIdAsync(updatedReservation.Id);
             var reservation = mapper.Map(updatedReservation, existingReservation);
 
             return await reservationRepository.UpdateReservationAsync(reservation);

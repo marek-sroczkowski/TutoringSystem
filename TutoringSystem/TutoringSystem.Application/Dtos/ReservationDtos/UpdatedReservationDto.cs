@@ -8,6 +8,7 @@ namespace TutoringSystem.Application.Dtos.ReservationDtos
 {
     public class UpdatedReservationDto : IMap
     {
+        public long Id { get; set; }
         public double Cost { get; set; }
         public DateTime StartTime { get; set; }
         public double Duration { get; set; }
