@@ -83,7 +83,7 @@ namespace TutoringSystem.API.Controllers
         [HttpPut("{subjectId}")]
         [Authorize(Roles = "Tutor")]
         [ValidateSubjectExistence]
-        public async Task<ActionResult> UpdateSubject(int subjectId, [FromBody] UpdateSubjectDto model)
+        public async Task<ActionResult> UpdateSubject(int subjectId, [FromBody] UpdatedSubjectDto model)
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);

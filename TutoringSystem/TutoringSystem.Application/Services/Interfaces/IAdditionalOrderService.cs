@@ -10,8 +10,8 @@ namespace TutoringSystem.Application.Services.Interfaces
     {
         Task<PagedList<OrderDto>> GetAdditionalOrdersAsync(long tutorId, AdditionalOrderParameters parameters);
         Task<OrderDetailsDto> GetAdditionalOrderByIdAsync(long orderId);
-        Task<OrderDto> AddAdditionalOrderAsync(long tutorId, CreateOrderDto newOrder);
-        Task<bool> UpdateAdditionalOrderAsync(long orderId, UpdateOrderDto updatedOrder);
+        Task<OrderDto> AddAdditionalOrderAsync(long tutorId, NewOrderDto newOrder);
+        Task<bool> UpdateAdditionalOrderAsync(long orderId, UpdatedOrderDto updatedOrder);
         Task<bool> DeleteAdditionalOrderAsync(long orderId);
         Task<bool> ChangeOrderStatusAsync(long orderId, AdditionalOrderStatus orderStatus);
     }

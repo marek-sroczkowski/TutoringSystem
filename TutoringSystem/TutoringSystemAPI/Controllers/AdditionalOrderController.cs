@@ -68,7 +68,7 @@ namespace TutoringSystem.API.Controllers
         [SwaggerOperation(Summary = "Creates a new order")]
         [HttpPost]
         [Authorize(Roles = "Tutor")]
-        public async Task<ActionResult> Post([FromBody] CreateOrderDto model)
+        public async Task<ActionResult> Post([FromBody] NewOrderDto model)
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
@@ -84,7 +84,7 @@ namespace TutoringSystem.API.Controllers
         [SwaggerOperation(Summary = "Updates a existing order")]
         [HttpPut("{orderId}")]
         [ValidateOrderExistence]
-        public async Task<ActionResult> Put(int orderId, [FromBody] UpdateOrderDto model)
+        public async Task<ActionResult> Put(int orderId, [FromBody] UpdatedOrderDto model)
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);

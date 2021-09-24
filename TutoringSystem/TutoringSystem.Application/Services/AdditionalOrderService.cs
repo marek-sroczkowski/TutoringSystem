@@ -24,7 +24,7 @@ namespace TutoringSystem.Application.Services
             this.mapper = mapper;
         }
 
-        public async Task<OrderDto> AddAdditionalOrderAsync(long tutorId, CreateOrderDto newOrder)
+        public async Task<OrderDto> AddAdditionalOrderAsync(long tutorId, NewOrderDto newOrder)
         {
             var order = mapper.Map<AdditionalOrder>(newOrder);
             order.TutorId = tutorId;
@@ -74,7 +74,7 @@ namespace TutoringSystem.Application.Services
             return PagedList<OrderDto>.ToPagedList(orderDtos, parameters.PageNumber, parameters.PageSize);
         }
 
-        public async Task<bool> UpdateAdditionalOrderAsync(long orderId, UpdateOrderDto updatedOrder)
+        public async Task<bool> UpdateAdditionalOrderAsync(long orderId, UpdatedOrderDto updatedOrder)
         {
             var existingOrder = await additionalOrderRepository.GetAdditionalOrderByIdAsync(orderId);
             var order = mapper.Map(updatedOrder, existingOrder);

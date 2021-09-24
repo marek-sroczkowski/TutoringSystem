@@ -64,7 +64,7 @@ namespace TutoringSystem.Application.Services
             return mapper.Map<ICollection<SubjectDto>>(subjects);
         }
 
-        public async Task<bool> UpdateSubjectAsync(long subjectId, UpdateSubjectDto updatedSubject)
+        public async Task<bool> UpdateSubjectAsync(long subjectId, UpdatedSubjectDto updatedSubject)
         {
             var existingSubject = await subjectRepository.GetSubjectByIdAsync(subjectId);
             var subject = mapper.Map(updatedSubject, existingSubject);

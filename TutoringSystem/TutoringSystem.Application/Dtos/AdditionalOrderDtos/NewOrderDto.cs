@@ -6,7 +6,7 @@ using TutoringSystem.Domain.Entities.Enums;
 
 namespace TutoringSystem.Application.Dtos.AdditionalOrderDtos
 {
-    public class CreateOrderDto : IMap
+    public class NewOrderDto : IMap
     {
         public string Name { get; set; }
         public DateTime Deadline { get; set; }
@@ -17,7 +17,7 @@ namespace TutoringSystem.Application.Dtos.AdditionalOrderDtos
 
         public void Mapping(Profile profile)
         {
-            profile.CreateMap<CreateOrderDto, AdditionalOrder>();
+            profile.CreateMap<NewOrderDto, AdditionalOrder>();
         }
     }
 }

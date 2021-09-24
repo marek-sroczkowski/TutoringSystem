@@ -89,7 +89,7 @@ namespace TutoringSystem.API.Controllers
         [SwaggerOperation(Summary = "Creates a new student's reservation")]
         [HttpPost("student")]
         [Authorize(Roles = "Student")]
-        public async Task<ActionResult> CreateStudentReservation([FromBody] CreateStudentReservationDto model)
+        public async Task<ActionResult> CreateStudentReservation([FromBody] NewStudentReservationDto model)
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
@@ -105,7 +105,7 @@ namespace TutoringSystem.API.Controllers
         [SwaggerOperation(Summary = "Creates a new tutor's reservation")]
         [HttpPost("tutor")]
         [Authorize(Roles = "Tutor")]
-        public async Task<ActionResult> CreateTutorReservation([FromBody] CreateTutorReservationDto model)
+        public async Task<ActionResult> CreateTutorReservation([FromBody] NewTutorReservationDto model)
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
@@ -122,7 +122,7 @@ namespace TutoringSystem.API.Controllers
         [HttpPut("{reservationId}")]
         [ValidateReservationExistence]
         [Authorize(Roles = "Tutor, Student")]
-        public async Task<ActionResult> UpdateReservation(int reservationId, [FromBody] UpdateReservationDto model)
+        public async Task<ActionResult> UpdateReservation(int reservationId, [FromBody] UpdatedReservationDto model)
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);

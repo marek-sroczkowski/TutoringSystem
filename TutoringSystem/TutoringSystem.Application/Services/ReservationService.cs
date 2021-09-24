@@ -24,7 +24,7 @@ namespace TutoringSystem.Application.Services
             this.mapper = mapper;
         }
 
-        public async Task<ReservationDto> AddReservationByStudentAsync(long studentId, CreateStudentReservationDto newReservation)
+        public async Task<ReservationDto> AddReservationByStudentAsync(long studentId, NewStudentReservationDto newReservation)
         {
             var reservation = mapper.Map<Reservation>(newReservation);
             reservation.StudentId = studentId;
@@ -36,7 +36,7 @@ namespace TutoringSystem.Application.Services
             return mapper.Map<ReservationDto>(reservation);
         }
 
-        public async Task<ReservationDto> AddReservationByTutorAsync(long tutorId, CreateTutorReservationDto newReservation)
+        public async Task<ReservationDto> AddReservationByTutorAsync(long tutorId, NewTutorReservationDto newReservation)
         {
             var reservation = mapper.Map<Reservation>(newReservation);
             reservation.TutorId = tutorId;
@@ -88,7 +88,7 @@ namespace TutoringSystem.Application.Services
             return PagedList<ReservationDto>.ToPagedList(reservationDtos, parameters.PageNumber, parameters.PageSize);
         }
 
-        public async Task<bool> UpdateReservationAsync(long reservationId, UpdateReservationDto updatedReservation)
+        public async Task<bool> UpdateReservationAsync(long reservationId, UpdatedReservationDto updatedReservation)
         {
             var existingReservation = await reservationRepository.GetReservationByIdAsync(reservationId);
             var reservation = mapper.Map(updatedReservation, existingReservation);
