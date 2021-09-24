@@ -9,5 +9,6 @@ namespace TutoringSystem.Domain.Repositories
         Task<Address> GetAddressByIdAsync(long addressId);
         Task<bool> UpdateAddressAsync(Address updatedAddress);
         Task<bool> DeleteAddressAsync(Address address);
+        Task<Address> GetAddressByUserIdAsync(long userId);
     }
 }

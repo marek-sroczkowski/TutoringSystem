@@ -35,6 +35,15 @@ namespace TutoringSystem.Infrastructure.Repositories
             return address;
         }
 
+        public async Task<Address> GetAddressByUserIdAsync(long userId)
+        {
+            var address = await DbContext.Addresses
+                .Include(c => c.User)
+                .FirstOrDefaultAsync(c => c.UserId.Equals(userId));
+
+            return address;
+        }
+
         public async Task<bool> UpdateAddressAsync(Address updatedAddress)
         {
             Update(updatedAddress);

@@ -26,6 +26,8 @@ namespace TutoringSystem.Domain.Entities
         {
             IsActiv = true;
             RegistrationDate = DateTime.Now;
+            Contact = new Contact { PhoneNumbers = new List<PhoneNumber>() };
+            Address = new Address();
         }
     }
 }
