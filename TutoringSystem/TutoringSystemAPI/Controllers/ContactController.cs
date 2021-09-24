@@ -3,7 +3,9 @@ using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
 using System.Security.Claims;
 using System.Threading.Tasks;
+using TutoringSystem.Application.Authorization;
 using TutoringSystem.Application.Dtos.ContactDtos;
+using TutoringSystem.Application.Filters;
 using TutoringSystem.Application.Services.Interfaces;
 
 namespace TutoringSystem.API.Controllers
@@ -14,10 +16,12 @@ namespace TutoringSystem.API.Controllers
     public class ContactController : ControllerBase
     {
         private readonly IContactService contactService;
+        private readonly IAuthorizationService authorizationService;
 
-        public ContactController(IContactService contactService)
+        public ContactController(IContactService contactService, IAuthorizationService authorizationService)
         {
             this.contactService = contactService;
+            this.authorizationService = authorizationService;
         }
 
         [SwaggerOperation(Summary = "Retrieves contact of the current logged in user")]
@@ -34,13 +38,17 @@ namespace TutoringSystem.API.Controllers
         [SwaggerOperation(Summary = "Updates a existing contact")]
         [HttpPut]
         [Authorize(Roles = "Tutor, Student")]
+        [ValidateContactExistence]
         public async Task<ActionResult> UpdateContact([FromBody] UpdatedContactDto model)
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            var userId = User.FindFirst(c => c.Type == ClaimTypes.NameIdentifier).Value;
-            var updated = await contactService.UpdateContactAsync(long.Parse(userId), model);
+            var authorizationResult = authorizationService.AuthorizeAsync(User, model, new ResourceOperationRequirement(OperationType.Update)).Result;
+            if (!authorizationResult.Succeeded)
+                return Forbid();
+
+            var updated = await contactService.UpdateContactAsync(model);
             if (!updated)
                 return BadRequest("Contact could be not updated");
 

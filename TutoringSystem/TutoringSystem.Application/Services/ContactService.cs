@@ -2,7 +2,6 @@
 using System.Threading.Tasks;
 using TutoringSystem.Application.Dtos.ContactDtos;
 using TutoringSystem.Application.Services.Interfaces;
-using TutoringSystem.Domain.Entities;
 using TutoringSystem.Domain.Repositories;
 
 namespace TutoringSystem.Application.Services
@@ -32,9 +31,9 @@ namespace TutoringSystem.Application.Services
             return mapper.Map<ContactDetailsDto>(contact);
         }
 
-        public async Task<bool> UpdateContactAsync(long userId, UpdatedContactDto updatedContact)
+        public async Task<bool> UpdateContactAsync(UpdatedContactDto updatedContact)
         {
-            var existingContact = await contactRepository.GetContactByUserIdAsync(userId);
+            var existingContact = await contactRepository.GetContactByIdAsync(updatedContact.Id);
             var contact = mapper.Map(updatedContact, existingContact);
 
             return await contactRepository.UpdateContactAsync(contact);

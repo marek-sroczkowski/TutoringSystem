@@ -8,6 +8,7 @@ namespace TutoringSystem.Application.Dtos.ContactDtos
 {
     public class UpdatedContactDto : IMap
     {
+        public long Id { get; set; }
         public string Email { get; set; }
         public string DiscordName { get; set; }
 

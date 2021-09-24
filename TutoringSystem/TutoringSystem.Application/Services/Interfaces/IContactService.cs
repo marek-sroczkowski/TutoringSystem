@@ -8,6 +8,6 @@ namespace TutoringSystem.Application.Services.Interfaces
         Task<bool> DeleteContactAsync(long contactId);
         Task<ContactDetailsDto> GetContactByIdAsync(long contactId);
         Task<ContactDetailsDto> GetContactByUserAsync(long userId);
-        Task<bool> UpdateContactAsync(long userId, UpdatedContactDto updatedContact);
+        Task<bool> UpdateContactAsync(UpdatedContactDto updatedContact);
     }
 }
