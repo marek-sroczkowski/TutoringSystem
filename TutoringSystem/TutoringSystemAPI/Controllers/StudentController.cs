@@ -17,12 +17,10 @@ namespace TutoringSystem.API.Controllers
     public class StudentController : ControllerBase
     {
         private readonly IStudentService studentService;
-        private readonly IAuthorizationService authorizationService;
 
-        public StudentController(IStudentService studentService, IAuthorizationService authorizationService)
+        public StudentController(IStudentService studentService)
         {
             this.studentService = studentService;
-            this.authorizationService = authorizationService;
         }
 
         [SwaggerOperation(Summary = "Retrieves all tutors of the current logged in student")]
