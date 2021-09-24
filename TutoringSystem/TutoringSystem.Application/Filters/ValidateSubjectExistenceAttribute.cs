@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 using System.Threading.Tasks;
+using TutoringSystem.Application.Dtos.SubjectDtos;
 using TutoringSystem.Domain.Repositories;
 
 namespace TutoringSystem.Application.Filters
@@ -30,6 +31,18 @@ namespace TutoringSystem.Application.Filters
                         if ((await subjectRepository.GetSubjectByIdAsync(subjectId.Value)) == null)
                         {
                             context.Result = new NotFoundObjectResult(subjectId.Value);
+                            return;
+                        }
+                    }
+                }
+                else if (context.ActionArguments.ContainsKey("model"))
+                {
+                    var subject = context.ActionArguments["model"] as UpdatedSubjectDto;
+                    if (subject != null)
+                    {
+                        if ((await subjectRepository.GetSubjectByIdAsync(subject.Id)) == null)
+                        {
+                            context.Result = new NotFoundObjectResult(subject.Id);
                             return;
                         }
                     }

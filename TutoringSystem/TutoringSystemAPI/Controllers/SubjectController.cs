@@ -80,20 +80,20 @@ namespace TutoringSystem.API.Controllers
         }
 
         [SwaggerOperation(Summary = "Updates a existing subject")]
-        [HttpPut("{subjectId}")]
+        [HttpPut]
         [Authorize(Roles = "Tutor")]
         [ValidateSubjectExistence]
-        public async Task<ActionResult> UpdateSubject(int subjectId, [FromBody] UpdatedSubjectDto model)
+        public async Task<ActionResult> UpdateSubject([FromBody] UpdatedSubjectDto model)
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            var subject = await subjectService.GetSubjectByIdAsync(subjectId);
+            var subject = await subjectService.GetSubjectByIdAsync(model.Id);
             var authorizationResult = authorizationService.AuthorizeAsync(User, subject, new ResourceOperationRequirement(OperationType.Update)).Result;
             if (!authorizationResult.Succeeded)
                 return Forbid();
 
-            var updated = await subjectService.UpdateSubjectAsync(subjectId, model);
+            var updated = await subjectService.UpdateSubjectAsync(model);
             if (!updated)
                 return BadRequest("Subject could be not updated");
 
@@ -104,7 +104,7 @@ namespace TutoringSystem.API.Controllers
         [HttpDelete("{subjectId}")]
         [Authorize(Roles = "Tutor")]
         [ValidateSubjectExistence]
-        public async Task<ActionResult> DeleteSubject(int subjectId)
+        public async Task<ActionResult> DeleteSubject(long subjectId)
         {
             var subject = await subjectService.GetSubjectByIdAsync(subjectId);
             var authorizationResult = authorizationService.AuthorizeAsync(User, subject, new ResourceOperationRequirement(OperationType.Delete)).Result;

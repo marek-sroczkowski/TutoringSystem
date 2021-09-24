@@ -11,6 +11,6 @@ namespace TutoringSystem.Application.Services.Interfaces
         Task<bool> ActivateSubjectAsync(long tutorId, long subjectId);
         Task<SubjectDetailsDto> GetSubjectByIdAsync(long subjectId);
         Task<ICollection<SubjectDto>> GetTutorSubjectsAsync(long tutorId, bool isActiv = true);
-        Task<bool> UpdateSubjectAsync(long subjectId, UpdatedSubjectDto updatedSubject);
+        Task<bool> UpdateSubjectAsync(UpdatedSubjectDto updatedSubject);
     }
 }

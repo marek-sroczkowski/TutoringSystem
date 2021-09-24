@@ -7,6 +7,7 @@ namespace TutoringSystem.Application.Dtos.SubjectDtos
 {
     public class UpdatedSubjectDto : IMap
     {
+        public long Id { get; set; }
         public string Name { get; set; }
         public SubjectCategory Category { get; set; }
 
