@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using System.Linq;
 using System.Threading.Tasks;
 using TutoringSystem.Domain.Entities;
 using TutoringSystem.Domain.Repositories;
@@ -30,7 +31,7 @@ namespace TutoringSystem.Infrastructure.Repositories
         {
             var contact = await DbContext.Contacts
                 .Include(c => c.User)
-                .Include(c => c.PhoneNumbers)
+                .Include(c => c.PhoneNumbers.Where(p => p.IsActiv))
                 .FirstOrDefaultAsync(c => c.Id.Equals(contactId));
 
             return contact;
@@ -40,7 +41,7 @@ namespace TutoringSystem.Infrastructure.Repositories
         {
             var contact = await DbContext.Contacts
                 .Include(c => c.User)
-                .Include(c => c.PhoneNumbers)
+                .Include(c => c.PhoneNumbers.Where(p => p.IsActiv))
                 .FirstOrDefaultAsync(c => c.UserId.Equals(userId));
 
             return contact;
