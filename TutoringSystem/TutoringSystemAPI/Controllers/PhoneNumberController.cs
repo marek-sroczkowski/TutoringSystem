@@ -62,7 +62,7 @@ namespace TutoringSystem.API.Controllers
                 return BadRequest(ModelState);
 
             var phone = await phoneNumberService.GetPhoneNumberById(model.Id);
-            var authorizationResult = authorizationService.AuthorizeAsync(User, phone, new ResourceOperationRequirement(OperationType.Read)).Result;
+            var authorizationResult = authorizationService.AuthorizeAsync(User, phone, new ResourceOperationRequirement(OperationType.Update)).Result;
             if (!authorizationResult.Succeeded)
                 return Forbid();
 
@@ -80,7 +80,7 @@ namespace TutoringSystem.API.Controllers
         public async Task<ActionResult> RemovePhone(long phoneNumberId)
         {
             var phone = await phoneNumberService.GetPhoneNumberById(phoneNumberId);
-            var authorizationResult = authorizationService.AuthorizeAsync(User, phone, new ResourceOperationRequirement(OperationType.Read)).Result;
+            var authorizationResult = authorizationService.AuthorizeAsync(User, phone, new ResourceOperationRequirement(OperationType.Delete)).Result;
             if (!authorizationResult.Succeeded)
                 return Forbid();
 
