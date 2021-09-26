@@ -8,9 +8,9 @@ using System.Threading.Tasks;
 using TutoringSystem.Application.Dtos.AdditionalOrderDtos;
 using TutoringSystem.Application.Services.Interfaces;
 using TutoringSystem.Domain.Parameters;
-using TutoringSystem.Application.Filters;
 using TutoringSystem.Application.Authorization;
 using TutoringSystem.Domain.Entities.Enums;
+using TutoringSystem.API.Filters;
 
 namespace TutoringSystem.API.Controllers
 {

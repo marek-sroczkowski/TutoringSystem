@@ -7,9 +7,9 @@ using System.Security.Claims;
 using System.Threading.Tasks;
 using TutoringSystem.Application.Authorization;
 using TutoringSystem.Application.Dtos.ReservationDtos;
-using TutoringSystem.Application.Filters;
 using TutoringSystem.Application.Services.Interfaces;
 using TutoringSystem.Domain.Parameters;
+using TutoringSystem.API.Filters;
 
 namespace TutoringSystem.API.Controllers
 {

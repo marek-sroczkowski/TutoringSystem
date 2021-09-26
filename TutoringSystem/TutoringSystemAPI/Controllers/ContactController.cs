@@ -3,9 +3,9 @@ using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
 using System.Security.Claims;
 using System.Threading.Tasks;
+using TutoringSystem.API.Filters;
 using TutoringSystem.Application.Authorization;
 using TutoringSystem.Application.Dtos.ContactDtos;
-using TutoringSystem.Application.Filters;
 using TutoringSystem.Application.Services.Interfaces;
 
 namespace TutoringSystem.API.Controllers
