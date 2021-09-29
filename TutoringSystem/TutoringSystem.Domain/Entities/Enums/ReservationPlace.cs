@@ -1,10 +1,9 @@
 ﻿namespace TutoringSystem.Domain.Entities.Enums
 {
-    public enum Place
+    public enum ReservationPlace
     {
         AtTutor,
-        Online,
         AtStudent,
-        Other
+        Online
     }
 }

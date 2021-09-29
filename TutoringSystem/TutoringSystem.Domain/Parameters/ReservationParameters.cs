@@ -7,6 +7,6 @@ namespace TutoringSystem.Domain.Parameters
     {
         public DateTime? StartDate { get; set; }
         public DateTime? EndDate { get; set; }
-        public Place? Place { get; set; }
+        public ReservationPlace? Place { get; set; }
     }
 }

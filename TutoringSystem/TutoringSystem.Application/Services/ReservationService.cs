@@ -112,7 +112,7 @@ namespace TutoringSystem.Application.Services
             reservations = reservations.Where(r => r.StartTime <= endDate.Value);
         }
 
-        private void FilterByPlace(ref IEnumerable<Reservation> reservations, Place? place)
+        private void FilterByPlace(ref IEnumerable<Reservation> reservations, ReservationPlace? place)
         {
             if (!place.HasValue)
                 return;

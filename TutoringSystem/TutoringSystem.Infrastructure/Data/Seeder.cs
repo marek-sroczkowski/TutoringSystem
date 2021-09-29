@@ -53,12 +53,16 @@ namespace TutoringSystem.Infrastructure.Data
             var programming = new Subject
             {
                 Name = "Programowanie",
-                Category = SubjectCategory.Informatics
+                Category = SubjectCategory.Informatics,
+                Description = "Podstawy programowania w językach C++, C# oraz Java",
+                Place = SubjectPlace.Online
             };
             var math = new Subject
             {
                 Name = "Matematyka",
-                Category = SubjectCategory.Math
+                Category = SubjectCategory.Math,
+                Description = "Matematyka ma poziomie szkoły podstawowej oraz podstawy w szkole średniej",
+                Place = SubjectPlace.AtTutor
             };
 
             var tutor1 = new Tutor
@@ -140,7 +144,7 @@ namespace TutoringSystem.Infrastructure.Data
                 Duration = 1.5,
                 Student = janKowalski,
                 Tutor = tutor1,
-                Place = Place.AtTutor,
+                Place = ReservationPlace.AtTutor,
                 Subject = math
             };
             r1.Cost = r1.Duration * r1.Student.HourlRate;
@@ -153,7 +157,7 @@ namespace TutoringSystem.Infrastructure.Data
                 Duration = 2.0,
                 Student = jacekNowak,
                 Tutor = tutor1,
-                Place = Place.Online
+                Place = ReservationPlace.Online
             };
             r2.Cost = r2.Duration * r2.Student.HourlRate;
             programming.Reservations = new List<Reservation> { r2 };
