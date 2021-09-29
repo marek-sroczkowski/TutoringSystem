@@ -36,6 +36,7 @@ namespace TutoringSystem.Application.DependencyInjection
             services.AddScoped<IContactService, ContactService>();
             services.AddScoped<IAddressService, AddressService>();
             services.AddScoped<IPhoneNumberService, PhoneNumberService>();
+            services.AddScoped<IAvailabilityService, AvailabilityService>();
 
             return services;
         }
@@ -82,6 +83,7 @@ namespace TutoringSystem.Application.DependencyInjection
             services.AddScoped<IAuthorizationHandler, PhoneNumberResourceOperationHandler>();
             services.AddScoped<IAuthorizationHandler, AddressResourceOperationHandler>();
             services.AddScoped<IAuthorizationHandler, ContactResourceOperationHandler>();
+            services.AddScoped<IAuthorizationHandler, AvailabilityResourceOperationHandler>();
 
             return services;
         }
