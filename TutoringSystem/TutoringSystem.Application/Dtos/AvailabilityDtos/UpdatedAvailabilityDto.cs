@@ -9,6 +9,7 @@ namespace TutoringSystem.Application.Dtos.AvailabilityDtos
     public class UpdatedAvailabilityDto : IMap
     {
         public long Id { get; set; }
+        public int BreakTime { get; set; }
 
         public ICollection<UpdatedIntervalDto> Intervals { get; set; }
 

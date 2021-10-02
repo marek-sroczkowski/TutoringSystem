@@ -11,6 +11,7 @@ namespace TutoringSystem.Application.Dtos.AvailabilityDtos
     {
         public long Id { get; set; }
         public DateTime Date { get; set; }
+        public int BreakTime { get; set; }
 
         public ICollection<IntervalDto> Intervals { get; set; }
 

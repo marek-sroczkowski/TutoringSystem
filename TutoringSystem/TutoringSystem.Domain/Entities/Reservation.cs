@@ -8,7 +8,7 @@ namespace TutoringSystem.Domain.Entities
         public long Id { get; set; }
         public double Cost { get; set; }
         public DateTime StartTime { get; set; }
-        public double Duration { get; set; }
+        public int Duration { get; set; }
         public string Description { get; set; }
         public ReservationPlace Place { get; set; }
 

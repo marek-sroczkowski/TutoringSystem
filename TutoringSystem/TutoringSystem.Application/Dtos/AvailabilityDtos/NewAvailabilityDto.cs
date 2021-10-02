@@ -10,6 +10,7 @@ namespace TutoringSystem.Application.Dtos.AvailabilityDtos
     public class NewAvailabilityDto : IMap
     {
         public DateTime Date { get; set; }
+        public int BreakTime { get; set; }
 
         public ICollection<NewIntervalDto> Intervals { get; set; }
 

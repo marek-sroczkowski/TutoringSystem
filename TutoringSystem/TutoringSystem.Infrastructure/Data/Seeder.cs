@@ -141,25 +141,25 @@ namespace TutoringSystem.Infrastructure.Data
             {
                 StartTime = new DateTime(2021, 09, 04),
                 Description = "Ciągi arytmetyczne",
-                Duration = 1.5,
+                Duration = 90,
                 Student = janKowalski,
                 Tutor = tutor1,
                 Place = ReservationPlace.AtTutor,
                 Subject = math
             };
-            r1.Cost = r1.Duration * r1.Student.HourlRate;
+            r1.Cost = (r1.Duration / 60.0) * r1.Student.HourlRate;
             math.Reservations = new List<Reservation> { r1 };
 
             var r2 = new Reservation
             {
                 StartTime = new DateTime(2021, 09, 05),
                 Description = "Omówienie tablic w języku C++",
-                Duration = 2.0,
+                Duration = 120,
                 Student = jacekNowak,
                 Tutor = tutor1,
                 Place = ReservationPlace.Online
             };
-            r2.Cost = r2.Duration * r2.Student.HourlRate;
+            r2.Cost = (r2.Duration / 60.0) * r2.Student.HourlRate;
             programming.Reservations = new List<Reservation> { r2 };
 
             tutor1.Reservations = new List<Reservation> { r1, r2 };

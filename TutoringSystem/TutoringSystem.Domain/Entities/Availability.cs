@@ -7,6 +7,7 @@ namespace TutoringSystem.Domain.Entities
     {
         public long Id { get; set; }
         public DateTime Date { get; set; }
+        public int BreakTime { get; set; }
 
         public virtual ICollection<Interval> Intervals { get; set; }
 

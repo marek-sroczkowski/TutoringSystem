@@ -8,15 +8,14 @@ namespace TutoringSystem.Application.Dtos.ReservationDtos
 {
     public class NewStudentReservationDto : IMap
     {
-        public double Cost { get; set; }
         public DateTime StartTime { get; set; }
-        public double Duration { get; set; }
+        public int Duration { get; set; }
         public string Description { get; set; }
         public ReservationPlace Place { get; set; }
 
         public long SubjectId { get; set; }
         public long TutorId { get; set; }
-
+        public long IntervalId { get; set; }
 
         public void Mapping(Profile profile)
         {
