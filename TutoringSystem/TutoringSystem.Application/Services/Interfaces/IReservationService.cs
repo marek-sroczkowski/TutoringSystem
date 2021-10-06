@@ -12,7 +12,8 @@ namespace TutoringSystem.Application.Services.Interfaces
         Task<ReservationDetailsDto> GetReservationByIdAsync(long reservationId);
         Task<ReservationDto> AddReservationByStudentAsync(long studentId, NewStudentReservationDto newReservation);
         Task<ReservationDto> AddReservationByTutorAsync(long tutorId, NewTutorReservationDto newReservation);
-        Task<bool> UpdateReservationAsync(UpdatedReservationDto updatedReservation);
+        Task<bool> UpdateTutorReservationAsync(UpdatedTutorReservationDto updatedReservation);
         Task<bool> DeleteReservationAsync(long reservationId);
+        Task<bool> UpdateStudentReservationAsync(UpdatedStudentReservationDto updatedReservation);
     }
 }

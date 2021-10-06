@@ -36,7 +36,7 @@ namespace TutoringSystem.API.Filters
                 }
                 else if (context.ActionArguments.ContainsKey("model"))
                 {
-                    var reservation = context.ActionArguments["model"] as UpdatedReservationDto;
+                    var reservation = context.ActionArguments["model"] as UpdatedTutorReservationDto;
                     if (reservation != null)
                     {
                         if ((await reservationRepository.GetReservationByIdAsync(reservation.Id)) == null)

@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using TutoringSystem.Domain.Entities;
 
@@ -12,5 +13,6 @@ namespace TutoringSystem.Domain.Repositories
         Task<IEnumerable<Reservation>> GetReservationsByTutorIdAsync(long tutorId);
         Task<bool> UpdateReservationAsync(Reservation updatedReservation);
         Task<bool> DeleteReservationAsync(Reservation reservation);
+        Task<IEnumerable<Reservation>> GetReservationsByTutorIdAndDateAsync(long tutorId, DateTime date);
     }
 }

@@ -6,10 +6,9 @@ using TutoringSystem.Domain.Entities.Enums;
 
 namespace TutoringSystem.Application.Dtos.ReservationDtos
 {
-    public class UpdatedReservationDto : IMap
+    public class UpdatedStudentReservationDto : IMap
     {
         public long Id { get; set; }
-        public double Cost { get; set; }
         public DateTime StartTime { get; set; }
         public int Duration { get; set; }
         public string Description { get; set; }
@@ -19,7 +18,7 @@ namespace TutoringSystem.Application.Dtos.ReservationDtos
 
         public void Mapping(Profile profile)
         {
-            profile.CreateMap<UpdatedReservationDto, Reservation>();
+            profile.CreateMap<UpdatedStudentReservationDto, Reservation>();
         }
     }
 }

@@ -12,7 +12,7 @@ namespace TutoringSystem.Application.Services
     {
         private readonly IStudentRepository studentRepository;
         private readonly ITutorRepository tutorRepository;
-        private IMapper mapper;
+        private readonly IMapper mapper;
 
         public StudentService(IStudentRepository studentRepository, ITutorRepository tutorRepository, IMapper mapper)
         {
@@ -36,11 +36,11 @@ namespace TutoringSystem.Application.Services
             return mapper.Map<ICollection<TutorDto>>(student?.Tutors);
         }
 
-        public async Task<StudentDto> GetStudentAsync(long studentId)
+        public async Task<StudentDetailsDto> GetStudentAsync(long studentId)
         {
             var student = await studentRepository.GetStudentByIdAsync(studentId);
 
-            return mapper.Map<StudentDto>(student);
+            return mapper.Map<StudentDetailsDto>(student);
         }
 
         public async Task<ICollection<StudentDto>> GetStudentsAsync()

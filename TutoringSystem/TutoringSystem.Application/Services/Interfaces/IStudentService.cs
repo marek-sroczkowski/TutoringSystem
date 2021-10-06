@@ -8,7 +8,7 @@ namespace TutoringSystem.Application.Services.Interfaces
     public interface IStudentService
     {
         Task<bool> AddTutorAsync(long studentId, long tutorId);
-        Task<StudentDto> GetStudentAsync(long studentId);
+        Task<StudentDetailsDto> GetStudentAsync(long studentId);
         Task<ICollection<StudentDto>> GetStudentsAsync();
         Task<ICollection<TutorDto>> GetTutorsAsync(long studentId);
         Task<bool> RemoveAllTutorsAsync(long studentId);
