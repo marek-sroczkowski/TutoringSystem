@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Threading.Tasks;
 using TutoringSystem.Application.Dtos.AdditionalOrderDtos;
 using TutoringSystem.Application.Helpers;
@@ -60,15 +61,15 @@ namespace TutoringSystem.Application.Services
 
         public async Task<PagedList<OrderDto>> GetAdditionalOrdersAsync(long tutorId, AdditionalOrderParameters parameters)
         {
-            var orders = await additionalOrderRepository.GetAdditionalOrdersAsync(tutorId);
+            Expression<Func<AdditionalOrder, bool>> expression = o => o.TutorId.Equals(tutorId);
+            FilterByStartReceiptDate(ref expression, parameters.ReceiptStartDate);
+            FilterByEndReceiptDate(ref expression, parameters.ReceiptEndDate);
+            FilterByStatus(ref expression, parameters.Status);
+            FilterByPaid(ref expression, parameters.IsPaid);
+            FilterByStartDeadline(ref expression, parameters.DeadlineStart);
+            FilterByEndDeadline(ref expression, parameters.DeadlineEnd);
 
-            FilterByStartReceiptDate(ref orders, parameters.ReceiptStartDate);
-            FilterByEndReceiptDate(ref orders, parameters.ReceiptEndDate);
-            FilterByStatus(ref orders, parameters.Status);
-            FilterByPaid(ref orders, parameters.IsPaid);
-            FilterByStartDeadline(ref orders, parameters.DeadlineStart);
-            FilterByEndDeadline(ref orders, parameters.DeadlineEnd);
-
+            var orders = await additionalOrderRepository.GetAdditionalOrdersAsync(o => o.TutorId.Equals(tutorId) && o.Status.Equals(parameters.Status.Value) && o.Deadline >= parameters.DeadlineStart.Value && o.Deadline <= parameters.DeadlineEnd.Value);
             var orderDtos = mapper.Map<ICollection<OrderDto>>(orders);
 
             return PagedList<OrderDto>.ToPagedList(orderDtos, parameters.PageNumber, parameters.PageSize);
@@ -82,52 +83,60 @@ namespace TutoringSystem.Application.Services
             return await additionalOrderRepository.UpdateAdditionalOrderAsync(order);
         }
 
-        private void FilterByStatus(ref IEnumerable<AdditionalOrder> orders, AdditionalOrderStatus? status)
+        private void FilterByStatus(ref Expression<Func<AdditionalOrder, bool>> expression, AdditionalOrderStatus? status)
         {
             if (!status.HasValue)
                 return;
 
-            orders = orders.Where(o => o.Status.Equals(status.Value));
+            AddExpression(ref expression, o => o.Status.Equals(status.Value));
         }
 
-        private void FilterByPaid(ref IEnumerable<AdditionalOrder> orders, bool? isPaid)
+        private void FilterByPaid(ref Expression<Func<AdditionalOrder, bool>> expression, bool? isPaid)
         {
             if (!isPaid.HasValue)
                 return;
 
-            orders = orders.Where(o => o.IsPaid.Equals(isPaid.Value));
+            AddExpression(ref expression, o => o.IsPaid.Equals(isPaid.Value));
         }
 
-        private void FilterByStartReceiptDate(ref IEnumerable<AdditionalOrder> orders, DateTime? startDate)
+        private void FilterByStartReceiptDate(ref Expression<Func<AdditionalOrder, bool>> expression, DateTime? startDate)
         {
             if (!startDate.HasValue)
                 return;
 
-            orders = orders.Where(o => o.ReceiptDate >= startDate.Value);
+            AddExpression(ref expression, o => o.ReceiptDate >= startDate.Value);
         }
 
-        private void FilterByEndReceiptDate(ref IEnumerable<AdditionalOrder> orders, DateTime? endDate)
+        private void FilterByEndReceiptDate(ref Expression<Func<AdditionalOrder, bool>> expression, DateTime? endDate)
         {
             if (!endDate.HasValue)
                 return;
 
-            orders = orders.Where(o => o.ReceiptDate <= endDate.Value);
+            AddExpression(ref expression, o => o.ReceiptDate <= endDate.Value);
         }
 
-        private void FilterByStartDeadline(ref IEnumerable<AdditionalOrder> orders, DateTime? startDate)
+        private void FilterByStartDeadline(ref Expression<Func<AdditionalOrder, bool>> expression, DateTime? startDate)
         {
             if (!startDate.HasValue)
                 return;
 
-            orders = orders.Where(o => o.Deadline >= startDate.Value);
+            AddExpression(ref expression, o => o.Deadline >= startDate.Value);
         }
 
-        private void FilterByEndDeadline(ref IEnumerable<AdditionalOrder> orders, DateTime? startDate)
+        private void FilterByEndDeadline(ref Expression<Func<AdditionalOrder, bool>> expression, DateTime? startDate)
         {
             if (!startDate.HasValue)
                 return;
 
-            orders = orders.Where(o => o.Deadline <= startDate.Value);
+            AddExpression(ref expression, o => o.Deadline <= startDate.Value);
+        }
+
+        private void AddExpression(ref Expression<Func<AdditionalOrder, bool>> expression, Expression<Func<AdditionalOrder, bool>> newExpression)
+        {
+            var visitor = new ParameterUpdateVisitor(newExpression.Parameters.First(), expression.Parameters.First());
+            newExpression = visitor.Visit(newExpression) as Expression<Func<AdditionalOrder, bool>>;
+            var binExp = Expression.And(expression.Body, newExpression.Body);
+            expression = Expression.Lambda<Func<AdditionalOrder, bool>>(binExp, newExpression.Parameters);
         }
     }
 }

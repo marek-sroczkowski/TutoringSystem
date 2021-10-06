@@ -1,5 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using System;
 using System.Collections.Generic;
+using System.Linq.Expressions;
 using System.Threading.Tasks;
 using TutoringSystem.Domain.Entities;
 using TutoringSystem.Domain.Repositories;
@@ -36,9 +38,9 @@ namespace TutoringSystem.Infrastructure.Repositories
             return order;
         }
 
-        public async Task<IEnumerable<AdditionalOrder>> GetAdditionalOrdersAsync(long tutorId)
+        public async Task<IEnumerable<AdditionalOrder>> GetAdditionalOrdersAsync(Expression<Func<AdditionalOrder, bool>> expression)
         {
-            var orders = FindByCondition(o => o.TutorId.Equals(tutorId));
+            var orders = FindByCondition(expression);
 
             return await orders.ToListAsync();
         }
