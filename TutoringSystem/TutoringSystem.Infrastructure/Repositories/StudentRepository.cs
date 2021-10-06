@@ -21,9 +21,10 @@ namespace TutoringSystem.Infrastructure.Repositories
             return await SaveChangedAsync();
         }
 
-        public async Task<ICollection<Student>> GetStudentsAsync()
+        public async Task<IEnumerable<Student>> GetStudentsAsync()
         {
             var students = await FindByCondition(s => s.IsActiv)
+                .Include(s => s.Tutors)
                 .ToListAsync();
 
             return students;

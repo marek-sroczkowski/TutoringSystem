@@ -8,7 +8,7 @@ namespace TutoringSystem.Domain.Repositories
     {
         Task<bool> AddStudentAsycn(Student student);
         Task<Student> GetStudentByIdAsync(long studentId);
-        Task<ICollection<Student>> GetStudentsAsync();
+        Task<IEnumerable<Student>> GetStudentsAsync();
         Task<bool> UpdateStudentAsync(Student student);
     }
 }
