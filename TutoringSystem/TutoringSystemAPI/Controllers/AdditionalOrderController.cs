@@ -31,7 +31,7 @@ namespace TutoringSystem.API.Controllers
         [SwaggerOperation(Summary = "Retrieves all additional order assigned to the currently logged in tutor")]
         [HttpGet]
         [Authorize(Roles = "Tutor")]
-        public async Task<ActionResult<List<OrderDto>>> Get([FromQuery] AdditionalOrderParameters parameters)
+        public async Task<ActionResult<IEnumerable<OrderDto>>> GetOrders([FromQuery] AdditionalOrderParameters parameters)
         {
             var tutorId = User.FindFirst(c => c.Type == ClaimTypes.NameIdentifier).Value;
             var orders = await additionalOrderService.GetAdditionalOrdersAsync(long.Parse(tutorId), parameters);
@@ -54,7 +54,7 @@ namespace TutoringSystem.API.Controllers
         [HttpGet("{orderId}")]
         [Authorize(Roles = "Tutor")]
         [ValidateOrderExistence]
-        public async Task<ActionResult<OrderDetailsDto>> Get(long orderId)
+        public async Task<ActionResult<OrderDetailsDto>> GetOrderById(long orderId)
         {
             var order = await additionalOrderService.GetAdditionalOrderByIdAsync(orderId);
 
@@ -68,7 +68,7 @@ namespace TutoringSystem.API.Controllers
         [SwaggerOperation(Summary = "Creates a new order")]
         [HttpPost]
         [Authorize(Roles = "Tutor")]
-        public async Task<ActionResult> Post([FromBody] NewOrderDto model)
+        public async Task<ActionResult> AddOrder([FromBody] NewOrderDto model)
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
@@ -84,7 +84,7 @@ namespace TutoringSystem.API.Controllers
         [SwaggerOperation(Summary = "Updates a existing order")]
         [HttpPut]
         [ValidateOrderExistence]
-        public async Task<ActionResult> Put([FromBody] UpdatedOrderDto model)
+        public async Task<ActionResult> UpdateOrder([FromBody] UpdatedOrderDto model)
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
@@ -104,7 +104,7 @@ namespace TutoringSystem.API.Controllers
         [SwaggerOperation(Summary = "Deletes a specific order")]
         [HttpDelete("{orderId}")]
         [ValidateOrderExistence]
-        public async Task<ActionResult> Delete(int orderId)
+        public async Task<ActionResult> DeleteOrder(int orderId)
         {
             var order = await additionalOrderService.GetAdditionalOrderByIdAsync(orderId);
             var authorizationResult = authorizationService.AuthorizeAsync(User, order, new ResourceOperationRequirement(OperationType.Delete)).Result;
