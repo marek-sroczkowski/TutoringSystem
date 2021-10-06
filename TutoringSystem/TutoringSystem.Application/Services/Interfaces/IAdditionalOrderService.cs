@@ -1,8 +1,8 @@
 ﻿using System.Threading.Tasks;
 using TutoringSystem.Application.Dtos.AdditionalOrderDtos;
+using TutoringSystem.Application.Helpers;
+using TutoringSystem.Application.Parameters;
 using TutoringSystem.Domain.Entities.Enums;
-using TutoringSystem.Domain.Helpers;
-using TutoringSystem.Domain.Parameters;
 
 namespace TutoringSystem.Application.Services.Interfaces
 {

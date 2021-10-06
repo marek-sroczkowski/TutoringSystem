@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace TutoringSystem.Domain.Parameters
+namespace TutoringSystem.Application.Parameters
 {
     public class ReportParameters
     {

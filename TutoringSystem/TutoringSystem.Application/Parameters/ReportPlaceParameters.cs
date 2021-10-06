@@ -1,12 +1,12 @@
 ﻿using System;
 using TutoringSystem.Domain.Entities.Enums;
 
-namespace TutoringSystem.Domain.Parameters
+namespace TutoringSystem.Application.Parameters
 {
-    public class ReportSubjectCategoryParameters
+    public class ReportPlaceParameters
     {
         public DateTime StartDate { get; set; }
         public DateTime EndDate { get; set; }
-        public SubjectCategory SubjectCategory { get; set; }
+        public ReservationPlace Place { get; set; }
     }
 }

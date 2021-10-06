@@ -6,8 +6,8 @@ using System.Threading.Tasks;
 using TutoringSystem.API.Filters;
 using TutoringSystem.Application.Authorization;
 using TutoringSystem.Application.Dtos.ReportDtos;
+using TutoringSystem.Application.Parameters;
 using TutoringSystem.Application.Services.Interfaces;
-using TutoringSystem.Domain.Parameters;
 
 namespace TutoringSystem.API.Controllers
 {

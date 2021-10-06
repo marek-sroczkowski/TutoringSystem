@@ -1,7 +1,7 @@
 ﻿using System.Threading.Tasks;
 using TutoringSystem.Application.Dtos.ReservationDtos;
-using TutoringSystem.Domain.Helpers;
-using TutoringSystem.Domain.Parameters;
+using TutoringSystem.Application.Helpers;
+using TutoringSystem.Application.Parameters;
 
 namespace TutoringSystem.Application.Services.Interfaces
 {

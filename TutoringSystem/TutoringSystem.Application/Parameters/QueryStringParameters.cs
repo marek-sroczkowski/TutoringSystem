@@ -1,4 +1,4 @@
-﻿namespace TutoringSystem.Domain.Parameters
+﻿namespace TutoringSystem.Application.Parameters
 {
     public abstract class QueryStringParameters
 	{

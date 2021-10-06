@@ -1,7 +1,7 @@
 ﻿using System;
 using TutoringSystem.Domain.Entities.Enums;
 
-namespace TutoringSystem.Domain.Parameters
+namespace TutoringSystem.Application.Parameters
 {
     public class AdditionalOrderParameters : QueryStringParameters
     {

@@ -8,8 +8,8 @@ using System.Threading.Tasks;
 using TutoringSystem.Application.Authorization;
 using TutoringSystem.Application.Dtos.ReservationDtos;
 using TutoringSystem.Application.Services.Interfaces;
-using TutoringSystem.Domain.Parameters;
 using TutoringSystem.API.Filters;
+using TutoringSystem.Application.Parameters;
 
 namespace TutoringSystem.API.Controllers
 {

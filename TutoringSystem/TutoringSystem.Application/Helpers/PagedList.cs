@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace TutoringSystem.Domain.Helpers
+namespace TutoringSystem.Application.Helpers
 {
     public class PagedList<T> : List<T>
 	{

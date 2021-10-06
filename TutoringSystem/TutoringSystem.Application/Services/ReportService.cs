@@ -4,8 +4,8 @@ using System.Threading.Tasks;
 using TutoringSystem.Application.Dtos.ReportDtos;
 using TutoringSystem.Application.Dtos.StudentDtos;
 using TutoringSystem.Application.Dtos.SubjectDtos;
+using TutoringSystem.Application.Parameters;
 using TutoringSystem.Application.Services.Interfaces;
-using TutoringSystem.Domain.Parameters;
 using TutoringSystem.Domain.Repositories;
 
 namespace TutoringSystem.Application.Services

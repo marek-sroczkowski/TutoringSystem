@@ -1,6 +1,6 @@
 ﻿using System.Threading.Tasks;
 using TutoringSystem.Application.Dtos.ReportDtos;
-using TutoringSystem.Domain.Parameters;
+using TutoringSystem.Application.Parameters;
 
 namespace TutoringSystem.Application.Services.Interfaces
 {

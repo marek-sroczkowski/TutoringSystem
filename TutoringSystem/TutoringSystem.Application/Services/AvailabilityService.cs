@@ -5,10 +5,10 @@ using System.Linq;
 using System.Threading.Tasks;
 using TutoringSystem.Application.Dtos.AvailabilityDtos;
 using TutoringSystem.Application.Dtos.IntervalDtos;
+using TutoringSystem.Application.Helpers;
+using TutoringSystem.Application.Parameters;
 using TutoringSystem.Application.Services.Interfaces;
 using TutoringSystem.Domain.Entities;
-using TutoringSystem.Domain.Helpers;
-using TutoringSystem.Domain.Parameters;
 using TutoringSystem.Domain.Repositories;
 
 namespace TutoringSystem.Application.Services

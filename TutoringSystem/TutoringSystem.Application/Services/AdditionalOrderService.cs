@@ -4,11 +4,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using TutoringSystem.Application.Dtos.AdditionalOrderDtos;
+using TutoringSystem.Application.Helpers;
+using TutoringSystem.Application.Parameters;
 using TutoringSystem.Application.Services.Interfaces;
 using TutoringSystem.Domain.Entities;
 using TutoringSystem.Domain.Entities.Enums;
-using TutoringSystem.Domain.Helpers;
-using TutoringSystem.Domain.Parameters;
 using TutoringSystem.Domain.Repositories;
 
 namespace TutoringSystem.Application.Services
