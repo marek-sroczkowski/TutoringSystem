@@ -28,7 +28,7 @@ namespace TutoringSystem.API.Filters
                     var phone = context.ActionArguments["model"] as UpdatedPhoneNumberDto;
                     if (phone != null)
                     {
-                        if ((await phoneNumberRepository.GetPhoneNumberById(phone.Id)) == null)
+                        if ((await phoneNumberRepository.GetPhoneNumberAsync(p => p.Id.Equals(phone.Id))) == null)
                         {
                             context.Result = new NotFoundObjectResult(phone.Id);
                             return;
@@ -40,7 +40,7 @@ namespace TutoringSystem.API.Filters
                     var phoneId = context.ActionArguments["phoneNumberId"] as long?;
                     if (phoneId.HasValue)
                     {
-                        if ((await phoneNumberRepository.GetPhoneNumberById(phoneId.Value)) == null)
+                        if ((await phoneNumberRepository.GetPhoneNumberAsync(p => p.Id.Equals(phoneId.Value))) == null)
                         {
                             context.Result = new NotFoundObjectResult(phoneId.Value);
                             return;

@@ -38,7 +38,7 @@ namespace TutoringSystem.Application.Services
 
         public async Task<bool> ChangeOrderStatusAsync(long orderId, AdditionalOrderStatus orderStatus)
         {
-            var order = await additionalOrderRepository.GetAdditionalOrderByIdAsync(orderId);
+            var order = await additionalOrderRepository.GetAdditionalOrderAsync(o => o.Id.Equals(orderId));
             order.Status = orderStatus;
 
             return await additionalOrderRepository.UpdateAdditionalOrderAsync(order);
@@ -46,14 +46,14 @@ namespace TutoringSystem.Application.Services
 
         public async Task<bool> DeleteAdditionalOrderAsync(long orderId)
         {
-            var order = await additionalOrderRepository.GetAdditionalOrderByIdAsync(orderId);
+            var order = await additionalOrderRepository.GetAdditionalOrderAsync(o => o.Id.Equals(orderId));
 
             return await additionalOrderRepository.DeleteAdditionalOrderAsync(order);
         }
 
         public async Task<OrderDetailsDto> GetAdditionalOrderByIdAsync(long orderId)
         {
-            var order = await additionalOrderRepository.GetAdditionalOrderByIdAsync(orderId);
+            var order = await additionalOrderRepository.GetAdditionalOrderAsync(o => o.Id.Equals(orderId));
 
             return mapper.Map<OrderDetailsDto>(order);
         }
@@ -68,7 +68,7 @@ namespace TutoringSystem.Application.Services
             FilterByStartDeadline(ref expression, parameters.DeadlineStart);
             FilterByEndDeadline(ref expression, parameters.DeadlineEnd);
 
-            var orders = await additionalOrderRepository.GetAdditionalOrdersAsync(expression);
+            var orders = await additionalOrderRepository.GetAdditionalOrdersCollectionAsync(expression);
             var orderDtos = mapper.Map<ICollection<OrderDto>>(orders);
 
             return PagedList<OrderDto>.ToPagedList(orderDtos, parameters.PageNumber, parameters.PageSize);
@@ -76,7 +76,7 @@ namespace TutoringSystem.Application.Services
 
         public async Task<bool> UpdateAdditionalOrderAsync(UpdatedOrderDto updatedOrder)
         {
-            var existingOrder = await additionalOrderRepository.GetAdditionalOrderByIdAsync(updatedOrder.Id);
+            var existingOrder = await additionalOrderRepository.GetAdditionalOrderAsync(o => o.Id.Equals(updatedOrder.Id));
             var order = mapper.Map(updatedOrder, existingOrder);
 
             return await additionalOrderRepository.UpdateAdditionalOrderAsync(order);

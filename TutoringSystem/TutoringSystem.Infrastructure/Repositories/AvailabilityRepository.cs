@@ -29,7 +29,17 @@ namespace TutoringSystem.Infrastructure.Repositories
             return await SaveChangedAsync();
         }
 
-        public async Task<IEnumerable<Availability>> GetAvailabilitiesAsync(Expression<Func<Availability, bool>> expression)
+        public async Task<Availability> GetAvailabilityAsync(Expression<Func<Availability, bool>> expression)
+        {
+            var availability = await DbContext.Availabilities
+               .Include(a => a.Intervals)
+               .Include(a => a.Tutor)
+               .FirstOrDefaultAsync(expression);
+
+            return availability;
+        }
+
+        public async Task<IEnumerable<Availability>> GetAvailabilitiesCollectionAsync(Expression<Func<Availability, bool>> expression)
         {
             var availabilities = await FindByCondition(expression)
                 .Include(a => a.Intervals)
@@ -37,36 +47,6 @@ namespace TutoringSystem.Infrastructure.Repositories
                 .ToListAsync();
 
             return availabilities;
-        }
-
-        public async Task<Availability> GetAvailabilityByIdAsync(long availabilityId)
-        {
-            var availability = await DbContext.Availabilities
-               .Include(a => a.Intervals)
-               .Include(a => a.Tutor)
-               .FirstOrDefaultAsync(a => a.Id.Equals(availabilityId));
-
-            return availability;
-        }
-
-        public async Task<Availability> GetAvailabilityByTutorIdAndDateAsync(long tutorId, DateTime date)
-        {
-            var availability = await DbContext.Availabilities
-               .Include(a => a.Intervals)
-               .Include(a => a.Tutor)
-               .FirstOrDefaultAsync(a => a.TutorId.Equals(tutorId) && a.Date.Date.Equals(date.Date));
-
-            return availability;
-        }
-
-        public async Task<Availability> GetTodaysAvailabilityByTutorIdAsync(long tutorId)
-        {
-            var availability = await DbContext.Availabilities
-                .Include(a => a.Intervals)
-                .Include(a => a.Tutor)
-                .FirstOrDefaultAsync(a => a.Date.Date.Equals(DateTime.Now.Date) && a.TutorId.Equals(tutorId));
-
-            return availability;
         }
 
         public async Task<bool> UpdateAvailabilityAsync(Availability updatedAvailability)

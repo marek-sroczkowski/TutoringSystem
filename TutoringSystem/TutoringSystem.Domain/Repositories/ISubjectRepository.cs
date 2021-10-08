@@ -9,9 +9,9 @@ namespace TutoringSystem.Domain.Repositories
     public interface ISubjectRepository
     {
         Task<bool> AddSubjectAsync(Subject subject);
-        Task<Subject> GetSubjectByIdAsync(long subjectId);
         Task<bool> UpdateSubjectAsync(Subject updatedSubject);
         Task<bool> DeleteSubjectAsync(Subject subject);
-        Task<IEnumerable<Subject>> GetSubjectsAsync(Expression<Func<Subject, bool>> expression, bool? isActiv = true);
+        Task<Subject> GetSubjectAsync(Expression<Func<Subject, bool>> expression, bool? isActiv = true);
+        Task<IEnumerable<Subject>> GetSubjectsCollectionAsync(Expression<Func<Subject, bool>> expression, bool? isActiv = true);
     }
 }

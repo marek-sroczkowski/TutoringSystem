@@ -15,20 +15,21 @@ namespace TutoringSystem.Infrastructure.Repositories
         {
         }
 
-        public async Task<Interval> GetIntervalByIdAsync(long intervalId)
+        public async Task<Interval> GetIntervalAsync(Expression<Func<Interval, bool>> expression)
         {
             var interval = await DbContext.Intervals
                 .Include(i => i.Availability)
-                .FirstOrDefaultAsync(i => i.Id.Equals(intervalId));
+                .FirstOrDefaultAsync(expression);
 
             return interval;
         }
 
-        public async Task<IEnumerable<Interval>> GetIntervalsAsync(Expression<Func<Interval, bool>> expression)
+        public async Task<IEnumerable<Interval>> GetIntervalsCollectionAsync(Expression<Func<Interval, bool>> expression)
         {
-            var intervals = FindByCondition(expression);
+            var intervals = await FindByCondition(expression)
+                .ToListAsync();
 
-            return await intervals.ToListAsync();
+            return intervals;
         }
     }
 }

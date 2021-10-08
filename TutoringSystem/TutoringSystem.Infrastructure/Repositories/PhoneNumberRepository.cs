@@ -30,16 +30,19 @@ namespace TutoringSystem.Infrastructure.Repositories
             return await SaveChangedAsync();
         }
 
-        public async Task<PhoneNumber> GetPhoneNumberById(long phoneNumberId, bool isActiv = true)
+        public async Task<PhoneNumber> GetPhoneNumberAsync(Expression<Func<PhoneNumber, bool>> expression, bool? isActiv = true)
         {
+            if (isActiv.HasValue)
+                ExpressionMerger.MergeExpression(ref expression, p => p.IsActiv.Equals(isActiv.Value));
+
             var phone = await DbContext.PhoneNumbers
                 .Include(p => p.Contact)
-                .FirstOrDefaultAsync(p => p.Id.Equals(phoneNumberId) && p.IsActiv.Equals(isActiv));
+                .FirstOrDefaultAsync(expression);
 
             return phone;
         }
 
-        public async Task<IEnumerable<PhoneNumber>> GetPhoneNumbersAsync(Expression<Func<PhoneNumber, bool>> expression, bool? isActiv = true)
+        public async Task<IEnumerable<PhoneNumber>> GetPhoneNumbersCollectionAsync(Expression<Func<PhoneNumber, bool>> expression, bool? isActiv = true)
         {
             if (isActiv.HasValue)
                 ExpressionMerger.MergeExpression(ref expression, p => p.IsActiv.Equals(isActiv.Value));

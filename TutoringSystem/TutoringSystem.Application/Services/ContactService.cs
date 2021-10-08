@@ -19,31 +19,24 @@ namespace TutoringSystem.Application.Services
 
         public async Task<ContactDetailsDto> GetContactByIdAsync(long contactId)
         {
-            var contact = await contactRepository.GetContactByIdAsync(contactId);
+            var contact = await contactRepository.GetContactAsync(c => c.Id.Equals(contactId));
 
             return mapper.Map<ContactDetailsDto>(contact);
         }
 
         public async Task<ContactDetailsDto> GetContactByUserAsync(long userId)
         {
-            var contact = await contactRepository.GetContactByUserIdAsync(userId);
+            var contact = await contactRepository.GetContactAsync(c => c.UserId.Equals(userId));
 
             return mapper.Map<ContactDetailsDto>(contact);
         }
 
         public async Task<bool> UpdateContactAsync(UpdatedContactDto updatedContact)
         {
-            var existingContact = await contactRepository.GetContactByIdAsync(updatedContact.Id);
+            var existingContact = await contactRepository.GetContactAsync(c => c.Id.Equals(updatedContact.Id));
             var contact = mapper.Map(updatedContact, existingContact);
 
             return await contactRepository.UpdateContactAsync(contact);
-        }
-
-        public async Task<bool> DeleteContactAsync(long contactId)
-        {
-            var contact = await contactRepository.GetContactByIdAsync(contactId);
-
-            return await contactRepository.DeleteContactAsync(contact);
         }
     }
 }

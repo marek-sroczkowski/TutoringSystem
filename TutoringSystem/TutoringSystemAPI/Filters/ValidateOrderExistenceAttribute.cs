@@ -28,7 +28,7 @@ namespace TutoringSystem.API.Filters
                     var orderId = context.ActionArguments["orderId"] as long?;
                     if (orderId.HasValue)
                     {
-                        if ((await additionalOrderRepository.GetAdditionalOrderByIdAsync(orderId.Value)) == null)
+                        if ((await additionalOrderRepository.GetAdditionalOrderAsync(o => o.Id.Equals(orderId.Value))) == null)
                         {
                             context.Result = new NotFoundObjectResult(orderId.Value);
                             return;
@@ -40,7 +40,7 @@ namespace TutoringSystem.API.Filters
                     var order = context.ActionArguments["model"] as UpdatedOrderDto;
                     if(order != null)
                     {
-                        if ((await additionalOrderRepository.GetAdditionalOrderByIdAsync(order.Id)) == null)
+                        if ((await additionalOrderRepository.GetAdditionalOrderAsync(o => o.Id.Equals(order.Id))) == null)
                         {
                             context.Result = new NotFoundObjectResult(order.Id);
                             return;

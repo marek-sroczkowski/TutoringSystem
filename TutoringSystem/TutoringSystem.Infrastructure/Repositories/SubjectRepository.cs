@@ -31,16 +31,19 @@ namespace TutoringSystem.Infrastructure.Repositories
             return await SaveChangedAsync();
         }
 
-        public async Task<Subject> GetSubjectByIdAsync(long subjectId)
+        public async Task<Subject> GetSubjectAsync(Expression<Func<Subject, bool>> expression, bool? isActiv = true)
         {
+            if (isActiv.HasValue)
+                ExpressionMerger.MergeExpression(ref expression, s => s.IsActiv.Equals(isActiv.Value));
+
             var subject = await DbContext.Subjects
                 .Include(s => s.Tutor)
-                .FirstOrDefaultAsync(s => s.IsActiv && s.Id.Equals(subjectId));
+                .FirstOrDefaultAsync(expression);
 
             return subject;
         }
 
-        public async Task<IEnumerable<Subject>> GetSubjectsAsync(Expression<Func<Subject, bool>> expression, bool? isActiv = true)
+        public async Task<IEnumerable<Subject>> GetSubjectsCollectionAsync(Expression<Func<Subject, bool>> expression, bool? isActiv = true)
         {
             if (isActiv.HasValue)
                 ExpressionMerger.MergeExpression(ref expression, s => s.IsActiv.Equals(isActiv.Value));

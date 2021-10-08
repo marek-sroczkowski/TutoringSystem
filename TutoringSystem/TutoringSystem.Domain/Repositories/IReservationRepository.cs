@@ -9,9 +9,9 @@ namespace TutoringSystem.Domain.Repositories
     public interface IReservationRepository
     {
         Task<bool> AddReservationAsync(Reservation reservation);
-        Task<Reservation> GetReservationByIdAsync(long reservationId);
         Task<bool> UpdateReservationAsync(Reservation updatedReservation);
         Task<bool> DeleteReservationAsync(Reservation reservation);
-        Task<IEnumerable<Reservation>> GetReservationsAsync(Expression<Func<Reservation, bool>> expression);
+        Task<Reservation> GetReservationAsync(Expression<Func<Reservation, bool>> expression);
+        Task<IEnumerable<Reservation>> GetReservationsCollectionAsync(Expression<Func<Reservation, bool>> expression);
     }
 }

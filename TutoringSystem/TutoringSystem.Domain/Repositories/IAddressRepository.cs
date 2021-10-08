@@ -9,10 +9,9 @@ namespace TutoringSystem.Domain.Repositories
     public interface IAddressRepository
     {
         Task<bool> AddAddressAsync(Address address);
-        Task<Address> GetAddressByIdAsync(long addressId);
         Task<bool> UpdateAddressAsync(Address updatedAddress);
         Task<bool> DeleteAddressAsync(Address address);
-        Task<Address> GetAddressByUserIdAsync(long userId);
-        Task<IEnumerable<Address>> GetAddressesAsync(Expression<Func<Address, bool>> expression);
+        Task<Address> GetAddressAsync(Expression<Func<Address, bool>> expression);
+        Task<IEnumerable<Address>> GetAddressesCollectionAsync(Expression<Func<Address, bool>> expression);
     }
 }

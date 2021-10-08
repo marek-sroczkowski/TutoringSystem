@@ -28,7 +28,7 @@ namespace TutoringSystem.API.Filters
                     var address = context.ActionArguments["model"] as UpdatedAddressDto;
                     if (address != null)
                     {
-                        if ((await addressRepository.GetAddressByIdAsync(address.Id)) == null)
+                        if ((await addressRepository.GetAddressAsync(a => a.Id.Equals(address.Id))) == null)
                         {
                             context.Result = new NotFoundObjectResult(address.Id);
                             return;

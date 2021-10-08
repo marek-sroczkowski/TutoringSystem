@@ -32,31 +32,24 @@ namespace TutoringSystem.Application.Services
 
         public async Task<AddressDetailsDto> GetAddressByIdAsync(long addressId)
         {
-            var address = await addressRepository.GetAddressByIdAsync(addressId);
+            var address = await addressRepository.GetAddressAsync(a => a.Id.Equals(addressId));
 
             return mapper.Map<AddressDetailsDto>(address);
         }
 
         public async Task<AddressDetailsDto> GetAddressByUserAsync(long userId)
         {
-            var address = await addressRepository.GetAddressByUserIdAsync(userId);
+            var address = await addressRepository.GetAddressAsync(a => a.UserId.Equals(userId));
 
             return mapper.Map<AddressDetailsDto>(address);
         }
 
         public async Task<bool> UpdateAddressAsync(UpdatedAddressDto updatedAddress)
         {
-            var existingAddress = await addressRepository.GetAddressByIdAsync(updatedAddress.Id);
+            var existingAddress = await addressRepository.GetAddressAsync(a => a.Id.Equals(updatedAddress.Id));
             var address = mapper.Map(updatedAddress, existingAddress);
 
             return await addressRepository.UpdateAddressAsync(address);
-        }
-
-        public async Task<bool> DeleteAddressAsync(long addressId)
-        {
-            var address = await addressRepository.GetAddressByUserIdAsync(addressId);
-
-            return await addressRepository.DeleteAddressAsync(address);
         }
     }
 }

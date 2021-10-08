@@ -40,7 +40,7 @@ namespace TutoringSystem.Application.Services
 
         public async Task<bool> DeleteAvailabilityAsync(long availabilityId)
         {
-            var availability = await availabilityRepository.GetAvailabilityByIdAsync(availabilityId);
+            var availability = await availabilityRepository.GetAvailabilityAsync(a => a.Id.Equals(availabilityId));
 
             return await availabilityRepository.DeleteAvailabilityAsync(availability);
         }
@@ -50,7 +50,7 @@ namespace TutoringSystem.Application.Services
             Expression<Func<Availability, bool>> expression = a => a.TutorId.Equals(tutorId);
             FilterByStartDate(ref expression, parameters.StartDate);
             FilterByEndDate(ref expression, parameters.EndDate);
-            var availabilities = await availabilityRepository.GetAvailabilitiesAsync(expression);
+            var availabilities = await availabilityRepository.GetAvailabilitiesCollectionAsync(expression);
             var availabilityDtos = mapper.Map<ICollection<AvailabilityDto>>(availabilities);
 
             return PagedList<AvailabilityDto>.ToPagedList(availabilityDtos, parameters.PageNumber, parameters.PageSize);
@@ -60,7 +60,7 @@ namespace TutoringSystem.Application.Services
         {
             Expression<Func<Availability, bool>> expression = a => a.TutorId.Equals(tutorId) && a.Date >= DateTime.Now;
             FilterByEndDate(ref expression, parameters.EndDate);
-            var availabilities = await availabilityRepository.GetAvailabilitiesAsync(expression);
+            var availabilities = await availabilityRepository.GetAvailabilitiesCollectionAsync(expression);
             var availabilityDtos = mapper.Map<ICollection<AvailabilityDto>>(availabilities);
 
             return PagedList<AvailabilityDto>.ToPagedList(availabilityDtos, parameters.PageNumber, parameters.PageSize);
@@ -68,21 +68,21 @@ namespace TutoringSystem.Application.Services
 
         public async Task<AvailabilityDetailsDto> GetAvailabilityByIdAsync(long availabilityId)
         {
-            var availability = await availabilityRepository.GetAvailabilityByIdAsync(availabilityId);
+            var availability = await availabilityRepository.GetAvailabilityAsync(a => a.Id.Equals(availabilityId));
 
             return mapper.Map<AvailabilityDetailsDto>(availability);
         }
 
         public async Task<AvailabilityDetailsDto> GetTodaysAvailabilityByTutorAsync(long tutorId)
         {
-            var availability = await availabilityRepository.GetTodaysAvailabilityByTutorIdAsync(tutorId);
+            var availability = await availabilityRepository.GetAvailabilityAsync(a => a.TutorId.Equals(tutorId) && a.Date.Date.Equals(DateTime.Now.Date));
 
             return mapper.Map<AvailabilityDetailsDto>(availability);
         }
 
         public async Task<bool> UpdateAvailabilityAsync(UpdatedAvailabilityDto updatedAvailability)
         {
-            var existingAvailability = await availabilityRepository.GetAvailabilityByIdAsync(updatedAvailability.Id);
+            var existingAvailability = await availabilityRepository.GetAvailabilityAsync(a => a.Id.Equals(updatedAvailability.Id));
             if (!ValidateUpdatedAvailability(updatedAvailability, existingAvailability.Date))
                 return false;
 
@@ -118,7 +118,7 @@ namespace TutoringSystem.Application.Services
             if (newAvailability.Intervals.Count > 40 || newAvailability.Intervals.Count == 0)
                 return false;
 
-            if ((await availabilityRepository.GetAvailabilityByTutorIdAndDateAsync(tutorId, newAvailability.Date)) != null)
+            if ((await availabilityRepository.GetAvailabilityAsync(a => a.TutorId.Equals(tutorId) && a.Date.Date.Equals(newAvailability.Date.Date))) != null)
                 return false;
 
             foreach (var interval in newAvailability.Intervals)

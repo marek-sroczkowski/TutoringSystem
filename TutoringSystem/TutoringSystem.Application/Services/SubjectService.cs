@@ -21,7 +21,7 @@ namespace TutoringSystem.Application.Services
 
         public async Task<bool> ActivateSubjectAsync(long subjectId)
         {
-            var inactiveSubject = await subjectRepository.GetSubjectByIdAsync(subjectId);
+            var inactiveSubject = await subjectRepository.GetSubjectAsync(s => s.Id.Equals(subjectId));
             if (inactiveSubject is null)
                 return false;
             inactiveSubject.IsActiv = true;
@@ -43,28 +43,28 @@ namespace TutoringSystem.Application.Services
 
         public async Task<bool> DeactivateSubjectAsync(long subjectId)
         {
-            var subject = await subjectRepository.GetSubjectByIdAsync(subjectId);
+            var subject = await subjectRepository.GetSubjectAsync(s => s.Id.Equals(subjectId));
 
             return await subjectRepository.DeleteSubjectAsync(subject);
         }
 
         public async Task<SubjectDetailsDto> GetSubjectByIdAsync(long subjectId)
         {
-            var subject = await subjectRepository.GetSubjectByIdAsync(subjectId);
+            var subject = await subjectRepository.GetSubjectAsync(s => s.Id.Equals(subjectId));
 
             return mapper.Map<SubjectDetailsDto>(subject);
         }
 
         public async Task<ICollection<SubjectDto>> GetTutorSubjectsAsync(long tutorId)
         {
-            var subjects = await subjectRepository.GetSubjectsAsync(s => s.TutorId.Equals(tutorId));
+            var subjects = await subjectRepository.GetSubjectsCollectionAsync(s => s.TutorId.Equals(tutorId));
 
             return mapper.Map<ICollection<SubjectDto>>(subjects);
         }
 
         public async Task<bool> UpdateSubjectAsync(UpdatedSubjectDto updatedSubject)
         {
-            var existingSubject = await subjectRepository.GetSubjectByIdAsync(updatedSubject.Id);
+            var existingSubject = await subjectRepository.GetSubjectAsync(s => s.Id.Equals(updatedSubject.Id));
             var subject = mapper.Map(updatedSubject, existingSubject);
 
             return await subjectRepository.UpdateSubjectAsync(subject);

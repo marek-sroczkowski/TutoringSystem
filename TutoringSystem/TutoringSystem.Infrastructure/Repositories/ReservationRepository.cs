@@ -29,18 +29,18 @@ namespace TutoringSystem.Infrastructure.Repositories
             return await SaveChangedAsync();
         }
 
-        public async Task<Reservation> GetReservationByIdAsync(long reservationId)
+        public async Task<Reservation> GetReservationAsync(Expression<Func<Reservation, bool>> expression)
         {
             var reservation = await DbContext.Reservations
                 .Include(r => r.Student)
                 .Include(r => r.Subject)
                 .Include(r => r.Tutor)
-                .FirstOrDefaultAsync(r => r.Id.Equals(reservationId));
+                .FirstOrDefaultAsync(expression);
 
             return reservation;
         }
 
-        public async Task<IEnumerable<Reservation>> GetReservationsAsync(Expression<Func<Reservation, bool>> expression)
+        public async Task<IEnumerable<Reservation>> GetReservationsCollectionAsync(Expression<Func<Reservation, bool>> expression)
         {
             var reservations = await FindByCondition(expression)
                 .Include(r => r.Student)

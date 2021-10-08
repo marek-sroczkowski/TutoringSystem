@@ -27,7 +27,7 @@ namespace TutoringSystem.API.Filters
                     var studentId = context.ActionArguments["studentId"] as long?;
                     if (studentId.HasValue)
                     {
-                        if ((await studentRepository.GetStudentByIdAsync(studentId.Value)) == null)
+                        if ((await studentRepository.GetStudentAsync(s => s.Id.Equals(studentId.Value))) == null)
                         {
                             context.Result = new NotFoundObjectResult(studentId.Value);
                             return;

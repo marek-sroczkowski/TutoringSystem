@@ -24,7 +24,20 @@ namespace TutoringSystem.Infrastructure.Repositories
             return await SaveChangedAsync();
         }
 
-        public async Task<IEnumerable<Student>> GetStudentsAsync(Expression<Func<Student, bool>> expression, bool? isActiv = true)
+        public async Task<Student> GetStudentAsync(Expression<Func<Student, bool>> expression, bool? isActiv = true)
+        {
+            if (isActiv.HasValue)
+                ExpressionMerger.MergeExpression(ref expression, s => s.IsActiv.Equals(isActiv.Value));
+
+            var student = await DbContext.Students
+                .Where(s => s.IsActiv.Equals(isActiv))
+                .Include(s => s.Tutors)
+                .FirstOrDefaultAsync(expression);
+
+            return student;
+        }
+
+        public async Task<IEnumerable<Student>> GetStudentsCollectionAsync(Expression<Func<Student, bool>> expression, bool? isActiv = true)
         {
             if (isActiv.HasValue)
                 ExpressionMerger.MergeExpression(ref expression, s => s.IsActiv.Equals(isActiv.Value));
@@ -34,16 +47,6 @@ namespace TutoringSystem.Infrastructure.Repositories
                 .ToListAsync();
 
             return students;
-        }
-
-        public async Task<Student> GetStudentByIdAsync(long studentId, bool isActiv = true)
-        {
-            var student = await DbContext.Students
-                .Where(s => s.IsActiv.Equals(isActiv))
-                .Include(s => s.Tutors)
-                .FirstOrDefaultAsync(s => s.Id.Equals(studentId));
-
-            return student;
         }
 
         public async Task<bool> UpdateStudentAsync(Student student)

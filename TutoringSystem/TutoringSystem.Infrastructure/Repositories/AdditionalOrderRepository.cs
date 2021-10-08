@@ -30,19 +30,22 @@ namespace TutoringSystem.Infrastructure.Repositories
             return await SaveChangedAsync();
         }
 
-        public async Task<AdditionalOrder> GetAdditionalOrderByIdAsync(long orderId)
+        public async Task<AdditionalOrder> GetAdditionalOrderAsync(Expression<Func<AdditionalOrder, bool>> expression, bool? isActiv = true)
         {
+            if (isActiv.HasValue)
+                ExpressionMerger.MergeExpression(ref expression, o => o.IsActiv.Equals(isActiv.Value));
+
             var order = await DbContext.AdditionalOrders
                 .Include(o => o.Tutor)
-                .FirstOrDefaultAsync(o => o.Id.Equals(orderId));
+                .FirstOrDefaultAsync(expression);
 
             return order;
         }
 
-        public async Task<IEnumerable<AdditionalOrder>> GetAdditionalOrdersAsync(Expression<Func<AdditionalOrder, bool>> expression, bool? isActiv = true)
+        public async Task<IEnumerable<AdditionalOrder>> GetAdditionalOrdersCollectionAsync(Expression<Func<AdditionalOrder, bool>> expression, bool? isActiv = true)
         {
             if (isActiv.HasValue)
-                ExpressionMerger.MergeExpression(ref expression, s => s.IsActiv.Equals(isActiv.Value));
+                ExpressionMerger.MergeExpression(ref expression, o => o.IsActiv.Equals(isActiv.Value));
 
             var orders = await FindByCondition(expression)
                 .ToListAsync();

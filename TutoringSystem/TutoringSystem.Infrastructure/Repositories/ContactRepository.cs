@@ -31,27 +31,17 @@ namespace TutoringSystem.Infrastructure.Repositories
             return await SaveChangedAsync();
         }
 
-        public async Task<Contact> GetContactByIdAsync(long contactId)
+        public async Task<Contact> GetContactAsync(Expression<Func<Contact, bool>> expression)
         {
             var contact = await DbContext.Contacts
                 .Include(c => c.User)
                 .Include(c => c.PhoneNumbers.Where(p => p.IsActiv))
-                .FirstOrDefaultAsync(c => c.Id.Equals(contactId));
+                .FirstOrDefaultAsync(expression);
 
             return contact;
         }
 
-        public async Task<Contact> GetContactByUserIdAsync(long userId)
-        {
-            var contact = await DbContext.Contacts
-                .Include(c => c.User)
-                .Include(c => c.PhoneNumbers.Where(p => p.IsActiv))
-                .FirstOrDefaultAsync(c => c.UserId.Equals(userId));
-
-            return contact;
-        }
-
-        public async Task<IEnumerable<Contact>> GetContactsAsync(Expression<Func<Contact, bool>> expression)
+        public async Task<IEnumerable<Contact>> GetContactsCollectionAsync(Expression<Func<Contact, bool>> expression)
         {
             ExpressionMerger.MergeExpression(ref expression, c => c.User.IsActiv);
             var contacts = FindByCondition(expression)

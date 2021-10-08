@@ -28,7 +28,7 @@ namespace TutoringSystem.API.Filters
                     var contact = context.ActionArguments["model"] as UpdatedContactDto;
                     if (contact != null)
                     {
-                        if ((await contactRepository.GetContactByIdAsync(contact.Id)) == null)
+                        if ((await contactRepository.GetContactAsync(c => c.Id.Equals(contact.Id))) == null)
                         {
                             context.Result = new NotFoundObjectResult(contact.Id);
                             return;

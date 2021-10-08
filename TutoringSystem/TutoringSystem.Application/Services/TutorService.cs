@@ -23,30 +23,30 @@ namespace TutoringSystem.Application.Services
 
         public async Task<bool> AddStudentAsync(long tutorId, long studentId)
         {
-            var tutor = await tutorRepository.GetTutorByIdAsync(tutorId);
-            tutor?.Students?.Add(await studentRepository.GetStudentByIdAsync(studentId));
+            var tutor = await tutorRepository.GetTutorAsync(t => t.Id.Equals(tutorId));
+            tutor?.Students?.Add(await studentRepository.GetStudentAsync(s => s.Id.Equals(studentId)));
 
             return await tutorRepository.UpdateTutorAsync(tutor);
         }
 
         public async Task<ICollection<StudentDto>> GetStudentsAsync(long tutorId)
         {
-            var tutor = await tutorRepository.GetTutorByIdAsync(tutorId);
+            var tutor = await tutorRepository.GetTutorAsync(t => t.Id.Equals(tutorId));
 
             return mapper.Map<ICollection<StudentDto>>(tutor?.Students);
         }
 
         public async Task<TutorDetailsDto> GetTutorAsync(long tutorId)
         {
-            var tutor = await tutorRepository.GetTutorByIdAsync(tutorId);
+            var tutor = await tutorRepository.GetTutorAsync(t => t.Id.Equals(tutorId));
 
             return mapper.Map<TutorDetailsDto>(tutor);
         }
 
         public async Task<bool> RemoveStudentAsync(long tutorId, long studentId)
         {
-            var tutor = await tutorRepository.GetTutorByIdAsync(tutorId);
-            var removed = tutor?.Students?.Remove(await studentRepository.GetStudentByIdAsync(studentId));
+            var tutor = await tutorRepository.GetTutorAsync(t => t.Id.Equals(tutorId));
+            var removed = tutor?.Students?.Remove(await studentRepository.GetStudentAsync(s => s.Id.Equals(studentId)));
             if (!removed.HasValue || !removed.Value)
                 return false;
 
@@ -55,7 +55,7 @@ namespace TutoringSystem.Application.Services
 
         public async Task<bool> RemoveAllStudentsAsync(long tutorId)
         {
-            var tutor = await tutorRepository.GetTutorByIdAsync(tutorId);
+            var tutor = await tutorRepository.GetTutorAsync(t => t.Id.Equals(tutorId));
             tutor?.Students?.Clear();
 
             return await tutorRepository.UpdateTutorAsync(tutor);

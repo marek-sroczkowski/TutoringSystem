@@ -8,10 +8,10 @@ namespace TutoringSystem.Domain.Repositories
 {
     public interface IAdditionalOrderRepository
     {
-        Task<AdditionalOrder> GetAdditionalOrderByIdAsync(long orderId);
         Task<bool> AddAdditionalOrderAsync(AdditionalOrder order);
         Task<bool> UpdateAdditionalOrderAsync(AdditionalOrder updatedOrder);
         Task<bool> DeleteAdditionalOrderAsync(AdditionalOrder order);
-        Task<IEnumerable<AdditionalOrder>> GetAdditionalOrdersAsync(Expression<Func<AdditionalOrder, bool>> expression, bool? isActiv = true);
+        Task<AdditionalOrder> GetAdditionalOrderAsync(Expression<Func<AdditionalOrder, bool>> expression, bool? isActiv = true);
+        Task<IEnumerable<AdditionalOrder>> GetAdditionalOrdersCollectionAsync(Expression<Func<AdditionalOrder, bool>> expression, bool? isActiv = true);
     }
 }

@@ -30,25 +30,16 @@ namespace TutoringSystem.Infrastructure.Repositories
             return await SaveChangedAsync();
         }
 
-        public async Task<Address> GetAddressByIdAsync(long addressId)
-        {
-            var address = await DbContext.Addresses
-                .Include(a => a.User)
-                .FirstOrDefaultAsync(a => a.Id.Equals(addressId));
-
-            return address;
-        }
-
-        public async Task<Address> GetAddressByUserIdAsync(long userId)
+        public async Task<Address> GetAddressAsync(Expression<Func<Address, bool>> expression)
         {
             var address = await DbContext.Addresses
                 .Include(c => c.User)
-                .FirstOrDefaultAsync(c => c.UserId.Equals(userId));
+                .FirstOrDefaultAsync(expression);
 
             return address;
         }
 
-        public async Task<IEnumerable<Address>> GetAddressesAsync(Expression<Func<Address, bool>> expression)
+        public async Task<IEnumerable<Address>> GetAddressesCollectionAsync(Expression<Func<Address, bool>> expression)
         {
             ExpressionMerger.MergeExpression(ref expression, a => a.User.IsActiv);
             var addresses = FindByCondition(expression)

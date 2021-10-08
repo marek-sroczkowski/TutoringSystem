@@ -28,7 +28,19 @@ namespace TutoringSystem.Infrastructure.Repositories
             return await SaveChangedAsync();
         }
 
-        public async Task<IEnumerable<User>> GetUsersAsync(Expression<Func<User, bool>> expression, bool? isActiv = true)
+        public async Task<User> GetUserAsync(Expression<Func<User, bool>> expression, bool? isActiv = true)
+        {
+            if (isActiv.HasValue)
+                ExpressionMerger.MergeExpression(ref expression, u => u.IsActiv.Equals(isActiv.Value));
+
+            var user = await DbContext.Users
+                .Where(u => u.IsActiv.Equals(isActiv))
+                .FirstOrDefaultAsync(expression);
+
+            return user;
+        }
+
+        public async Task<IEnumerable<User>> GetUsersCollectionAsync(Expression<Func<User, bool>> expression, bool? isActiv = true)
         {
             if (isActiv.HasValue)
                 ExpressionMerger.MergeExpression(ref expression, u => u.IsActiv.Equals(isActiv.Value));
@@ -37,24 +49,6 @@ namespace TutoringSystem.Infrastructure.Repositories
                 .ToListAsync();
 
             return users;
-        }
-
-        public async Task<User> GetUserByIdAsync(long userId, bool isActiv = true)
-        {
-            var user = await DbContext.Users
-                .Where(u => u.IsActiv.Equals(isActiv))
-                .FirstOrDefaultAsync(u => u.Id.Equals(userId));
-
-            return user;
-        }
-
-        public async Task<User> GetUserByUsernameAsync(string username)
-        {
-            var user = await DbContext.Users
-                .Where(u => u.IsActiv)
-                .FirstOrDefaultAsync(u => u.Username.Equals(username));
-
-            return user;
         }
 
         public async Task<bool> UpdateUser(User user)

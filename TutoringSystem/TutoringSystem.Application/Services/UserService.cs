@@ -2,7 +2,6 @@
 using Microsoft.AspNetCore.Identity;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using TutoringSystem.Application.Dtos.AccountDtos;
 using TutoringSystem.Application.Dtos.Enums;
@@ -40,7 +39,7 @@ namespace TutoringSystem.Application.Services
             if (passwordVerificationResult == PasswordVerificationResult.Failed)
                 return null;
 
-            var user = await userRepository.GetUserByUsernameAsync(userModel.Username);
+            var user = await userRepository.GetUserAsync(u => u.Username.Equals(userModel.Username));
             if (user != null)
                 await SetLastLoginDate(user);
 
@@ -49,7 +48,7 @@ namespace TutoringSystem.Application.Services
 
         public async Task<Role> GetUserRoleAsync(long userId)
         {
-            var user = await userRepository.GetUserByIdAsync(userId);
+            var user = await userRepository.GetUserAsync(u => u.Id.Equals(userId));
 
             return user.Role;
         }
@@ -72,14 +71,14 @@ namespace TutoringSystem.Application.Services
 
         public async Task<bool> DeactivateUserAsync(long userId)
         {
-            var user = await userRepository.GetUserByIdAsync(userId);
+            var user = await userRepository.GetUserAsync(u => u.Id.Equals(userId));
 
             return await userRepository.DeleteUserAsync(user);
         }
 
         public async Task<ICollection<WrongPasswordStatus>> ChangePasswordAsync(long userId, PasswordDto passwordModel)
         {
-            var user = await userRepository.GetUserByIdAsync(userId);
+            var user = await userRepository.GetUserAsync(u => u.Id.Equals(userId));
             var validationResult = ValidatePassword(user, passwordModel);
 
             if (validationResult.Count == 0)
@@ -125,7 +124,7 @@ namespace TutoringSystem.Application.Services
 
         private async Task<PasswordVerificationResult> ValidatePasswordAsync(LoginUserDto loginModel)
         {
-            var user = await userRepository.GetUserByUsernameAsync(loginModel.Username);
+            var user = await userRepository.GetUserAsync(u => u.Username.Equals(loginModel.Username));
             if (user is null)
                 return PasswordVerificationResult.Failed;
 

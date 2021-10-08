@@ -28,7 +28,7 @@ namespace TutoringSystem.API.Filters
                     var subjectId = context.ActionArguments["subjectId"] as long?;
                     if (subjectId.HasValue)
                     {
-                        if ((await subjectRepository.GetSubjectByIdAsync(subjectId.Value)) == null)
+                        if ((await subjectRepository.GetSubjectAsync(s => s.Id.Equals(subjectId.Value))) == null)
                         {
                             context.Result = new NotFoundObjectResult(subjectId.Value);
                             return;
@@ -40,7 +40,7 @@ namespace TutoringSystem.API.Filters
                     var subject = context.ActionArguments["model"] as UpdatedSubjectDto;
                     if (subject != null)
                     {
-                        if ((await subjectRepository.GetSubjectByIdAsync(subject.Id)) == null)
+                        if ((await subjectRepository.GetSubjectAsync(s => s.Id.Equals(subject.Id))) == null)
                         {
                             context.Result = new NotFoundObjectResult(subject.Id);
                             return;

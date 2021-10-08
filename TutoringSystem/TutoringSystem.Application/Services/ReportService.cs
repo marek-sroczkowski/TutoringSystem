@@ -35,10 +35,10 @@ namespace TutoringSystem.Application.Services
 
         public async Task<TutorReportDto> GetReportByTutorAsync(long tutorId, ReportParameters parameters)
         {
-            var tutor = await tutorRepository.GetTutorByIdAsync(tutorId);
-            var students = await studentRepository.GetStudentsAsync(s => s.Tutors.Contains(tutor), null);
-            var reservations = await reservationRepository.GetReservationsAsync(GetExpressionToTutorReservations(tutorId, parameters));
-            var orders = await orderRepository.GetAdditionalOrdersAsync(GetExpressionToOrders(tutorId, parameters));
+            var tutor = await tutorRepository.GetTutorAsync(t => t.Id.Equals(tutorId));
+            var students = await studentRepository.GetStudentsCollectionAsync(s => s.Tutors.Contains(tutor), null);
+            var reservations = await reservationRepository.GetReservationsCollectionAsync(GetExpressionToTutorReservations(tutorId, parameters));
+            var orders = await orderRepository.GetAdditionalOrdersCollectionAsync(GetExpressionToOrders(tutorId, parameters));
 
             var result = new TutorReportDto
             {
@@ -54,8 +54,8 @@ namespace TutoringSystem.Application.Services
 
         public async Task<StudentSummaryDto> GetStudentSummaryAsync(long studentId, ReportParameters parameters)
         {
-            var student = await studentRepository.GetStudentByIdAsync(studentId);
-            var reservations = await reservationRepository.GetReservationsAsync(GetExpressionToStudentReservations(studentId, parameters));
+            var student = await studentRepository.GetStudentAsync(s => s.Id.Equals(studentId));
+            var reservations = await reservationRepository.GetReservationsCollectionAsync(GetExpressionToStudentReservations(studentId, parameters));
 
             return new StudentSummaryDto
             {
@@ -67,8 +67,8 @@ namespace TutoringSystem.Application.Services
 
         public async Task<SubjectReportDto> GetSubjectReportAsync(long subjectId, ReportParameters parameters)
         {
-            var subject = await subjectRepository.GetSubjectByIdAsync(subjectId);
-            var reservations = await reservationRepository.GetReservationsAsync(GetExpressionToSubjectReservations(subjectId, parameters));
+            var subject = await subjectRepository.GetSubjectAsync(s => s.Id.Equals(subjectId));
+            var reservations = await reservationRepository.GetReservationsCollectionAsync(GetExpressionToSubjectReservations(subjectId, parameters));
 
             return new SubjectReportDto
             {
@@ -80,7 +80,7 @@ namespace TutoringSystem.Application.Services
 
         public async Task<SubjectCategoryReportDto> GetSubjectCategoryReportAsync(long tutorId, ReportSubjectCategoryParameters parameters)
         {
-            var reservations = await reservationRepository.GetReservationsAsync(GetExpressionToSubjectCategoryReservations(tutorId, parameters));
+            var reservations = await reservationRepository.GetReservationsCollectionAsync(GetExpressionToSubjectCategoryReservations(tutorId, parameters));
 
             return new SubjectCategoryReportDto
             {
@@ -92,7 +92,7 @@ namespace TutoringSystem.Application.Services
 
         public async Task<PlaceReportDto> GetPlaceReportAsync(long tutorId, ReportPlaceParameters parameters)
         {
-            var reservations = await reservationRepository.GetReservationsAsync(GetExpressionToPlaceReservations(tutorId, parameters));
+            var reservations = await reservationRepository.GetReservationsCollectionAsync(GetExpressionToPlaceReservations(tutorId, parameters));
 
             return new PlaceReportDto
             {

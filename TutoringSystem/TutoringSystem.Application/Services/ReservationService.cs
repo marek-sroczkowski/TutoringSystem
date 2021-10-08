@@ -42,9 +42,9 @@ namespace TutoringSystem.Application.Services
 
             var reservation = mapper.Map<Reservation>(newReservation);
             reservation.StudentId = studentId;
-            reservation.Cost = (await studentRepository.GetStudentByIdAsync(studentId)).HourlRate * (newReservation.Duration / 60.0);
-            bool created = false;
+            reservation.Cost = (await studentRepository.GetStudentAsync(s => s.Id.Equals(studentId))).HourlRate * (newReservation.Duration / 60.0);
 
+            bool created = false;
             if (await UpdateAvailabilityStudentAsync(newReservation))
                 created = await reservationRepository.AddReservationAsync(reservation);
 
@@ -63,7 +63,7 @@ namespace TutoringSystem.Application.Services
             reservation.TutorId = tutorId;
             reservation.Cost = newReservation.Cost.HasValue ?
                 newReservation.Cost.Value :
-                (await studentRepository.GetStudentByIdAsync(newReservation.StudentId)).HourlRate * (newReservation.Duration / 60.0);
+                (await studentRepository.GetStudentAsync(s => s.Id.Equals(newReservation.StudentId))).HourlRate * (newReservation.Duration / 60.0);
             bool created = false;
             if (await UpdateAvailabilityTutorAsync(tutorId, newReservation))
                 created = await reservationRepository.AddReservationAsync(reservation);
@@ -76,14 +76,14 @@ namespace TutoringSystem.Application.Services
 
         public async Task<bool> DeleteReservationAsync(long reservationId)
         {
-            var reservation = await reservationRepository.GetReservationByIdAsync(reservationId);
+            var reservation = await reservationRepository.GetReservationAsync(r => r.Id.Equals(reservationId));
 
             return await reservationRepository.DeleteReservationAsync(reservation);
         }
 
         public async Task<ReservationDetailsDto> GetReservationByIdAsync(long reservationId)
         {
-            var reservation = await reservationRepository.GetReservationByIdAsync(reservationId);
+            var reservation = await reservationRepository.GetReservationAsync(r => r.Id.Equals(reservationId));
 
             return mapper.Map<ReservationDetailsDto>(reservation);
         }
@@ -94,7 +94,7 @@ namespace TutoringSystem.Application.Services
             FilterByStartDate(ref expression, parameters.StartDate);
             FilterByEndDate(ref expression, parameters.EndDate);
             FilterByPlace(ref expression, parameters.Place);
-            var resevations = await reservationRepository.GetReservationsAsync(expression);
+            var resevations = await reservationRepository.GetReservationsCollectionAsync(expression);
             var reservationDtos = mapper.Map<ICollection<ReservationDto>>(resevations);
 
             return PagedList<ReservationDto>.ToPagedList(reservationDtos, parameters.PageNumber, parameters.PageSize);
@@ -106,7 +106,7 @@ namespace TutoringSystem.Application.Services
             FilterByStartDate(ref expression, parameters.StartDate);
             FilterByEndDate(ref expression, parameters.EndDate);
             FilterByPlace(ref expression, parameters.Place);
-            var resevations = await reservationRepository.GetReservationsAsync(expression);
+            var resevations = await reservationRepository.GetReservationsCollectionAsync(expression);
             var reservationDtos = mapper.Map<ICollection<ReservationDto>>(resevations);
 
             return PagedList<ReservationDto>.ToPagedList(reservationDtos, parameters.PageNumber, parameters.PageSize);
@@ -117,7 +117,7 @@ namespace TutoringSystem.Application.Services
             if (!(await ValidateUpdatedTutorReservationAsync(updatedReservation)))
                 return false;
 
-            var existingReservation = await reservationRepository.GetReservationByIdAsync(updatedReservation.Id);
+            var existingReservation = await reservationRepository.GetReservationAsync(r => r.Id.Equals(updatedReservation.Id));
             var reservation = mapper.Map(updatedReservation, existingReservation);
 
             return await reservationRepository.UpdateReservationAsync(reservation);
@@ -128,7 +128,7 @@ namespace TutoringSystem.Application.Services
             if (!(await ValidateUpdatedStudentReservationAsync(updatedReservation)))
                 return false;
 
-            var existingReservation = await reservationRepository.GetReservationByIdAsync(updatedReservation.Id);
+            var existingReservation = await reservationRepository.GetReservationAsync(r => r.Id.Equals(updatedReservation.Id));
             var reservation = mapper.Map(updatedReservation, existingReservation);
 
             return await reservationRepository.UpdateReservationAsync(reservation);
@@ -163,7 +163,7 @@ namespace TutoringSystem.Application.Services
             if (reservation.StartTime.AddMinutes(30) < DateTime.Now)
                 return false;
 
-            var interval = await intervalRepository.GetIntervalByIdAsync(reservation.IntervalId);
+            var interval = await intervalRepository.GetIntervalAsync(i => i.Id.Equals(reservation.IntervalId));
             if (interval is null)
                 return false;
             else if (reservation.StartTime < interval.StartTime || reservation.StartTime.AddMinutes(reservation.Duration) > interval.EndTime)
@@ -174,7 +174,7 @@ namespace TutoringSystem.Application.Services
 
         private async Task<bool> ValidateNewTutorReservationAsync(long tutorId, NewTutorReservationDto reservation)
         {
-            var reservations = await reservationRepository.GetReservationsAsync(r => r.TutorId.Equals(tutorId) && r.StartTime.Date.Equals(reservation.StartTime.Date));
+            var reservations = await reservationRepository.GetReservationsCollectionAsync(r => r.TutorId.Equals(tutorId) && r.StartTime.Date.Equals(reservation.StartTime.Date));
             if (reservation is null)
                 return true;
 
@@ -202,7 +202,7 @@ namespace TutoringSystem.Application.Services
 
         private async Task<bool> UpdateAvailabilityStudentAsync(NewStudentReservationDto reservation)
         {
-            var interval = await intervalRepository.GetIntervalByIdAsync(reservation.IntervalId);
+            var interval = await intervalRepository.GetIntervalAsync(i => i.Id.Equals(reservation.IntervalId));
             var availability = interval.Availability;
 
             if (interval.StartTime == reservation.StartTime)
@@ -234,7 +234,7 @@ namespace TutoringSystem.Application.Services
 
         private async Task<bool> UpdateAvailabilityTutorAsync(long tutorId, NewTutorReservationDto reservation)
         {
-            var availability = await availabilityRepository.GetAvailabilityByTutorIdAndDateAsync(tutorId, reservation.StartTime);
+            var availability = await availabilityRepository.GetAvailabilityAsync(a => a.TutorId.Equals(tutorId) && a.Date.Date.Equals(reservation.StartTime.Date));
 
             for (int i = 0; i<availability.Intervals.Count; i++)
             {

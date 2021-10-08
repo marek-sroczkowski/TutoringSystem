@@ -9,8 +9,8 @@ namespace TutoringSystem.Domain.Repositories
     public interface ITutorRepository
     {
         Task<bool> AddTutorAsync(Tutor tutor);
-        Task<Tutor> GetTutorByIdAsync(long tutorId, bool isActiv = true);
         Task<bool> UpdateTutorAsync(Tutor tutor);
-        Task<IEnumerable<Tutor>> GetTutorsAsync(Expression<Func<Tutor, bool>> expression, bool? isActiv = true);
+        Task<Tutor> GetTutorAsync(Expression<Func<Tutor, bool>> expression, bool? isActiv = true);
+        Task<IEnumerable<Tutor>> GetTutorsCollectionAsync(Expression<Func<Tutor, bool>> expression, bool? isActiv = true);
     }
 }

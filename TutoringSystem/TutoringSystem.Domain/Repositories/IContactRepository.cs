@@ -9,10 +9,9 @@ namespace TutoringSystem.Domain.Repositories
     public interface IContactRepository
     {
         Task<bool> AddContactAsync(Contact contact);
-        Task<Contact> GetContactByIdAsync(long contactId);
-        Task<Contact> GetContactByUserIdAsync(long userId);
         Task<bool> UpdateContactAsync(Contact updatedContact);
         Task<bool> DeleteContactAsync(Contact contact);
-        Task<IEnumerable<Contact>> GetContactsAsync(Expression<Func<Contact, bool>> expression);
+        Task<Contact> GetContactAsync(Expression<Func<Contact, bool>> expression);
+        Task<IEnumerable<Contact>> GetContactsCollectionAsync(Expression<Func<Contact, bool>> expression);
     }
 }

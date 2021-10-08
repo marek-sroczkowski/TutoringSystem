@@ -8,7 +8,7 @@ namespace TutoringSystem.Domain.Repositories
 {
     public interface IIntervalRepository
     {
-        Task<Interval> GetIntervalByIdAsync(long intervalId);
-        Task<IEnumerable<Interval>> GetIntervalsAsync(Expression<Func<Interval, bool>> expression);
+        Task<Interval> GetIntervalAsync(Expression<Func<Interval, bool>> expression);
+        Task<IEnumerable<Interval>> GetIntervalsCollectionAsync(Expression<Func<Interval, bool>> expression);
     }
 }
