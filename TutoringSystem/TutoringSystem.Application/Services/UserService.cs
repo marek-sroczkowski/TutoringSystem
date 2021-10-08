@@ -77,16 +77,6 @@ namespace TutoringSystem.Application.Services
             return await userRepository.DeleteUserAsync(user);
         }
 
-        public async Task<bool> ActivateUserAsync(long userId)
-        {
-            var user = await userRepository.GetUserByIdAsync(userId, false);
-            if (user is null)
-                return false;
-            user.IsActiv = true;
-
-            return await userRepository.UpdateUser(user);
-        }
-
         public async Task<ICollection<WrongPasswordStatus>> ChangePasswordAsync(long userId, PasswordDto passwordModel)
         {
             var user = await userRepository.GetUserByIdAsync(userId);

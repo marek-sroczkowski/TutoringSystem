@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
+using TutoringSystem.Application.Helpers;
 using TutoringSystem.Domain.Entities;
 using TutoringSystem.Domain.Repositories;
 using TutoringSystem.Infrastructure.Data;
@@ -38,11 +39,15 @@ namespace TutoringSystem.Infrastructure.Repositories
             return order;
         }
 
-        public async Task<IEnumerable<AdditionalOrder>> GetAdditionalOrdersAsync(Expression<Func<AdditionalOrder, bool>> expression)
+        public async Task<IEnumerable<AdditionalOrder>> GetAdditionalOrdersAsync(Expression<Func<AdditionalOrder, bool>> expression, bool? isActiv = true)
         {
-            var orders = FindByCondition(expression);
+            if (isActiv.HasValue)
+                ExpressionMerger.MergeExpression(ref expression, s => s.IsActiv.Equals(isActiv.Value));
 
-            return await orders.ToListAsync();
+            var orders = await FindByCondition(expression)
+                .ToListAsync();
+
+            return orders;
         }
 
         public async Task<bool> UpdateAdditionalOrderAsync(AdditionalOrder updatedOrder)

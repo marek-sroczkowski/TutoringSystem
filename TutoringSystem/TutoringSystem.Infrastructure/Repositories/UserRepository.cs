@@ -19,7 +19,9 @@ namespace TutoringSystem.Infrastructure.Repositories
 
         public async Task<bool> DeleteUserAsync(User user)
         {
-            user.Contact.PhoneNumbers.ToList().ForEach(p => p.IsActiv = false);
+            DeactivatePhones(user);
+            await DeactivateOrdersAsync(user.Id);
+            await DeactivateSubjectsAsync(user.Id);
             user.IsActiv = false;
             Update(user);
 
@@ -60,6 +62,29 @@ namespace TutoringSystem.Infrastructure.Repositories
             Update(user);
 
             return await SaveChangedAsync();
+        }
+
+        private async Task DeactivateSubjectsAsync(long userId)
+        {
+            await DbContext.Subjects.ForEachAsync(s =>
+            {
+                if (s.TutorId.Equals(userId))
+                    s.IsActiv = false;
+            });
+        }
+
+        private async Task DeactivateOrdersAsync(long userId)
+        {
+            await DbContext.AdditionalOrders.ForEachAsync(o =>
+            {
+                if (o.TutorId.Equals(userId))
+                    o.IsActiv = false;
+            });
+        }
+
+        private void DeactivatePhones(User user)
+        {
+            user.Contact.PhoneNumbers.ToList().ForEach(p => p.IsActiv = false);
         }
     }
 }

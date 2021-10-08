@@ -13,6 +13,7 @@ namespace TutoringSystem.Domain.Entities
         public double Cost { get; set; }
         public bool IsPaid { get; set; }
         public AdditionalOrderStatus Status { get; set; }
+        public bool IsActiv { get; set; }
 
         public long TutorId { get; set; }
         public virtual Tutor Tutor { get; set; }

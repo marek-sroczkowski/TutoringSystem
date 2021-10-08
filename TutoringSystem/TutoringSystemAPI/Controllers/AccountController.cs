@@ -38,7 +38,7 @@ namespace TutoringSystem.API.Controllers
 
         [SwaggerOperation(Summary = "Creates a new student")]
         [HttpPost("register/student")]
-        [Authorize(Roles = "Admin,Tutor")]
+        [Authorize(Roles = "Tutor")]
         public async Task<ActionResult> RegisterStudent([FromBody] RegisterStudentDto model)
         {
             var created = await userService.RegisterStudentAsync(model);
@@ -98,19 +98,6 @@ namespace TutoringSystem.API.Controllers
 
             if (!deleted)
                 return BadRequest("Account could be not deleted");
-
-            return NoContent();
-        }
-
-        [SwaggerOperation(Summary = "Activates the account of the specific user")]
-        [HttpGet("activate/{userId}")]
-        [Authorize(Roles = "Tutor")]
-        public async Task<ActionResult> ActivateAccount(long userId)
-        {
-            var activated = await userService.ActivateUserAsync(userId);
-
-            if (!activated)
-                return BadRequest("Account could be not activate");
 
             return NoContent();
         }

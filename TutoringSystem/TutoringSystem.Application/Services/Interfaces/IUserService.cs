@@ -12,7 +12,6 @@ namespace TutoringSystem.Application.Services.Interfaces
         Task<bool> RegisterStudentAsync(RegisterStudentDto student);
         Task<bool> RegisterTutorAsync(RegisterTutorDto tutor);
         Task<bool> DeactivateUserAsync(long userId);
-        Task<bool> ActivateUserAsync(long userId);
         Task<Role> GetUserRoleAsync(long userId);
         Task<ICollection<WrongPasswordStatus>> ChangePasswordAsync(long userId, PasswordDto passwordModel);
     }

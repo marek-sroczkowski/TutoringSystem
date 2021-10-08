@@ -12,6 +12,6 @@ namespace TutoringSystem.Domain.Repositories
         Task<bool> AddAdditionalOrderAsync(AdditionalOrder order);
         Task<bool> UpdateAdditionalOrderAsync(AdditionalOrder updatedOrder);
         Task<bool> DeleteAdditionalOrderAsync(AdditionalOrder order);
-        Task<IEnumerable<AdditionalOrder>> GetAdditionalOrdersAsync(Expression<Func<AdditionalOrder, bool>> expression);
+        Task<IEnumerable<AdditionalOrder>> GetAdditionalOrdersAsync(Expression<Func<AdditionalOrder, bool>> expression, bool? isActiv = true);
     }
 }
