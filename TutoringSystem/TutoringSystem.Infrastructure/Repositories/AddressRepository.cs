@@ -1,5 +1,9 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using System;
+using System.Collections.Generic;
+using System.Linq.Expressions;
 using System.Threading.Tasks;
+using TutoringSystem.Application.Helpers;
 using TutoringSystem.Domain.Entities;
 using TutoringSystem.Domain.Repositories;
 using TutoringSystem.Infrastructure.Data;
@@ -42,6 +46,15 @@ namespace TutoringSystem.Infrastructure.Repositories
                 .FirstOrDefaultAsync(c => c.UserId.Equals(userId));
 
             return address;
+        }
+
+        public async Task<IEnumerable<Address>> GetAddressesAsync(Expression<Func<Address, bool>> expression)
+        {
+            ExpressionMerger.MergeExpression(ref expression, a => a.User.IsActiv);
+            var addresses = FindByCondition(expression)
+                .Include(a => a.User);
+
+            return await addresses.ToListAsync();
         }
 
         public async Task<bool> UpdateAddressAsync(Address updatedAddress)

@@ -1,7 +1,6 @@
 ﻿using AutoMapper;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
 using TutoringSystem.Application.Dtos.AdditionalOrderDtos;
@@ -69,7 +68,7 @@ namespace TutoringSystem.Application.Services
             FilterByStartDeadline(ref expression, parameters.DeadlineStart);
             FilterByEndDeadline(ref expression, parameters.DeadlineEnd);
 
-            var orders = await additionalOrderRepository.GetAdditionalOrdersAsync(o => o.TutorId.Equals(tutorId) && o.Status.Equals(parameters.Status.Value) && o.Deadline >= parameters.DeadlineStart.Value && o.Deadline <= parameters.DeadlineEnd.Value);
+            var orders = await additionalOrderRepository.GetAdditionalOrdersAsync(expression);
             var orderDtos = mapper.Map<ICollection<OrderDto>>(orders);
 
             return PagedList<OrderDto>.ToPagedList(orderDtos, parameters.PageNumber, parameters.PageSize);
@@ -88,7 +87,7 @@ namespace TutoringSystem.Application.Services
             if (!status.HasValue)
                 return;
 
-            AddExpression(ref expression, o => o.Status.Equals(status.Value));
+            ExpressionMerger.MergeExpression(ref expression, o => o.Status.Equals(status.Value));
         }
 
         private void FilterByPaid(ref Expression<Func<AdditionalOrder, bool>> expression, bool? isPaid)
@@ -96,7 +95,7 @@ namespace TutoringSystem.Application.Services
             if (!isPaid.HasValue)
                 return;
 
-            AddExpression(ref expression, o => o.IsPaid.Equals(isPaid.Value));
+            ExpressionMerger.MergeExpression(ref expression, o => o.IsPaid.Equals(isPaid.Value));
         }
 
         private void FilterByStartReceiptDate(ref Expression<Func<AdditionalOrder, bool>> expression, DateTime? startDate)
@@ -104,7 +103,7 @@ namespace TutoringSystem.Application.Services
             if (!startDate.HasValue)
                 return;
 
-            AddExpression(ref expression, o => o.ReceiptDate >= startDate.Value);
+            ExpressionMerger.MergeExpression(ref expression, o => o.ReceiptDate >= startDate.Value);
         }
 
         private void FilterByEndReceiptDate(ref Expression<Func<AdditionalOrder, bool>> expression, DateTime? endDate)
@@ -112,7 +111,7 @@ namespace TutoringSystem.Application.Services
             if (!endDate.HasValue)
                 return;
 
-            AddExpression(ref expression, o => o.ReceiptDate <= endDate.Value);
+            ExpressionMerger.MergeExpression(ref expression, o => o.ReceiptDate <= endDate.Value);
         }
 
         private void FilterByStartDeadline(ref Expression<Func<AdditionalOrder, bool>> expression, DateTime? startDate)
@@ -120,7 +119,7 @@ namespace TutoringSystem.Application.Services
             if (!startDate.HasValue)
                 return;
 
-            AddExpression(ref expression, o => o.Deadline >= startDate.Value);
+            ExpressionMerger.MergeExpression(ref expression, o => o.Deadline >= startDate.Value);
         }
 
         private void FilterByEndDeadline(ref Expression<Func<AdditionalOrder, bool>> expression, DateTime? startDate)
@@ -128,15 +127,7 @@ namespace TutoringSystem.Application.Services
             if (!startDate.HasValue)
                 return;
 
-            AddExpression(ref expression, o => o.Deadline <= startDate.Value);
-        }
-
-        private void AddExpression(ref Expression<Func<AdditionalOrder, bool>> expression, Expression<Func<AdditionalOrder, bool>> newExpression)
-        {
-            var visitor = new ParameterUpdateVisitor(newExpression.Parameters.First(), expression.Parameters.First());
-            newExpression = visitor.Visit(newExpression) as Expression<Func<AdditionalOrder, bool>>;
-            var binExp = Expression.And(expression.Body, newExpression.Body);
-            expression = Expression.Lambda<Func<AdditionalOrder, bool>>(binExp, newExpression.Parameters);
+            ExpressionMerger.MergeExpression(ref expression, o => o.Deadline <= startDate.Value);
         }
     }
 }

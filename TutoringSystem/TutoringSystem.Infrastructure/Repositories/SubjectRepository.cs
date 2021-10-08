@@ -1,6 +1,9 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using System;
 using System.Collections.Generic;
+using System.Linq.Expressions;
 using System.Threading.Tasks;
+using TutoringSystem.Application.Helpers;
 using TutoringSystem.Domain.Entities;
 using TutoringSystem.Domain.Repositories;
 using TutoringSystem.Infrastructure.Data;
@@ -37,9 +40,12 @@ namespace TutoringSystem.Infrastructure.Repositories
             return subject;
         }
 
-        public async Task<ICollection<Subject>> GetSubjectsByTutorAsync(long tutorId, bool isActiv = true)
+        public async Task<IEnumerable<Subject>> GetSubjectsAsync(Expression<Func<Subject, bool>> expression, bool? isActiv = true)
         {
-            var subjects = await FindByCondition(s => s.IsActiv.Equals(isActiv) && s.TutorId.Equals(tutorId))
+            if (isActiv.HasValue)
+                ExpressionMerger.MergeExpression(ref expression, s => s.IsActiv.Equals(isActiv.Value));
+
+            var subjects = await FindByCondition(expression)
                 .ToListAsync();
 
             return subjects;

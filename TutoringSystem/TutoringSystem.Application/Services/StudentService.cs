@@ -43,13 +43,6 @@ namespace TutoringSystem.Application.Services
             return mapper.Map<StudentDetailsDto>(student);
         }
 
-        public async Task<ICollection<StudentDto>> GetStudentsAsync()
-        {
-            var students = await studentRepository.GetStudentsAsync();
-
-            return mapper.Map<ICollection<StudentDto>>(students);
-        }
-
         public async Task<bool> RemoveTutorAsync(long studentId, long tutorId)
         {
             var student = await studentRepository.GetStudentByIdAsync(studentId);

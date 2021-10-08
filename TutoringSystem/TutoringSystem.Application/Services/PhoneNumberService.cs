@@ -1,6 +1,5 @@
 ﻿using AutoMapper;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using TutoringSystem.Application.Dtos.PhoneNumberDtos;
 using TutoringSystem.Application.Services.Interfaces;
@@ -25,8 +24,8 @@ namespace TutoringSystem.Application.Services
         public async Task<bool> AddPhoneNumbersAsync(long userId, ICollection<NewPhoneNumberDto> phoneNumbers)
         {
             var contact = await contactRepository.GetContactByUserIdAsync(userId);
-            var phones = mapper.Map<ICollection<PhoneNumber>>(phoneNumbers);
-            phones.ToList().ForEach(p => p.ContactId = contact.Id);
+            var phones = mapper.Map<List<PhoneNumber>>(phoneNumbers);
+            phones.ForEach(p => p.ContactId = contact.Id);
 
             return await phoneNumberRepository.AddPhoneNumbersAsync(phones);
         }

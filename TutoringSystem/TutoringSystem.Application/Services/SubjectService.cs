@@ -1,6 +1,5 @@
 ﻿using AutoMapper;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using TutoringSystem.Application.Dtos.SubjectDtos;
 using TutoringSystem.Application.Services.Interfaces;
@@ -20,15 +19,14 @@ namespace TutoringSystem.Application.Services
             this.mapper = mapper;
         }
 
-        public async Task<bool> ActivateSubjectAsync(long tutorId, long subjectId)
+        public async Task<bool> ActivateSubjectAsync(long subjectId)
         {
-            var inactiveSubject = await subjectRepository.GetSubjectsByTutorAsync(tutorId, false);
-            var subject = inactiveSubject?.FirstOrDefault(s => s.Id.Equals(subjectId));
-            if (subject is null)
+            var inactiveSubject = await subjectRepository.GetSubjectByIdAsync(subjectId);
+            if (inactiveSubject is null)
                 return false;
-            subject.IsActiv = true;
+            inactiveSubject.IsActiv = true;
 
-            return await subjectRepository.UpdateSubjectAsync(subject);
+            return await subjectRepository.UpdateSubjectAsync(inactiveSubject);
         }
 
         public async Task<SubjectDto> AddSubjectAsync(long tutorId, NewSubjectDto newSubjectModel)
@@ -57,9 +55,9 @@ namespace TutoringSystem.Application.Services
             return mapper.Map<SubjectDetailsDto>(subject);
         }
 
-        public async Task<ICollection<SubjectDto>> GetTutorSubjectsAsync(long tutorId, bool isActiv = true)
+        public async Task<ICollection<SubjectDto>> GetTutorSubjectsAsync(long tutorId)
         {
-            var subjects = await subjectRepository.GetSubjectsByTutorAsync(tutorId, isActiv);
+            var subjects = await subjectRepository.GetSubjectsAsync(s => s.TutorId.Equals(tutorId));
 
             return mapper.Map<ICollection<SubjectDto>>(subjects);
         }

@@ -1,6 +1,10 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using System;
+using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Threading.Tasks;
+using TutoringSystem.Application.Helpers;
 using TutoringSystem.Domain.Entities;
 using TutoringSystem.Domain.Repositories;
 using TutoringSystem.Infrastructure.Data;
@@ -45,6 +49,15 @@ namespace TutoringSystem.Infrastructure.Repositories
                 .FirstOrDefaultAsync(c => c.UserId.Equals(userId));
 
             return contact;
+        }
+
+        public async Task<IEnumerable<Contact>> GetContactsAsync(Expression<Func<Contact, bool>> expression)
+        {
+            ExpressionMerger.MergeExpression(ref expression, c => c.User.IsActiv);
+            var contacts = FindByCondition(expression)
+                .Include(c => c.User);
+
+            return await contacts.ToListAsync();
         }
 
         public async Task<bool> UpdateContactAsync(Contact updatedContact)

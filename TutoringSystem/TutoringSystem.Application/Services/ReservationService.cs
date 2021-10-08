@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Threading.Tasks;
 using TutoringSystem.Application.Dtos.ReservationDtos;
 using TutoringSystem.Application.Helpers;
@@ -89,12 +90,11 @@ namespace TutoringSystem.Application.Services
 
         public async Task<PagedList<ReservationDto>> GetReservationsByStudentAsync(long studentId, ReservationParameters parameters)
         {
-            var resevations = await reservationRepository.GetReservationsByStudentIdAsync(studentId);
-
-            FilterByStartDate(ref resevations, parameters.StartDate);
-            FilterByEndDate(ref resevations, parameters.EndDate);
-            FilterByPlace(ref resevations, parameters.Place);
-
+            Expression<Func<Reservation, bool>> expression = r => r.StudentId.Equals(studentId);
+            FilterByStartDate(ref expression, parameters.StartDate);
+            FilterByEndDate(ref expression, parameters.EndDate);
+            FilterByPlace(ref expression, parameters.Place);
+            var resevations = await reservationRepository.GetReservationsAsync(expression);
             var reservationDtos = mapper.Map<ICollection<ReservationDto>>(resevations);
 
             return PagedList<ReservationDto>.ToPagedList(reservationDtos, parameters.PageNumber, parameters.PageSize);
@@ -102,12 +102,11 @@ namespace TutoringSystem.Application.Services
 
         public async Task<PagedList<ReservationDto>> GetReservationsByTutorAsync(long tutorId, ReservationParameters parameters)
         {
-            var resevations = await reservationRepository.GetReservationsByTutorIdAsync(tutorId);
-
-            FilterByStartDate(ref resevations, parameters.StartDate);
-            FilterByEndDate(ref resevations, parameters.EndDate);
-            FilterByPlace(ref resevations, parameters.Place);
-
+            Expression<Func<Reservation, bool>> expression = r => r.TutorId.Equals(tutorId);
+            FilterByStartDate(ref expression, parameters.StartDate);
+            FilterByEndDate(ref expression, parameters.EndDate);
+            FilterByPlace(ref expression, parameters.Place);
+            var resevations = await reservationRepository.GetReservationsAsync(expression);
             var reservationDtos = mapper.Map<ICollection<ReservationDto>>(resevations);
 
             return PagedList<ReservationDto>.ToPagedList(reservationDtos, parameters.PageNumber, parameters.PageSize);
@@ -135,28 +134,28 @@ namespace TutoringSystem.Application.Services
             return await reservationRepository.UpdateReservationAsync(reservation);
         }
 
-        private void FilterByStartDate(ref IEnumerable<Reservation> reservations, DateTime? startDate)
+        private void FilterByStartDate(ref Expression<Func<Reservation, bool>> expression, DateTime? startDate)
         {
             if (!startDate.HasValue)
                 return;
 
-            reservations = reservations.Where(r => r.StartTime >= startDate.Value);
+            ExpressionMerger.MergeExpression(ref expression, r => r.StartTime >= startDate.Value);
         }
 
-        private void FilterByEndDate(ref IEnumerable<Reservation> reservations, DateTime? endDate)
+        private void FilterByEndDate(ref Expression<Func<Reservation, bool>> expression, DateTime? endDate)
         {
             if (!endDate.HasValue)
                 return;
 
-            reservations = reservations.Where(r => r.StartTime <= endDate.Value);
+            ExpressionMerger.MergeExpression(ref expression, r => r.StartTime <= endDate.Value);
         }
 
-        private void FilterByPlace(ref IEnumerable<Reservation> reservations, ReservationPlace? place)
+        private void FilterByPlace(ref Expression<Func<Reservation, bool>> expression, ReservationPlace? place)
         {
             if (!place.HasValue)
                 return;
 
-            reservations = reservations.Where(r => r.Place.Equals(place.Value));
+            ExpressionMerger.MergeExpression(ref expression, r => r.Place.Equals(place.Value));
         }
 
         private async Task<bool> ValidateNewStudentReservationAsync(NewStudentReservationDto reservation)
@@ -175,7 +174,7 @@ namespace TutoringSystem.Application.Services
 
         private async Task<bool> ValidateNewTutorReservationAsync(long tutorId, NewTutorReservationDto reservation)
         {
-            var reservations = await reservationRepository.GetReservationsByTutorIdAndDateAsync(tutorId, reservation.StartTime);
+            var reservations = await reservationRepository.GetReservationsAsync(r => r.TutorId.Equals(tutorId) && r.StartTime.Date.Equals(reservation.StartTime.Date));
             if (reservation is null)
                 return true;
 

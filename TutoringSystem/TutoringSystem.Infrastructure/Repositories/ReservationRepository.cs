@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
+using System.Linq.Expressions;
 using System.Threading.Tasks;
 using TutoringSystem.Domain.Entities;
 using TutoringSystem.Domain.Repositories;
@@ -39,34 +40,15 @@ namespace TutoringSystem.Infrastructure.Repositories
             return reservation;
         }
 
-        public async Task<IEnumerable<Reservation>> GetReservationsByStudentIdAsync(long studentId)
+        public async Task<IEnumerable<Reservation>> GetReservationsAsync(Expression<Func<Reservation, bool>> expression)
         {
-            var reservations = FindByCondition(r => r.StudentId.Equals(studentId))
+            var reservations = await FindByCondition(expression)
                 .Include(r => r.Student)
                 .Include(r => r.Subject)
-                .Include(r => r.Tutor);
+                .Include(r => r.Tutor)
+                .ToListAsync();
 
-            return await reservations.ToListAsync();
-        }
-
-        public async Task<IEnumerable<Reservation>> GetReservationsByTutorIdAsync(long tutorId)
-        {
-            var reservations = FindByCondition(r => r.TutorId.Equals(tutorId))
-                .Include(r => r.Student)
-                .Include(r => r.Subject)
-                .Include(r => r.Tutor);
-
-            return await reservations.ToListAsync();
-        }
-
-        public async Task<IEnumerable<Reservation>> GetReservationsByTutorIdAndDateAsync(long tutorId, DateTime date)
-        {
-            var reservations = FindByCondition(r => r.TutorId.Equals(tutorId) && r.StartTime.Date.Equals(date.Date))
-                .Include(r => r.Student)
-                .Include(r => r.Subject)
-                .Include(r => r.Tutor);
-
-            return await reservations.ToListAsync();
+            return reservations;
         }
 
         public async Task<bool> UpdateReservationAsync(Reservation updatedReservation)

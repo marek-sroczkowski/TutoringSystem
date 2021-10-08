@@ -1,4 +1,7 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq.Expressions;
+using System.Threading.Tasks;
 using TutoringSystem.Domain.Entities;
 
 namespace TutoringSystem.Domain.Repositories
@@ -10,5 +13,6 @@ namespace TutoringSystem.Domain.Repositories
         Task<Contact> GetContactByUserIdAsync(long userId);
         Task<bool> UpdateContactAsync(Contact updatedContact);
         Task<bool> DeleteContactAsync(Contact contact);
+        Task<IEnumerable<Contact>> GetContactsAsync(Expression<Func<Contact, bool>> expression);
     }
 }

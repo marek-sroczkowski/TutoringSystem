@@ -1,4 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using System;
+using System.Collections.Generic;
+using System.Linq.Expressions;
 using System.Threading.Tasks;
 using TutoringSystem.Domain.Entities;
 using TutoringSystem.Domain.Repositories;
@@ -19,6 +22,13 @@ namespace TutoringSystem.Infrastructure.Repositories
                 .FirstOrDefaultAsync(i => i.Id.Equals(intervalId));
 
             return interval;
+        }
+
+        public async Task<IEnumerable<Interval>> GetIntervalsAsync(Expression<Func<Interval, bool>> expression)
+        {
+            var intervals = FindByCondition(expression);
+
+            return await intervals.ToListAsync();
         }
     }
 }

@@ -10,6 +10,6 @@ namespace TutoringSystem.Application.Services.Interfaces
         Task<TutorReportDto> GetReportByTutorAsync(long tutorId, ReportParameters parameters);
         Task<StudentSummaryDto> GetStudentSummaryAsync(long studentId, ReportParameters parameters);
         Task<SubjectCategoryReportDto> GetSubjectCategoryReportAsync(long tutorId, ReportSubjectCategoryParameters parameters);
-        Task<SubjectReportDto> GetSubjectReportAsync(long tutorId, long subjectId, ReportParameters parameters);
+        Task<SubjectReportDto> GetSubjectReportAsync(long subjectId, ReportParameters parameters);
     }
 }

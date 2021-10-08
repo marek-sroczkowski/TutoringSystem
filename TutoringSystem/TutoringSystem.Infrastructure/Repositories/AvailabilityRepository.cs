@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
+using System.Linq.Expressions;
 using System.Threading.Tasks;
 using TutoringSystem.Domain.Entities;
 using TutoringSystem.Domain.Repositories;
@@ -28,9 +29,9 @@ namespace TutoringSystem.Infrastructure.Repositories
             return await SaveChangedAsync();
         }
 
-        public async Task<IEnumerable<Availability>> GetAvailabilitiesByTutorIdAsync(long tutorId)
+        public async Task<IEnumerable<Availability>> GetAvailabilitiesAsync(Expression<Func<Availability, bool>> expression)
         {
-            var availabilities = await FindByCondition(a => a.TutorId.Equals(tutorId))
+            var availabilities = await FindByCondition(expression)
                 .Include(a => a.Intervals)
                 .Include(a => a.Tutor)
                 .ToListAsync();
@@ -56,16 +57,6 @@ namespace TutoringSystem.Infrastructure.Repositories
                .FirstOrDefaultAsync(a => a.TutorId.Equals(tutorId) && a.Date.Date.Equals(date.Date));
 
             return availability;
-        }
-
-        public async Task<IEnumerable<Availability>> GetFutureAvailabilitiesByTutorIdAsync(long tutorId)
-        {
-            var availabilities = await FindByCondition(a => a.Date > DateTime.Now && a.TutorId.Equals(tutorId))
-                .Include(a => a.Intervals)
-                .Include(a => a.Tutor)
-                .ToListAsync();
-
-            return availabilities;
         }
 
         public async Task<Availability> GetTodaysAvailabilityByTutorIdAsync(long tutorId)

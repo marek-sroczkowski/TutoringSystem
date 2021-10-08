@@ -1,7 +1,7 @@
 ﻿using AutoMapper;
 using System;
 using System.Collections.Generic;
-using System.Linq;
+using System.Linq.Expressions;
 using System.Threading.Tasks;
 using TutoringSystem.Application.Dtos.AvailabilityDtos;
 using TutoringSystem.Application.Dtos.IntervalDtos;
@@ -47,9 +47,20 @@ namespace TutoringSystem.Application.Services
 
         public async Task<PagedList<AvailabilityDto>> GetAvailabilitiesByTutorAsync(long tutorId, AvailabilityParameters parameters)
         {
-            var availabilities = await availabilityRepository.GetAvailabilitiesByTutorIdAsync(tutorId);
-            FilterByStartDate(ref availabilities, parameters.StartDate);
-            FilterByEndDate(ref availabilities, parameters.EndDate);
+            Expression<Func<Availability, bool>> expression = a => a.TutorId.Equals(tutorId);
+            FilterByStartDate(ref expression, parameters.StartDate);
+            FilterByEndDate(ref expression, parameters.EndDate);
+            var availabilities = await availabilityRepository.GetAvailabilitiesAsync(expression);
+            var availabilityDtos = mapper.Map<ICollection<AvailabilityDto>>(availabilities);
+
+            return PagedList<AvailabilityDto>.ToPagedList(availabilityDtos, parameters.PageNumber, parameters.PageSize);
+        }
+
+        public async Task<PagedList<AvailabilityDto>> GetFutureAvailabilitiesByTutorAsync(long tutorId, FutureAvailabilityParameters parameters)
+        {
+            Expression<Func<Availability, bool>> expression = a => a.TutorId.Equals(tutorId) && a.Date >= DateTime.Now;
+            FilterByEndDate(ref expression, parameters.EndDate);
+            var availabilities = await availabilityRepository.GetAvailabilitiesAsync(expression);
             var availabilityDtos = mapper.Map<ICollection<AvailabilityDto>>(availabilities);
 
             return PagedList<AvailabilityDto>.ToPagedList(availabilityDtos, parameters.PageNumber, parameters.PageSize);
@@ -60,15 +71,6 @@ namespace TutoringSystem.Application.Services
             var availability = await availabilityRepository.GetAvailabilityByIdAsync(availabilityId);
 
             return mapper.Map<AvailabilityDetailsDto>(availability);
-        }
-
-        public async Task<PagedList<AvailabilityDto>> GetFutureAvailabilitiesByTutorAsync(long tutorId, FutureAvailabilityParameters parameters)
-        {
-            var availabilities = await availabilityRepository.GetFutureAvailabilitiesByTutorIdAsync(tutorId);
-            FilterByEndDate(ref availabilities, parameters.EndDate);
-            var availabilityDtos = mapper.Map<ICollection<AvailabilityDto>>(availabilities);
-
-            return PagedList<AvailabilityDto>.ToPagedList(availabilityDtos, parameters.PageNumber, parameters.PageSize);
         }
 
         public async Task<AvailabilityDetailsDto> GetTodaysAvailabilityByTutorAsync(long tutorId)
@@ -89,20 +91,20 @@ namespace TutoringSystem.Application.Services
             return await availabilityRepository.UpdateAvailabilityAsync(availability);
         }
 
-        private void FilterByStartDate(ref IEnumerable<Availability> availabilities, DateTime? startDate)
+        private void FilterByStartDate(ref Expression<Func<Availability, bool>> expression, DateTime? startDate)
         {
             if (!startDate.HasValue)
                 return;
 
-            availabilities = availabilities.Where(r => r.Date >= startDate.Value);
+            ExpressionMerger.MergeExpression(ref expression, a => a.Date >= startDate.Value);
         }
 
-        private void FilterByEndDate(ref IEnumerable<Availability> availabilities, DateTime? endDate)
+        private void FilterByEndDate(ref Expression<Func<Availability, bool>> expression, DateTime? endDate)
         {
             if (!endDate.HasValue)
                 return;
 
-            availabilities = availabilities.Where(r => r.Date <= endDate.Value);
+            ExpressionMerger.MergeExpression(ref expression, a => a.Date <= endDate.Value);
         }
 
         private async Task<bool> ValidateNewAvailabilityAsync(NewAvailabilityDto newAvailability, long tutorId)

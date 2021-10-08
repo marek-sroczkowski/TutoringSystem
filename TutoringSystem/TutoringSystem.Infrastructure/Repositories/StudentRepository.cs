@@ -1,7 +1,10 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Threading.Tasks;
+using TutoringSystem.Application.Helpers;
 using TutoringSystem.Domain.Entities;
 using TutoringSystem.Domain.Repositories;
 using TutoringSystem.Infrastructure.Data;
@@ -21,19 +24,22 @@ namespace TutoringSystem.Infrastructure.Repositories
             return await SaveChangedAsync();
         }
 
-        public async Task<IEnumerable<Student>> GetStudentsAsync()
+        public async Task<IEnumerable<Student>> GetStudentsAsync(Expression<Func<Student, bool>> expression, bool? isActiv = true)
         {
-            var students = await FindByCondition(s => s.IsActiv)
+            if (isActiv.HasValue)
+                ExpressionMerger.MergeExpression(ref expression, s => s.IsActiv.Equals(isActiv.Value));
+
+            var students = await FindByCondition(expression)
                 .Include(s => s.Tutors)
                 .ToListAsync();
 
             return students;
         }
 
-        public async Task<Student> GetStudentByIdAsync(long studentId)
+        public async Task<Student> GetStudentByIdAsync(long studentId, bool isActiv = true)
         {
             var student = await DbContext.Students
-                .Where(s => s.IsActiv)
+                .Where(s => s.IsActiv.Equals(isActiv))
                 .Include(s => s.Tutors)
                 .FirstOrDefaultAsync(s => s.Id.Equals(studentId));
 

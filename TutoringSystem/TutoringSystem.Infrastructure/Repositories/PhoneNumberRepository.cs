@@ -1,6 +1,9 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using System;
 using System.Collections.Generic;
+using System.Linq.Expressions;
 using System.Threading.Tasks;
+using TutoringSystem.Application.Helpers;
 using TutoringSystem.Domain.Entities;
 using TutoringSystem.Domain.Repositories;
 using TutoringSystem.Infrastructure.Data;
@@ -34,6 +37,16 @@ namespace TutoringSystem.Infrastructure.Repositories
                 .FirstOrDefaultAsync(p => p.Id.Equals(phoneNumberId) && p.IsActiv.Equals(isActiv));
 
             return phone;
+        }
+
+        public async Task<IEnumerable<PhoneNumber>> GetPhoneNumbersAsync(Expression<Func<PhoneNumber, bool>> expression, bool? isActiv = true)
+        {
+            if (isActiv.HasValue)
+                ExpressionMerger.MergeExpression(ref expression, p => p.IsActiv.Equals(isActiv.Value));
+
+            var phones = FindByCondition(expression);
+
+            return await phones.ToListAsync();
         }
 
         public async Task<bool> DeletePhoneNumberAsync(PhoneNumber phoneNumber)

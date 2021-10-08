@@ -79,8 +79,7 @@ namespace TutoringSystem.Application.Services
 
         public async Task<bool> ActivateUserAsync(long userId)
         {
-            var inactiveUsers = await userRepository.GetAllUsersAsync(false);
-            var user = inactiveUsers?.FirstOrDefault(u => u.Id.Equals(userId));
+            var user = await userRepository.GetUserByIdAsync(userId, false);
             if (user is null)
                 return false;
             user.IsActiv = true;

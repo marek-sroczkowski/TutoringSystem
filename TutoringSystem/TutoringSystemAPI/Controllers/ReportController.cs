@@ -67,8 +67,7 @@ namespace TutoringSystem.API.Controllers
             if (!authorizationResult.Succeeded)
                 return Forbid();
 
-            var tutorId = User.FindFirst(c => c.Type == ClaimTypes.NameIdentifier).Value;
-            var report = await reportService.GetSubjectReportAsync(long.Parse(tutorId), subjectId, parameters);
+            var report = await reportService.GetSubjectReportAsync(subjectId, parameters);
 
             return Ok(report);
         }

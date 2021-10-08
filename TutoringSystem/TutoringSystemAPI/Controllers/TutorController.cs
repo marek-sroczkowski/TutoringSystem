@@ -34,16 +34,6 @@ namespace TutoringSystem.API.Controllers
             return Ok(students);
         }
 
-        [SwaggerOperation(Summary = "Retrieves all tutors filtered with selected parameters")]
-        [HttpGet]
-        [Authorize(Roles = "Tutor, Student")]
-        public async Task<ActionResult<List<TutorDto>>> GetTutors()
-        {
-            var tutors = await tutorService.GetTutorsAsync();
-
-            return Ok(tutors);
-        }
-
         [SwaggerOperation(Summary = "Retrieves a specific tutor by unique id")]
         [HttpGet("{tutorId}")]
         [Authorize(Roles = "Student")]
