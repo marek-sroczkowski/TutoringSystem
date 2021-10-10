@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Mvc.Filters;
 using System.Threading.Tasks;
 using TutoringSystem.Domain.Repositories;
 
-namespace TutoringSystem.API.Filters
+namespace TutoringSystem.API.Filters.TypeFilters
 {
     public class ValidateStudentExistenceAttribute : TypeFilterAttribute
     {

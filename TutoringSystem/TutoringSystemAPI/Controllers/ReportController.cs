@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
 using System.Security.Claims;
 using System.Threading.Tasks;
-using TutoringSystem.API.Filters;
+using TutoringSystem.API.Filters.TypeFilters;
 using TutoringSystem.Application.Authorization;
 using TutoringSystem.Application.Dtos.ReportDtos;
 using TutoringSystem.Application.Parameters;

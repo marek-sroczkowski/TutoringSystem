@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 using TutoringSystem.Application.Dtos.AvailabilityDtos;
 using TutoringSystem.Domain.Repositories;
 
-namespace TutoringSystem.API.Filters
+namespace TutoringSystem.API.Filters.TypeFilters
 {
     public class ValidateAvailabilityExistenceAttribute : TypeFilterAttribute
     {

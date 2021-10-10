@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 using TutoringSystem.Application.Dtos.ReservationDtos;
 using TutoringSystem.Domain.Repositories;
 
-namespace TutoringSystem.API.Filters
+namespace TutoringSystem.API.Filters.TypeFilters
 {
     public class ValidateReservationExistenceAttribute : TypeFilterAttribute
     {

@@ -5,7 +5,7 @@ using Swashbuckle.AspNetCore.Annotations;
 using System.Collections.Generic;
 using System.Security.Claims;
 using System.Threading.Tasks;
-using TutoringSystem.API.Filters;
+using TutoringSystem.API.Filters.TypeFilters;
 using TutoringSystem.Application.Authorization;
 using TutoringSystem.Application.Dtos.AvailabilityDtos;
 using TutoringSystem.Application.Parameters;

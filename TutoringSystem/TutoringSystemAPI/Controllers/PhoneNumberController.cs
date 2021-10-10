@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 using TutoringSystem.Application.Authorization;
 using TutoringSystem.Application.Dtos.PhoneNumberDtos;
 using TutoringSystem.Application.Services.Interfaces;
-using TutoringSystem.API.Filters;
+using TutoringSystem.API.Filters.TypeFilters;
 
 namespace TutoringSystem.API.Controllers
 {
