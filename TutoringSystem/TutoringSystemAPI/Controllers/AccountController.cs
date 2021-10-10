@@ -65,7 +65,7 @@ namespace TutoringSystem.API.Controllers
 
         [SwaggerOperation(Summary = "Gets role of the currently logged user")]
         [HttpGet("role")]
-        [Authorize(Roles = "Admin,Tutor,Student")]
+        [Authorize(Roles = "Tutor,Student")]
         public async Task<ActionResult<Role>> GetUserRole()
         {
             var userId = User.FindFirst(c => c.Type == ClaimTypes.NameIdentifier).Value;
@@ -76,7 +76,7 @@ namespace TutoringSystem.API.Controllers
 
         [SwaggerOperation(Summary = "Changes password of the currently logged user")]
         [HttpPost("password")]
-        [Authorize(Roles = "Admin,Tutor,Student")]
+        [Authorize(Roles = "Tutor,Student")]
         public async Task<ActionResult> ChangePassword([FromBody] PasswordDto passwordModel)
         {
             var userId = User.FindFirst(c => c.Type == ClaimTypes.NameIdentifier).Value;
@@ -90,7 +90,7 @@ namespace TutoringSystem.API.Controllers
 
         [SwaggerOperation(Summary = "Deactivates the account of the currently logged in user")]
         [HttpDelete]
-        [Authorize(Roles = "Admin,Tutor,Student")]
+        [Authorize(Roles = "Tutor,Student")]
         public async Task<ActionResult> DeactivateAccount()
         {
             var userId = User.FindFirst(c => c.Type == ClaimTypes.NameIdentifier).Value;
