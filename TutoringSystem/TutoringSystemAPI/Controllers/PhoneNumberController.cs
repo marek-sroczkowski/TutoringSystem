@@ -2,12 +2,12 @@
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
 using System.Collections.Generic;
-using System.Security.Claims;
 using System.Threading.Tasks;
 using TutoringSystem.Application.Authorization;
 using TutoringSystem.Application.Dtos.PhoneNumberDtos;
 using TutoringSystem.Application.Services.Interfaces;
 using TutoringSystem.API.Filters.TypeFilters;
+using TutoringSystem.Application.Extensions;
 
 namespace TutoringSystem.API.Controllers
 {
@@ -33,8 +33,8 @@ namespace TutoringSystem.API.Controllers
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            var userId = User.FindFirst(c => c.Type == ClaimTypes.NameIdentifier).Value;
-            var added = await phoneNumberService.AddPhoneNumbersAsync(long.Parse(userId), model);
+            var userId = User.GetUserId();
+            var added = await phoneNumberService.AddPhoneNumbersAsync(userId, model);
             if (!added)
                 return BadRequest("Phones could be not created");
 
@@ -46,8 +46,8 @@ namespace TutoringSystem.API.Controllers
         [Authorize(Roles = "Tutor, Student")]
         public async Task<ActionResult<ICollection<PhoneNumberDto>>> GetPhones()
         {
-            var userId = User.FindFirst(c => c.Type == ClaimTypes.NameIdentifier).Value;
-            var phones = await phoneNumberService.GetPhoneNumbersByUserAsync(long.Parse(userId));
+            var userId = User.GetUserId();
+            var phones = await phoneNumberService.GetPhoneNumbersByUserAsync(userId);
 
             return Ok(phones);
         }

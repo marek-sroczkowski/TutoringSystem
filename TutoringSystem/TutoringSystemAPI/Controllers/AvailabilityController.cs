@@ -3,8 +3,8 @@ using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using Swashbuckle.AspNetCore.Annotations;
 using System.Collections.Generic;
-using System.Security.Claims;
 using System.Threading.Tasks;
+using TutoringSystem.Application.Extensions;
 using TutoringSystem.API.Filters.TypeFilters;
 using TutoringSystem.Application.Authorization;
 using TutoringSystem.Application.Dtos.AvailabilityDtos;
@@ -32,8 +32,8 @@ namespace TutoringSystem.API.Controllers
         [Authorize(Roles = "Tutor")]
         public async Task<ActionResult<List<AvailabilityDto>>> GetAllAvailabilities([FromQuery] AvailabilityParameters parameters)
         {
-            var tutorId = User.FindFirst(c => c.Type == ClaimTypes.NameIdentifier).Value;
-            var availabilities = await availabilityService.GetAvailabilitiesByTutorAsync(long.Parse(tutorId), parameters);
+            var tutorId = User.GetUserId();
+            var availabilities = await availabilityService.GetAvailabilitiesByTutorAsync(tutorId, parameters);
 
             var metadata = new
             {
@@ -54,8 +54,8 @@ namespace TutoringSystem.API.Controllers
         [Authorize(Roles = "Tutor")]
         public async Task<ActionResult<List<AvailabilityDto>>> GetFutureAvailabilities([FromQuery] FutureAvailabilityParameters parameters)
         {
-            var tutorId = User.FindFirst(c => c.Type == ClaimTypes.NameIdentifier).Value;
-            var availabilities = await availabilityService.GetFutureAvailabilitiesByTutorAsync(long.Parse(tutorId), parameters);
+            var tutorId = User.GetUserId();
+            var availabilities = await availabilityService.GetFutureAvailabilitiesByTutorAsync(tutorId, parameters);
 
             var metadata = new
             {
@@ -76,8 +76,8 @@ namespace TutoringSystem.API.Controllers
         [Authorize(Roles = "Tutor")]
         public async Task<ActionResult<AvailabilityDetailsDto>> GetTodayAvailability()
         {
-            var tutorId = User.FindFirst(c => c.Type == ClaimTypes.NameIdentifier).Value;
-            var availability = await availabilityService.GetTodaysAvailabilityByTutorAsync(long.Parse(tutorId));
+            var tutorId = User.GetUserId();
+            var availability = await availabilityService.GetTodaysAvailabilityByTutorAsync(tutorId);
             if (availability is null)
                 return NotFound();
 
@@ -103,8 +103,8 @@ namespace TutoringSystem.API.Controllers
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            var tutorId = User.FindFirst(c => c.Type == ClaimTypes.NameIdentifier).Value;
-            var reservation = await availabilityService.AddAvailabilityAsync(long.Parse(tutorId), model);
+            var tutorId = User.GetUserId();
+            var reservation = await availabilityService.AddAvailabilityAsync(tutorId, model);
             if (reservation is null)
                 return BadRequest("New availability could be not added");
 

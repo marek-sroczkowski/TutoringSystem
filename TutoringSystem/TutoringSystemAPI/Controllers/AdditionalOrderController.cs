@@ -3,7 +3,6 @@ using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using Swashbuckle.AspNetCore.Annotations;
 using System.Collections.Generic;
-using System.Security.Claims;
 using System.Threading.Tasks;
 using TutoringSystem.Application.Dtos.AdditionalOrderDtos;
 using TutoringSystem.Application.Services.Interfaces;
@@ -11,6 +10,7 @@ using TutoringSystem.Application.Authorization;
 using TutoringSystem.Domain.Entities.Enums;
 using TutoringSystem.Application.Parameters;
 using TutoringSystem.API.Filters.TypeFilters;
+using TutoringSystem.Application.Extensions;
 
 namespace TutoringSystem.API.Controllers
 {
@@ -33,8 +33,8 @@ namespace TutoringSystem.API.Controllers
         [Authorize(Roles = "Tutor")]
         public async Task<ActionResult<IEnumerable<OrderDto>>> GetOrders([FromQuery] AdditionalOrderParameters parameters)
         {
-            var tutorId = User.FindFirst(c => c.Type == ClaimTypes.NameIdentifier).Value;
-            var orders = await additionalOrderService.GetAdditionalOrdersAsync(long.Parse(tutorId), parameters);
+            var tutorId = User.GetUserId();
+            var orders = await additionalOrderService.GetAdditionalOrdersAsync(tutorId, parameters);
 
             var metadata = new
             {
@@ -73,8 +73,8 @@ namespace TutoringSystem.API.Controllers
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            var tutorId = User.FindFirst(c => c.Type == ClaimTypes.NameIdentifier).Value;
-            var order = await additionalOrderService.AddAdditionalOrderAsync(long.Parse(tutorId), model);
+            var tutorId = User.GetUserId();
+            var order = await additionalOrderService.AddAdditionalOrderAsync(tutorId, model);
             if (order is null)
                 return BadRequest("New order could be not added");
 

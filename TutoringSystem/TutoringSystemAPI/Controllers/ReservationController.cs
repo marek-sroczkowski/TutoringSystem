@@ -3,13 +3,13 @@ using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using Swashbuckle.AspNetCore.Annotations;
 using System.Collections.Generic;
-using System.Security.Claims;
 using System.Threading.Tasks;
 using TutoringSystem.Application.Authorization;
 using TutoringSystem.Application.Dtos.ReservationDtos;
 using TutoringSystem.Application.Services.Interfaces;
 using TutoringSystem.Application.Parameters;
 using TutoringSystem.API.Filters.TypeFilters;
+using TutoringSystem.Application.Extensions;
 
 namespace TutoringSystem.API.Controllers
 {
@@ -32,8 +32,8 @@ namespace TutoringSystem.API.Controllers
         [Authorize(Roles = "Student")]
         public async Task<ActionResult<List<ReservationDto>>> GetStudentReservations([FromQuery] ReservationParameters parameters)
         {
-            var studentId = User.FindFirst(c => c.Type == ClaimTypes.NameIdentifier).Value;
-            var resevations = await reservationService.GetReservationsByStudentAsync(long.Parse(studentId), parameters);
+            var studentId = User.GetUserId();
+            var resevations = await reservationService.GetReservationsByStudentAsync(studentId, parameters);
 
             var metadata = new
             {
@@ -54,8 +54,8 @@ namespace TutoringSystem.API.Controllers
         [Authorize(Roles = "Tutor")]
         public async Task<ActionResult<List<ReservationDto>>> GetTutorReservations([FromQuery] ReservationParameters parameters)
         {
-            var tutorId = User.FindFirst(c => c.Type == ClaimTypes.NameIdentifier).Value;
-            var resevations = await reservationService.GetReservationsByTutorAsync(long.Parse(tutorId), parameters);
+            var tutorId = User.GetUserId();
+            var resevations = await reservationService.GetReservationsByTutorAsync(tutorId, parameters);
 
             var metadata = new
             {
@@ -94,8 +94,8 @@ namespace TutoringSystem.API.Controllers
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            var studentId = User.FindFirst(c => c.Type == ClaimTypes.NameIdentifier).Value;
-            var reservation = await reservationService.AddReservationByStudentAsync(long.Parse(studentId), model);
+            var studentId = User.GetUserId();
+            var reservation = await reservationService.AddReservationByStudentAsync(studentId, model);
             if (reservation is null)
                 return BadRequest("New reservation could be not added");
 
@@ -110,8 +110,8 @@ namespace TutoringSystem.API.Controllers
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            var tutorId = User.FindFirst(c => c.Type == ClaimTypes.NameIdentifier).Value;
-            var reservation = await reservationService.AddReservationByTutorAsync(long.Parse(tutorId), model);
+            var tutorId = User.GetUserId();
+            var reservation = await reservationService.AddReservationByTutorAsync(tutorId, model);
             if (reservation is null)
                 return BadRequest("New reservation could be not added");
 

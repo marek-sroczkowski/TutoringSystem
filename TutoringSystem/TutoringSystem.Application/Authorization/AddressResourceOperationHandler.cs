@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
-using System.Security.Claims;
 using System.Threading.Tasks;
 using TutoringSystem.Application.Dtos.AddressDtos;
+using TutoringSystem.Application.Extensions;
 using TutoringSystem.Application.Services.Interfaces;
 
 namespace TutoringSystem.Application.Authorization
@@ -22,8 +22,8 @@ namespace TutoringSystem.Application.Authorization
                 context.Succeed(requirement);
             }
 
-            var userId = context.User.FindFirst(c => c.Type == ClaimTypes.NameIdentifier).Value;
-            var address = addressService.GetAddressByUserAsync(long.Parse(userId));
+            var userId = context.User.GetUserId();
+            var address = addressService.GetAddressByUserAsync(userId);
 
             if (resource.Id == address.Result.Id)
             {

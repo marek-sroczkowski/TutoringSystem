@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
-using System.Security.Claims;
 using System.Threading.Tasks;
 using TutoringSystem.Application.Dtos.ContactDtos;
+using TutoringSystem.Application.Extensions;
 using TutoringSystem.Application.Services.Interfaces;
 
 namespace TutoringSystem.Application.Authorization
@@ -22,8 +22,8 @@ namespace TutoringSystem.Application.Authorization
                 context.Succeed(requirement);
             }
 
-            var userId = context.User.FindFirst(c => c.Type == ClaimTypes.NameIdentifier).Value;
-            var contact = contactService.GetContactByUserAsync(long.Parse(userId));
+            var userId = context.User.GetUserId();
+            var contact = contactService.GetContactByUserAsync(userId);
 
             if (resource.Id == contact.Result.Id)
             {

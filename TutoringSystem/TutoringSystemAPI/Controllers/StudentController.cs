@@ -2,8 +2,8 @@
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
 using System.Collections.Generic;
-using System.Security.Claims;
 using System.Threading.Tasks;
+using TutoringSystem.Application.Extensions;
 using TutoringSystem.API.Filters.TypeFilters;
 using TutoringSystem.Application.Dtos.TutorDtos;
 using TutoringSystem.Application.Services.Interfaces;
@@ -27,8 +27,8 @@ namespace TutoringSystem.API.Controllers
         [Authorize(Roles = "Student")]
         public async Task<ActionResult<List<TutorDto>>> GetTutors()
         {
-            var studentId = User.FindFirst(c => c.Type == ClaimTypes.NameIdentifier).Value;
-            var students = await studentService.GetTutorsAsync(long.Parse(studentId));
+            var studentId = User.GetUserId();
+            var students = await studentService.GetTutorsAsync(studentId);
 
             return Ok(students);
         }
@@ -50,8 +50,8 @@ namespace TutoringSystem.API.Controllers
         [ValidateTutorExistence]
         public async Task<ActionResult> AddTutor(long tutorId)
         {
-            var studentId = User.FindFirst(c => c.Type == ClaimTypes.NameIdentifier).Value;
-            var added = await studentService.AddTutorAsync(long.Parse(studentId), tutorId);
+            var studentId = User.GetUserId();
+            var added = await studentService.AddTutorAsync(studentId, tutorId);
             if (!added)
                 return BadRequest("Tutor could not be added");
 
@@ -64,8 +64,8 @@ namespace TutoringSystem.API.Controllers
         [ValidateStudentExistence]
         public async Task<ActionResult> RemoveTutor(long tutorId)
         {
-            var studentId = User.FindFirst(c => c.Type == ClaimTypes.NameIdentifier).Value;
-            var removed = await studentService.RemoveTutorAsync(long.Parse(studentId), tutorId);
+            var studentId = User.GetUserId();
+            var removed = await studentService.RemoveTutorAsync(studentId, tutorId);
             if (!removed)
                 return BadRequest("Tutor could be not removed from student's tutor list");
 
@@ -77,8 +77,8 @@ namespace TutoringSystem.API.Controllers
         [Authorize(Roles = "Student")]
         public async Task<ActionResult> RemoveAllTutors()
         {
-            var studentId = User.FindFirst(c => c.Type == ClaimTypes.NameIdentifier).Value;
-            var removed = await studentService.RemoveAllTutorsAsync(long.Parse(studentId));
+            var studentId = User.GetUserId();
+            var removed = await studentService.RemoveAllTutorsAsync(studentId);
             if (!removed)
                 return BadRequest("Tutor list could be not cleared");
 

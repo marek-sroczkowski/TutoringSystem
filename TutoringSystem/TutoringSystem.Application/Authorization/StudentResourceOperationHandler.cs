@@ -1,9 +1,9 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using System.Collections.Generic;
 using System.Linq;
-using System.Security.Claims;
 using System.Threading.Tasks;
 using TutoringSystem.Application.Dtos.StudentDtos;
+using TutoringSystem.Application.Extensions;
 using TutoringSystem.Domain.Repositories;
 
 namespace TutoringSystem.Application.Authorization
@@ -24,8 +24,8 @@ namespace TutoringSystem.Application.Authorization
                 context.Succeed(requirement);
             }
 
-            var tutorId = context.User.FindFirst(c => c.Type == ClaimTypes.NameIdentifier).Value;
-            var tutor = tutorRepository.GetTutorAsync(t => t.Id.Equals(long.Parse(tutorId))).Result;
+            var tutorId = context.User.GetUserId();
+            var tutor = tutorRepository.GetTutorAsync(t => t.Id.Equals(tutorId)).Result;
             IEnumerable<long> studentIds = tutor.Students.Select(s => s.Id);
 
             if (studentIds.Contains(resource.Id))

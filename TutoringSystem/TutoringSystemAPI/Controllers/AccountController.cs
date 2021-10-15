@@ -1,10 +1,10 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
-using System.Security.Claims;
 using System.Threading.Tasks;
 using TutoringSystem.Application.Dtos.AccountDtos;
 using TutoringSystem.Application.Dtos.Enums;
+using TutoringSystem.Application.Extensions;
 using TutoringSystem.Application.Identity;
 using TutoringSystem.Application.Services.Interfaces;
 using TutoringSystem.Domain.Entities.Enums;
@@ -69,7 +69,7 @@ namespace TutoringSystem.API.Controllers
         [Authorize(Roles = "Tutor,Student")]
         public ActionResult<Role> GetUserRole()
         {
-            var role = User.FindFirst(c => c.Type == ClaimTypes.Role).Value;
+            var role = User.GetUserRole();
 
             return Ok(role);
         }
@@ -79,8 +79,8 @@ namespace TutoringSystem.API.Controllers
         [Authorize(Roles = "Tutor,Student")]
         public async Task<ActionResult> ChangePassword([FromBody] PasswordDto passwordModel)
         {
-            var userId = User.FindFirst(c => c.Type == ClaimTypes.NameIdentifier).Value;
-            var changedErrors = await userService.ChangePasswordAsync(long.Parse(userId), passwordModel);
+            var userId = User.GetUserId();
+            var changedErrors = await userService.ChangePasswordAsync(userId, passwordModel);
 
             if (changedErrors != null)
                 return BadRequest(changedErrors);
@@ -93,8 +93,8 @@ namespace TutoringSystem.API.Controllers
         [Authorize(Roles = "Tutor")]
         public async Task<ActionResult> ActivateAccountByToken(string token)
         {
-            var userId = User.FindFirst(c => c.Type == ClaimTypes.NameIdentifier).Value;
-            var activated = await userService.ActivateUserByTokenAsync(long.Parse(userId), token);
+            var userId = User.GetUserId();
+            var activated = await userService.ActivateUserByTokenAsync(userId, token);
 
             if (!activated)
                 return BadRequest("Account could be not activated");
@@ -107,8 +107,8 @@ namespace TutoringSystem.API.Controllers
         [Authorize(Roles = "Tutor")]
         public async Task<ActionResult> SendNewActivationToken()
         {
-            var userId = User.FindFirst(c => c.Type == ClaimTypes.NameIdentifier).Value;
-            var sent = await userService.SendNewActivationTokenAsync(long.Parse(userId));
+            var userId = User.GetUserId();
+            var sent = await userService.SendNewActivationTokenAsync(userId);
 
             if (!sent)
                 return BadRequest("New activation code could not be sent");
@@ -121,8 +121,8 @@ namespace TutoringSystem.API.Controllers
         [Authorize(Roles = "Tutor,Student")]
         public async Task<ActionResult> DeactivateAccount()
         {
-            var userId = User.FindFirst(c => c.Type == ClaimTypes.NameIdentifier).Value;
-            var deleted = await userService.DeactivateUserAsync(long.Parse(userId));
+            var userId = User.GetUserId();
+            var deleted = await userService.DeactivateUserAsync(userId);
 
             if (!deleted)
                 return BadRequest("Account could be not deleted");

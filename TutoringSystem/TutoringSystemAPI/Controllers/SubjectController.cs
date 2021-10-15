@@ -2,8 +2,8 @@
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
 using System.Collections.Generic;
-using System.Security.Claims;
 using System.Threading.Tasks;
+using TutoringSystem.Application.Extensions;
 using TutoringSystem.API.Filters.TypeFilters;
 using TutoringSystem.Application.Authorization;
 using TutoringSystem.Application.Dtos.SubjectDtos;
@@ -30,8 +30,8 @@ namespace TutoringSystem.API.Controllers
         [Authorize(Roles = "Tutor")]
         public async Task<ActionResult<List<SubjectDto>>> GetSubjects()
         {
-            var tutorId = User.FindFirst(c => c.Type == ClaimTypes.NameIdentifier).Value;
-            var subjects = await subjectService.GetTutorSubjectsAsync(long.Parse(tutorId));
+            var tutorId = User.GetUserId();
+            var subjects = await subjectService.GetTutorSubjectsAsync(tutorId);
 
             return Ok(subjects);
         }
@@ -53,7 +53,7 @@ namespace TutoringSystem.API.Controllers
         [ValidateSubjectExistence]
         public async Task<ActionResult<SubjectDetailsDto>> GetSubject(long subjectId)
         {
-            var tutorId = User.FindFirst(c => c.Type == ClaimTypes.NameIdentifier).Value;
+            var tutorId = User.GetUserId();
             var subject = await subjectService.GetSubjectByIdAsync(subjectId);
 
             var authorizationResult = authorizationService.AuthorizeAsync(User, subject, new ResourceOperationRequirement(OperationType.Read)).Result;
@@ -71,8 +71,8 @@ namespace TutoringSystem.API.Controllers
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            var tutorId = User.FindFirst(c => c.Type == ClaimTypes.NameIdentifier).Value;
-            var subject = await subjectService.AddSubjectAsync(long.Parse(tutorId), model);
+            var tutorId = User.GetUserId();
+            var subject = await subjectService.AddSubjectAsync(tutorId, model);
             if (subject is null)
                 return BadRequest("New subject could be not added");
 

@@ -1,8 +1,8 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
-using System.Security.Claims;
 using System.Threading.Tasks;
+using TutoringSystem.Application.Extensions;
 using TutoringSystem.API.Filters.TypeFilters;
 using TutoringSystem.Application.Authorization;
 using TutoringSystem.Application.Dtos.ReportDtos;
@@ -34,8 +34,8 @@ namespace TutoringSystem.API.Controllers
         [Authorize(Roles = "Tutor")]
         public async Task<ActionResult<TutorReportDto>> GetReportAsync([FromQuery] ReportParameters parameters)
         {
-            var tutorId = User.FindFirst(c => c.Type == ClaimTypes.NameIdentifier).Value;
-            var report = await reportService.GetReportByTutorAsync(long.Parse(tutorId), parameters);
+            var tutorId = User.GetUserId();
+            var report = await reportService.GetReportByTutorAsync(tutorId, parameters);
 
             return Ok(report);
         }
@@ -77,8 +77,8 @@ namespace TutoringSystem.API.Controllers
         [Authorize(Roles = "Tutor")]
         public async Task<ActionResult<TutorReportDto>> GetSubjectCategoryReport([FromQuery] ReportSubjectCategoryParameters parameters)
         {
-            var tutorId = User.FindFirst(c => c.Type == ClaimTypes.NameIdentifier).Value;
-            var report = await reportService.GetSubjectCategoryReportAsync(long.Parse(tutorId), parameters);
+            var tutorId = User.GetUserId();
+            var report = await reportService.GetSubjectCategoryReportAsync(tutorId, parameters);
 
             return Ok(report);
         }
@@ -88,8 +88,8 @@ namespace TutoringSystem.API.Controllers
         [Authorize(Roles = "Tutor")]
         public async Task<ActionResult<TutorReportDto>> GetPlaceReport([FromQuery] ReportPlaceParameters parameters)
         {
-            var tutorId = User.FindFirst(c => c.Type == ClaimTypes.NameIdentifier).Value;
-            var report = await reportService.GetPlaceReportAsync(long.Parse(tutorId), parameters);
+            var tutorId = User.GetUserId();
+            var report = await reportService.GetPlaceReportAsync(tutorId, parameters);
 
             return Ok(report);
         }

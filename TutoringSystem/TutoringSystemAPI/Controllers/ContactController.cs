@@ -1,8 +1,8 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
-using System.Security.Claims;
 using System.Threading.Tasks;
+using TutoringSystem.Application.Extensions;
 using TutoringSystem.API.Filters.TypeFilters;
 using TutoringSystem.Application.Authorization;
 using TutoringSystem.Application.Dtos.ContactDtos;
@@ -29,8 +29,8 @@ namespace TutoringSystem.API.Controllers
         [Authorize(Roles = "Tutor, Student")]
         public async Task<ActionResult<ContactDetailsDto>> GetContact()
         {
-            var userId = User.FindFirst(c => c.Type == ClaimTypes.NameIdentifier).Value;
-            var contact = await contactService.GetContactByUserAsync(long.Parse(userId));
+            var userId = User.GetUserId();
+            var contact = await contactService.GetContactByUserAsync(userId);
 
             return Ok(contact);
         }

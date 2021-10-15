@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
-using System.Security.Claims;
 using System.Threading.Tasks;
 using TutoringSystem.Application.Dtos.ReservationDtos;
+using TutoringSystem.Application.Extensions;
 
 namespace TutoringSystem.Application.Authorization
 {
@@ -14,9 +14,9 @@ namespace TutoringSystem.Application.Authorization
                 context.Succeed(requirement);
             }
 
-            var userId = context.User.FindFirst(c => c.Type == ClaimTypes.NameIdentifier).Value;
+            var userId = context.User.GetUserId();
 
-            if (resource.Tutor.Id == long.Parse(userId) || resource.Student.Id == long.Parse(userId))
+            if (resource.Tutor.Id == userId || resource.Student.Id == userId)
             {
                 context.Succeed(requirement);
             }

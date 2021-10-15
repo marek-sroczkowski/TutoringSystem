@@ -1,12 +1,12 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
-using System.Security.Claims;
 using System.Threading.Tasks;
 using TutoringSystem.Application.Authorization;
 using TutoringSystem.Application.Dtos.AddressDtos;
 using TutoringSystem.Application.Services.Interfaces;
 using TutoringSystem.API.Filters.TypeFilters;
+using TutoringSystem.Application.Extensions;
 
 namespace TutoringSystem.API.Controllers
 {
@@ -29,8 +29,8 @@ namespace TutoringSystem.API.Controllers
         [Authorize(Roles = "Tutor, Student")]
         public async Task<ActionResult<AddressDetailsDto>> GetAddress()
         {
-            var userId = User.FindFirst(c => c.Type == ClaimTypes.NameIdentifier).Value;
-            var address = await addressService.GetAddressByUserAsync(long.Parse(userId));
+            var userId = User.GetUserId();
+            var address = await addressService.GetAddressByUserAsync(userId);
 
             return Ok(address);
         }
