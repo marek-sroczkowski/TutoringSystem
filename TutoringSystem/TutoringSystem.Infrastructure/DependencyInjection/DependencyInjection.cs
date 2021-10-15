@@ -34,6 +34,7 @@ namespace TutoringSystem.Infrastructure.DependencyInjection
             services.AddScoped<ISubjectRepository, SubjectRepository>();
             services.AddScoped<IPhoneNumberRepository, PhoneNumberRepository>();
             services.AddScoped<IIntervalRepository, IntervalRepository>();
+            services.AddScoped<IActivationTokenRepository, ActivationTokenRepository>();
 
             return services;
         }

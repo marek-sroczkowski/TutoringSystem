@@ -14,17 +14,20 @@ namespace TutoringSystem.Domain.Entities
         public DateTime? LastLoginDate { get; set; }
         public DateTime RegistrationDate { get; set; }
         public bool IsActiv { get; set; }
+        public bool IsEnable { get; set; }
         public Role Role { get; set; }
 
         public virtual Contact Contact { get; set; }
         public virtual Address Address { get; set; }
 
-        public ICollection<Message> MessagesSent { get; set; }
-        public ICollection<Message> MessagesRecived { get; set; }
+        public virtual ICollection<Message> MessagesSent { get; set; }
+        public virtual ICollection<Message> MessagesRecived { get; set; }
+        public virtual ICollection<ActivationToken> ActivationTokens { get; set; }
 
         public User()
         {
             IsActiv = true;
+            IsEnable = false;
             RegistrationDate = DateTime.Now;
             Contact = new Contact { PhoneNumbers = new List<PhoneNumber>() };
             Address = new Address();

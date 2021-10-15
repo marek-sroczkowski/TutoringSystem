@@ -2,8 +2,10 @@
 using Microsoft.AspNetCore.Identity;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using TutoringSystem.Application.Dtos.AccountDtos;
+using TutoringSystem.Application.Dtos.EmailDtos;
 using TutoringSystem.Application.Dtos.Enums;
 using TutoringSystem.Application.Services.Interfaces;
 using TutoringSystem.Domain.Entities;
@@ -17,56 +19,92 @@ namespace TutoringSystem.Application.Services
         private readonly IUserRepository userRepository;
         private readonly ITutorRepository tutorRepository;
         private readonly IStudentRepository studentRepository;
+        private readonly IEmailService emailService;
+        private readonly IActivationTokenService activationTokenService;
         private readonly IMapper mapper;
         private readonly IPasswordHasher<User> passwordHasher;
 
-        public UserService(IUserRepository userRepository, 
-            ITutorRepository tutorRepository, 
-            IStudentRepository studentRepository, 
-            IMapper mapper, 
+        public UserService(IUserRepository userRepository,
+            ITutorRepository tutorRepository,
+            IStudentRepository studentRepository,
+            IEmailService emailService,
+            IActivationTokenService activationTokenService,
+            IMapper mapper,
             IPasswordHasher<User> passwordHasher)
         {
             this.userRepository = userRepository;
             this.tutorRepository = tutorRepository;
             this.studentRepository = studentRepository;
+            this.emailService = emailService;
+            this.activationTokenService = activationTokenService;
             this.mapper = mapper;
             this.passwordHasher = passwordHasher;
         }
 
-        public async Task<UserDto> TryLoginAsync(LoginUserDto userModel)
+        public async Task<LoginResultDto> TryLoginAsync(LoginUserDto userModel)
         {
-            var passwordVerificationResult = await ValidatePasswordAsync(userModel);
-            if (passwordVerificationResult == PasswordVerificationResult.Failed)
-                return null;
-
+            await DeactivateNotEnabledUsersAsync();
             var user = await userRepository.GetUserAsync(u => u.Username.Equals(userModel.Username));
-            if (user != null)
-                await SetLastLoginDate(user);
+            if (user is null || ValidatePassword(userModel, user) == PasswordVerificationResult.Failed)
+                return new LoginResultDto(null, LoginStatus.InvalidUsernameOrPassword);
 
-            return mapper.Map<UserDto>(user);
-        }
+            await SetLastLoginDateAsync(user);
 
-        public async Task<Role> GetUserRoleAsync(long userId)
-        {
-            var user = await userRepository.GetUserAsync(u => u.Id.Equals(userId));
+            if (!user.IsEnable)
+                return new LoginResultDto(mapper.Map<UserDto>(user), LoginStatus.InactiveAccount);
 
-            return user.Role;
+            return new LoginResultDto(mapper.Map<UserDto>(user), LoginStatus.LoggedInCorrectly);
         }
 
         public async Task<bool> RegisterStudentAsync(RegisterStudentDto student)
         {
+            await DeactivateNotEnabledUsersAsync();
             var newStudent = mapper.Map<Student>(student);
             newStudent.PasswordHash = passwordHasher.HashPassword(newStudent, student.Password);
 
             return await studentRepository.AddStudentAsycn(newStudent);
         }
 
-        public async Task<bool> RegisterTutorAsync(RegisterTutorDto tutor)
+        public async Task<bool> RegisterTutorAsync(RegisterTutorDto newTutor)
         {
-            var newTutor = mapper.Map<Tutor>(tutor);
-            newTutor.PasswordHash = passwordHasher.HashPassword(newTutor, tutor.Password);
+            await DeactivateNotEnabledUsersAsync();
+            var tutor = mapper.Map<Tutor>(newTutor);
+            tutor.PasswordHash = passwordHasher.HashPassword(tutor, newTutor.Password);
+            if (!(await tutorRepository.AddTutorAsync(tutor)))
+                return false;
 
-            return await tutorRepository.AddTutorAsync(newTutor);
+            return await SendNewActivationTokenAsync(tutor.Id);
+        }
+
+        public async Task<bool> ActivateUserByTokenAsync(long userId, string token)
+        {
+            var user = await userRepository.GetUserAsync(u => u.Id.Equals(userId) && !u.IsEnable);
+            if (user is null)
+                return false;
+
+            var userToken = user.ActivationTokens.FirstOrDefault(t => t.ExpirationDate > DateTime.Now && t.TokenContent.Equals(token));
+            if (userToken is null)
+                return false;
+
+            user.IsEnable = true;
+            userToken.ExpirationDate = DateTime.Now;
+
+            return await userRepository.UpdateUser(user);
+        }
+
+        public async Task<bool> SendNewActivationTokenAsync(long userId)
+        {
+            var user = await userRepository.GetUserAsync(u => u.Id.Equals(userId) && !u.IsEnable);
+            if (user is null)
+                return false;
+
+            var generatedToken = await activationTokenService.AddActivationTokenAsync(userId);
+            if (generatedToken is null || string.IsNullOrEmpty(generatedToken.TokenContent))
+                return false;
+
+            emailService.SendEmail(new ActivationEmailDto(user.Contact.Email, user.FirstName, generatedToken.TokenContent));
+
+            return true;
         }
 
         public async Task<bool> DeactivateUserAsync(long userId)
@@ -122,20 +160,24 @@ namespace TutoringSystem.Application.Services
             return result;
         }
 
-        private async Task<PasswordVerificationResult> ValidatePasswordAsync(LoginUserDto loginModel)
+        private PasswordVerificationResult ValidatePassword(LoginUserDto loginModel, User user)
         {
-            var user = await userRepository.GetUserAsync(u => u.Username.Equals(loginModel.Username));
-            if (user is null)
-                return PasswordVerificationResult.Failed;
-
             return passwordHasher.VerifyHashedPassword(user, user.PasswordHash, loginModel.Password);
         }
 
-        private async Task SetLastLoginDate(User user)
+        private async Task SetLastLoginDateAsync(User user)
         {
             user.LastLoginDate = DateTime.Now;
-
             await userRepository.UpdateUser(user);
+        }
+
+        private async Task DeactivateNotEnabledUsersAsync()
+        {
+            var users = await userRepository.GetUsersCollectionAsync(u => !u.IsEnable && u.IsActiv && u.RegistrationDate.AddDays(1) < DateTime.Now);
+            users.ToList().ForEach(u => u.IsActiv = false);
+
+            await userRepository.UpdateUsersCollection(users);
         }
     }
 }
+ 

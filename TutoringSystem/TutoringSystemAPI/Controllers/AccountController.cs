@@ -4,6 +4,7 @@ using Swashbuckle.AspNetCore.Annotations;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using TutoringSystem.Application.Dtos.AccountDtos;
+using TutoringSystem.Application.Dtos.Enums;
 using TutoringSystem.Application.Identity;
 using TutoringSystem.Application.Services.Interfaces;
 using TutoringSystem.Domain.Entities.Enums;
@@ -51,25 +52,24 @@ namespace TutoringSystem.API.Controllers
         [SwaggerOperation(Summary = "Generates a token when logging in successfully")]
         [HttpPost("login")]
         [AllowAnonymous]
-        public async Task<ActionResult> Login([FromBody] LoginUserDto model)
+        public async Task<ActionResult<LoginStatus>> Login([FromBody] LoginUserDto model)
         {
-            var user = await userService.TryLoginAsync(model);
-            if (user is null)
-                return BadRequest("Invalid username or password");
+            var loginResult = await userService.TryLoginAsync(model);
+            if (loginResult.Status.Equals(LoginStatus.InvalidUsernameOrPassword))
+                return BadRequest(loginResult.Status);
 
-            var token = jwtProvider.GenerateJwtToken(user);
+            var token = jwtProvider.GenerateJwtToken(loginResult.User);
             Response.Headers.Add("Authorization", token);
 
-            return Ok();
+            return Ok(loginResult.Status);
         }
 
         [SwaggerOperation(Summary = "Gets role of the currently logged user")]
         [HttpGet("role")]
         [Authorize(Roles = "Tutor,Student")]
-        public async Task<ActionResult<Role>> GetUserRole()
+        public ActionResult<Role> GetUserRole()
         {
-            var userId = User.FindFirst(c => c.Type == ClaimTypes.NameIdentifier).Value;
-            var role = await userService.GetUserRoleAsync(long.Parse(userId));
+            var role = User.FindFirst(c => c.Type == ClaimTypes.Role).Value;
 
             return Ok(role);
         }
@@ -84,6 +84,34 @@ namespace TutoringSystem.API.Controllers
 
             if (changedErrors != null)
                 return BadRequest(changedErrors);
+
+            return Ok();
+        }
+
+        [SwaggerOperation(Summary = "Activates the account of the currently logged in user by actiavtion token")]
+        [HttpPost("activate")]
+        [Authorize(Roles = "Tutor")]
+        public async Task<ActionResult> ActivateAccountByToken(string token)
+        {
+            var userId = User.FindFirst(c => c.Type == ClaimTypes.NameIdentifier).Value;
+            var activated = await userService.ActivateUserByTokenAsync(long.Parse(userId), token);
+
+            if (!activated)
+                return BadRequest("Account could be not activated");
+
+            return Ok();
+        }
+
+        [SwaggerOperation(Summary = "Sends a new activation token for the currently logged in user")]
+        [HttpPost("newCode")]
+        [Authorize(Roles = "Tutor")]
+        public async Task<ActionResult> SendNewActivationToken()
+        {
+            var userId = User.FindFirst(c => c.Type == ClaimTypes.NameIdentifier).Value;
+            var sent = await userService.SendNewActivationTokenAsync(long.Parse(userId));
+
+            if (!sent)
+                return BadRequest("New activation code could not be sent");
 
             return Ok();
         }

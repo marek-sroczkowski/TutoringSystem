@@ -26,6 +26,7 @@ namespace TutoringSystem.Infrastructure.Repositories
 
         public async Task<Tutor> GetTutorAsync(Expression<Func<Tutor, bool>> expression, bool? isActiv = true)
         {
+            ExpressionMerger.MergeExpression(ref expression, t => t.IsEnable);
             if (isActiv.HasValue)
                 ExpressionMerger.MergeExpression(ref expression, t => t.IsActiv.Equals(isActiv.Value));
 

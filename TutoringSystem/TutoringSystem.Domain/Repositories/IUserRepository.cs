@@ -12,5 +12,6 @@ namespace TutoringSystem.Domain.Repositories
         Task<bool> DeleteUserAsync(User user);
         Task<User> GetUserAsync(Expression<Func<User, bool>> expression, bool? isActiv = true);
         Task<IEnumerable<User>> GetUsersCollectionAsync(Expression<Func<User, bool>> expression, bool? isActiv = true);
+        Task<bool> UpdateUsersCollection(IEnumerable<User> users);
     }
 }

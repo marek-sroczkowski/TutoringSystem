@@ -19,6 +19,7 @@ namespace TutoringSystem.Infrastructure.Data
         public virtual DbSet<Availability> Availabilities { get; set; }
         public virtual DbSet<Interval> Intervals { get; set; }
         public virtual DbSet<Message> Messages { get; set; }
+        public virtual DbSet<ActivationToken> ActivationTokens { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

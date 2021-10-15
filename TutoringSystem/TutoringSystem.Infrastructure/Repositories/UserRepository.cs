@@ -34,7 +34,9 @@ namespace TutoringSystem.Infrastructure.Repositories
                 ExpressionMerger.MergeExpression(ref expression, u => u.IsActiv.Equals(isActiv.Value));
 
             var user = await DbContext.Users
-                .Where(u => u.IsActiv.Equals(isActiv))
+                .Include(u => u.Contact)
+                .Include(u => u.Address)
+                .Include(u => u.ActivationTokens)
                 .FirstOrDefaultAsync(expression);
 
             return user;
@@ -46,6 +48,8 @@ namespace TutoringSystem.Infrastructure.Repositories
                 ExpressionMerger.MergeExpression(ref expression, u => u.IsActiv.Equals(isActiv.Value));
 
             var users = await FindByCondition(expression)
+                .Include(u => u.Address)
+                .Include(u => u.Contact)
                 .ToListAsync();
 
             return users;
@@ -54,6 +58,13 @@ namespace TutoringSystem.Infrastructure.Repositories
         public async Task<bool> UpdateUser(User user)
         {
             Update(user);
+
+            return await SaveChangedAsync();
+        }
+
+        public async Task<bool> UpdateUsersCollection(IEnumerable<User> users)
+        {
+            DbContext.UpdateRange(users);
 
             return await SaveChangedAsync();
         }

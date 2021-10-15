@@ -38,6 +38,8 @@ namespace TutoringSystem.Application.DependencyInjection
             services.AddScoped<IPhoneNumberService, PhoneNumberService>();
             services.AddScoped<IAvailabilityService, AvailabilityService>();
             services.AddScoped<IReportService, ReportService>();
+            services.AddScoped<IEmailService, EmailService>();
+            services.AddScoped<IActivationTokenService, ActivationTokenService>();
 
             return services;
         }
