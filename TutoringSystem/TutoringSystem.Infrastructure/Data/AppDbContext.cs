@@ -20,12 +20,19 @@ namespace TutoringSystem.Infrastructure.Data
         public virtual DbSet<Interval> Intervals { get; set; }
         public virtual DbSet<Message> Messages { get; set; }
         public virtual DbSet<ActivationToken> ActivationTokens { get; set; }
+        public virtual DbSet<SingleReservation> SingleReservations { get; set; }
+        public virtual DbSet<RecurringReservation> RecurringReservations { get; set; }
+        public virtual DbSet<RepeatedReservation> RepeatedReservations { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<User>().ToTable("Users");
             modelBuilder.Entity<Student>().ToTable("Students");
             modelBuilder.Entity<Tutor>().ToTable("Tutors");
+
+            modelBuilder.Entity<Reservation>().ToTable("Reservations");
+            modelBuilder.Entity<SingleReservation>().ToTable("SingleReservations");
+            modelBuilder.Entity<RecurringReservation>().ToTable("RecurringReservations");
 
             modelBuilder.Entity<Message>().HasOne(u => u.Sender)
                                      .WithMany(m => m.MessagesSent)

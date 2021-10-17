@@ -8,7 +8,6 @@ namespace TutoringSystem.Domain.Repositories
 {
     public interface IReservationRepository
     {
-        Task<bool> AddReservationAsync(Reservation reservation);
         Task<bool> UpdateReservationAsync(Reservation updatedReservation);
         Task<bool> DeleteReservationAsync(Reservation reservation);
         Task<Reservation> GetReservationAsync(Expression<Func<Reservation, bool>> expression);

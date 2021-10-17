@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using TutoringSystem.Infrastructure.Data;
 
 namespace TutoringSystem.Infrastructure.Data.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20211017112009_NewReservationsSchema")]
+    partial class NewReservationsSchema
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -401,6 +403,13 @@ namespace TutoringSystem.Infrastructure.Data.Migrations
                     b.ToTable("Users");
                 });
 
+            modelBuilder.Entity("TutoringSystem.Domain.Entities.OneTimeReservation", b =>
+                {
+                    b.HasBaseType("TutoringSystem.Domain.Entities.Reservation");
+
+                    b.ToTable("OneTimeReservations");
+                });
+
             modelBuilder.Entity("TutoringSystem.Domain.Entities.RecurringReservation", b =>
                 {
                     b.HasBaseType("TutoringSystem.Domain.Entities.Reservation");
@@ -414,13 +423,6 @@ namespace TutoringSystem.Infrastructure.Data.Migrations
                     b.HasIndex("RepeatedReservationId");
 
                     b.ToTable("RecurringReservations");
-                });
-
-            modelBuilder.Entity("TutoringSystem.Domain.Entities.SingleReservation", b =>
-                {
-                    b.HasBaseType("TutoringSystem.Domain.Entities.Reservation");
-
-                    b.ToTable("SingleReservations");
                 });
 
             modelBuilder.Entity("TutoringSystem.Domain.Entities.Student", b =>
@@ -592,6 +594,15 @@ namespace TutoringSystem.Infrastructure.Data.Migrations
                     b.Navigation("Tutor");
                 });
 
+            modelBuilder.Entity("TutoringSystem.Domain.Entities.OneTimeReservation", b =>
+                {
+                    b.HasOne("TutoringSystem.Domain.Entities.Reservation", null)
+                        .WithOne()
+                        .HasForeignKey("TutoringSystem.Domain.Entities.OneTimeReservation", "Id")
+                        .OnDelete(DeleteBehavior.ClientCascade)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("TutoringSystem.Domain.Entities.RecurringReservation", b =>
                 {
                     b.HasOne("TutoringSystem.Domain.Entities.Reservation", null)
@@ -607,15 +618,6 @@ namespace TutoringSystem.Infrastructure.Data.Migrations
                         .IsRequired();
 
                     b.Navigation("Reservation");
-                });
-
-            modelBuilder.Entity("TutoringSystem.Domain.Entities.SingleReservation", b =>
-                {
-                    b.HasOne("TutoringSystem.Domain.Entities.Reservation", null)
-                        .WithOne()
-                        .HasForeignKey("TutoringSystem.Domain.Entities.SingleReservation", "Id")
-                        .OnDelete(DeleteBehavior.ClientCascade)
-                        .IsRequired();
                 });
 
             modelBuilder.Entity("TutoringSystem.Domain.Entities.Student", b =>

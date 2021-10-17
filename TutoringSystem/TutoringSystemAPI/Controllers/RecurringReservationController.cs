@@ -4,30 +4,30 @@ using Newtonsoft.Json;
 using Swashbuckle.AspNetCore.Annotations;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using TutoringSystem.API.Filters.TypeFilters;
 using TutoringSystem.Application.Authorization;
 using TutoringSystem.Application.Dtos.ReservationDtos;
-using TutoringSystem.Application.Services.Interfaces;
-using TutoringSystem.Application.Parameters;
-using TutoringSystem.API.Filters.TypeFilters;
 using TutoringSystem.Application.Extensions;
+using TutoringSystem.Application.Parameters;
+using TutoringSystem.Application.Services.Interfaces;
 
 namespace TutoringSystem.API.Controllers
 {
-    [Route("api/reservation")]
+    [Route("api/reservation/recurring")]
     [ApiController]
     [Authorize]
-    public class ReservationController : ControllerBase
+    public class RecurringReservationController : ControllerBase
     {
-        private readonly IReservationService reservationService;
+        private readonly IRecurringReservationService reservationService;
         private readonly IAuthorizationService authorizationService;
 
-        public ReservationController(IReservationService reservationService, IAuthorizationService authorizationService)
+        public RecurringReservationController(IRecurringReservationService reservationService, IAuthorizationService authorizationService)
         {
             this.reservationService = reservationService;
             this.authorizationService = authorizationService;
         }
 
-        [SwaggerOperation(Summary = "Retrieves all reservations of the current logged in student filtered with selected parameters")]
+        [SwaggerOperation(Summary = "Retrieves all recurring reservations of the current logged in student filtered with selected parameters")]
         [HttpGet("student")]
         [Authorize(Roles = "Student")]
         public async Task<ActionResult<List<ReservationDto>>> GetStudentReservations([FromQuery] ReservationParameters parameters)
@@ -49,7 +49,7 @@ namespace TutoringSystem.API.Controllers
             return Ok(resevations);
         }
 
-        [SwaggerOperation(Summary = "Retrieves all reservations of the current logged in tutor filtered with selected parameters")]
+        [SwaggerOperation(Summary = "Retrieves all recurring reservations of the current logged in tutor filtered with selected parameters")]
         [HttpGet("tutor")]
         [Authorize(Roles = "Tutor")]
         public async Task<ActionResult<List<ReservationDto>>> GetTutorReservations([FromQuery] ReservationParameters parameters)
@@ -71,10 +71,10 @@ namespace TutoringSystem.API.Controllers
             return Ok(resevations);
         }
 
-        [SwaggerOperation(Summary = "Retrieves a specific reservation by unique id")]
+        [SwaggerOperation(Summary = "Retrieves a specific recurring reservation by unique id")]
         [HttpGet("{reservationId}")]
         [Authorize(Roles = "Tutor, Student")]
-        [ValidateReservationExistence]
+        [ValidateRecurringReservationExistence]
         public async Task<ActionResult<ReservationDetailsDto>> GetReservation(long reservationId)
         {
             var reservation = await reservationService.GetReservationByIdAsync(reservationId);
@@ -86,10 +86,10 @@ namespace TutoringSystem.API.Controllers
             return Ok(reservation);
         }
 
-        [SwaggerOperation(Summary = "Creates a new student's reservation")]
+        [SwaggerOperation(Summary = "Creates a new student's recurring reservation")]
         [HttpPost("student")]
         [Authorize(Roles = "Student")]
-        public async Task<ActionResult> CreateStudentReservation([FromBody] NewStudentReservationDto model)
+        public async Task<ActionResult> CreateStudentReservation([FromBody] NewStudentRecurringReservationDto model)
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
@@ -99,13 +99,13 @@ namespace TutoringSystem.API.Controllers
             if (reservation is null)
                 return BadRequest("New reservation could be not added");
 
-            return Created("api/reservation/" + reservation.Id, null);
+            return Created("api/reservation/recurring/" + reservation.Id, null);
         }
 
-        [SwaggerOperation(Summary = "Creates a new tutor's reservation")]
+        [SwaggerOperation(Summary = "Creates a new tutor's recurring reservation")]
         [HttpPost("tutor")]
         [Authorize(Roles = "Tutor")]
-        public async Task<ActionResult> CreateTutorReservation([FromBody] NewTutorReservationDto model)
+        public async Task<ActionResult> CreateTutorReservation([FromBody] NewTutorRecurringReservationDto model)
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
@@ -115,55 +115,13 @@ namespace TutoringSystem.API.Controllers
             if (reservation is null)
                 return BadRequest("New reservation could be not added");
 
-            return Created("api/reservation/" + reservation.Id, null);
-        }
-
-        [SwaggerOperation(Summary = "Updates a existing reservation by tutor")]
-        [HttpPut("tutor")]
-        [Authorize(Roles = "Tutor")]
-        [ValidateReservationExistence]
-        public async Task<ActionResult> UpdateReservationByTutor([FromBody] UpdatedTutorReservationDto model)
-        {
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
-
-            var reservation = await reservationService.GetReservationByIdAsync(model.Id);
-            var authorizationResult = authorizationService.AuthorizeAsync(User, reservation, new ResourceOperationRequirement(OperationType.Update)).Result;
-            if (!authorizationResult.Succeeded)
-                return Forbid();
-
-            var updated = await reservationService.UpdateTutorReservationAsync(model);
-            if (!updated)
-                return BadRequest("Reservation could be not updated");
-
-            return NoContent();
-        }
-
-        [SwaggerOperation(Summary = "Updates a existing reservation by student")]
-        [HttpPut("student")]
-        [Authorize(Roles = "Student")]
-        [ValidateReservationExistence]
-        public async Task<ActionResult> UpdateReservationByStudent([FromBody] UpdatedStudentReservationDto model)
-        {
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
-
-            var reservation = await reservationService.GetReservationByIdAsync(model.Id);
-            var authorizationResult = authorizationService.AuthorizeAsync(User, reservation, new ResourceOperationRequirement(OperationType.Update)).Result;
-            if (!authorizationResult.Succeeded)
-                return Forbid();
-
-            var updated = await reservationService.UpdateStudentReservationAsync(model);
-            if (!updated)
-                return BadRequest("Reservation could be not updated");
-
-            return NoContent();
+            return Created("api/reservation/recurring/" + reservation.Id, null);
         }
 
         [SwaggerOperation(Summary = "Deletes a specific reservation")]
         [HttpDelete("{reservationId}")]
         [Authorize(Roles = "Tutor, Student")]
-        [ValidateReservationExistence]
+        [ValidateRecurringReservationExistence ]
         public async Task<ActionResult> DeleteReservation(long reservationId)
         {
             var reservation = await reservationService.GetReservationByIdAsync(reservationId);

@@ -29,7 +29,8 @@ namespace TutoringSystem.Application.DependencyInjection
         {
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<IAdditionalOrderService, AdditionalOrderService>();
-            services.AddScoped<IReservationService, ReservationService>();
+            services.AddScoped<ISingleReservationService, SingleReservationService>();
+            services.AddScoped<IRecurringReservationService, RecurringReservationService>();
             services.AddScoped<ISubjectService, SubjectService>();
             services.AddScoped<ITutorService, TutorService>();
             services.AddScoped<IStudentService, StudentService>();

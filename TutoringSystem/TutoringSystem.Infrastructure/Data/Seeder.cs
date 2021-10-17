@@ -137,7 +137,7 @@ namespace TutoringSystem.Infrastructure.Data
             };
             jacekNowak.PasswordHash = passwordHasher.HashPassword(jacekNowak, "1234");
 
-            var r1 = new Reservation
+            var r1 = new SingleReservation
             {
                 StartTime = new DateTime(2021, 09, 04),
                 Description = "Ciągi arytmetyczne",
@@ -150,7 +150,7 @@ namespace TutoringSystem.Infrastructure.Data
             r1.Cost = (r1.Duration / 60.0) * r1.Student.HourlRate;
             math.Reservations = new List<Reservation> { r1 };
 
-            var r2 = new Reservation
+            var r2 = new SingleReservation
             {
                 StartTime = new DateTime(2021, 09, 05),
                 Description = "Omówienie tablic w języku C++",
