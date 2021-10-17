@@ -6,20 +6,21 @@ using TutoringSystem.Domain.Repositories;
 
 namespace TutoringSystem.API.Filters.TypeFilters
 {
-    public class ValidateReservationExistenceAttribute : TypeFilterAttribute
+    public class ValidateRecurringReservationExistenceAttribute : TypeFilterAttribute
     {
-        public ValidateReservationExistenceAttribute() : base(typeof(ValidateReservationExistenceFilterImpl))
+        public ValidateRecurringReservationExistenceAttribute() : base(typeof(ValidateReservationExistenceFilterImpl))
         {
         }
 
         private class ValidateReservationExistenceFilterImpl : IAsyncActionFilter
         {
-            private readonly IReservationRepository reservationRepository;
+            private readonly IRecurringReservationRepository reservationRepository;
 
-            public ValidateReservationExistenceFilterImpl(IReservationRepository reservationRepository)
+            public ValidateReservationExistenceFilterImpl(IRecurringReservationRepository reservationRepository)
             {
                 this.reservationRepository = reservationRepository;
             }
+
             public async Task OnActionExecutionAsync(ActionExecutingContext context, ActionExecutionDelegate next)
             {
                 if (context.ActionArguments.ContainsKey("reservationId"))

@@ -30,11 +30,14 @@ namespace TutoringSystem.Infrastructure.DependencyInjection
             services.AddScoped<IAddressRepository, AddressRepository>();
             services.AddScoped<IAvailabilityRepository, AvailabilityRepository>();
             services.AddScoped<IContactRepository, ContactRepository>();
-            services.AddScoped<IReservationRepository, ReservationRepository>();
+            services.AddScoped<ISingleReservationRepository, SingleReservationRepository>();
             services.AddScoped<ISubjectRepository, SubjectRepository>();
             services.AddScoped<IPhoneNumberRepository, PhoneNumberRepository>();
             services.AddScoped<IIntervalRepository, IntervalRepository>();
             services.AddScoped<IActivationTokenRepository, ActivationTokenRepository>();
+            services.AddScoped<IRecurringReservationRepository, RecurringReservationRepository>();
+            services.AddScoped<IRepeatedReservationRepository, RepeatedReservationRepository>();
+            services.AddScoped<IReservationRepository, ReservationRepository>();
 
             return services;
         }

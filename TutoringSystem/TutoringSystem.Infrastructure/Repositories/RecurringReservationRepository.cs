@@ -9,22 +9,29 @@ using TutoringSystem.Infrastructure.Data;
 
 namespace TutoringSystem.Infrastructure.Repositories
 {
-    public class ReservationRepository : RepositoryBase<Reservation>, IReservationRepository
+    public class RecurringReservationRepository : RepositoryBase<RecurringReservation>, IRecurringReservationRepository
     {
-        public ReservationRepository(AppDbContext dbContext) : base(dbContext)
+        public RecurringReservationRepository(AppDbContext dbContext) : base(dbContext)
         {
         }
 
-        public async Task<bool> DeleteReservationAsync(Reservation reservation)
+        public async Task<bool> AddReservationAsync(RecurringReservation reservation)
+        {
+            Create(reservation);
+
+            return await SaveChangedAsync();
+        }
+
+        public async Task<bool> DeleteReservationAsync(RecurringReservation reservation)
         {
             Delete(reservation);
 
             return await SaveChangedAsync();
         }
 
-        public async Task<Reservation> GetReservationAsync(Expression<Func<Reservation, bool>> expression)
+        public async Task<RecurringReservation> GetReservationAsync(Expression<Func<RecurringReservation, bool>> expression)
         {
-            var reservation = await DbContext.Reservations
+            var reservation = await DbContext.RecurringReservations
                 .Include(r => r.Student)
                 .Include(r => r.Subject)
                 .Include(r => r.Tutor)
@@ -33,7 +40,7 @@ namespace TutoringSystem.Infrastructure.Repositories
             return reservation;
         }
 
-        public async Task<IEnumerable<Reservation>> GetReservationsCollectionAsync(Expression<Func<Reservation, bool>> expression)
+        public async Task<IEnumerable<RecurringReservation>> GetReservationsCollectionAsync(Expression<Func<RecurringReservation, bool>> expression)
         {
             var reservations = await FindByCondition(expression)
                 .Include(r => r.Student)
@@ -44,7 +51,7 @@ namespace TutoringSystem.Infrastructure.Repositories
             return reservations;
         }
 
-        public async Task<bool> UpdateReservationAsync(Reservation updatedReservation)
+        public async Task<bool> UpdateReservationAsync(RecurringReservation updatedReservation)
         {
             Update(updatedReservation);
 

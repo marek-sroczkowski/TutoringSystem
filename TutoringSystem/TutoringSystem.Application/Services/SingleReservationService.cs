@@ -14,15 +14,15 @@ using TutoringSystem.Domain.Repositories;
 
 namespace TutoringSystem.Application.Services
 {
-    public class ReservationService : IReservationService
+    public class SingleReservationService : ISingleReservationService
     {
-        private readonly IReservationRepository reservationRepository;
+        private readonly ISingleReservationRepository reservationRepository;
         private readonly IIntervalRepository intervalRepository;
         private readonly IStudentRepository studentRepository;
         private readonly IAvailabilityRepository availabilityRepository;
         private readonly IMapper mapper;
 
-        public ReservationService(IReservationRepository reservationRepository,
+        public SingleReservationService(ISingleReservationRepository reservationRepository,
             IIntervalRepository intervalRepository,
             IStudentRepository studentRepository,
             IAvailabilityRepository availabilityRepository,
@@ -35,14 +35,14 @@ namespace TutoringSystem.Application.Services
             this.mapper = mapper;
         }
 
-        public async Task<ReservationDto> AddReservationByStudentAsync(long studentId, NewStudentReservationDto newReservation)
+        public async Task<ReservationDto> AddReservationByStudentAsync(long studentId, NewStudentSingleReservationDto newReservation)
         {
             if (!(await ValidateNewStudentReservationAsync(newReservation)))
                 return null;
 
-            var reservation = mapper.Map<Reservation>(newReservation);
+            var reservation = mapper.Map<SingleReservation>(newReservation);
             reservation.StudentId = studentId;
-            reservation.Cost = (await studentRepository.GetStudentAsync(s => s.Id.Equals(studentId))).HourlRate * (newReservation.Duration / 60.0);
+            reservation.Cost = await CalculateReservationCost(studentId, newReservation);
 
             bool created = false;
             if (await UpdateAvailabilityStudentAsync(newReservation))
@@ -54,16 +54,14 @@ namespace TutoringSystem.Application.Services
             return mapper.Map<ReservationDto>(reservation);
         }
 
-        public async Task<ReservationDto> AddReservationByTutorAsync(long tutorId, NewTutorReservationDto newReservation)
+        public async Task<ReservationDto> AddReservationByTutorAsync(long tutorId, NewTutorSingleReservationDto newReservation)
         {
             if (!(await ValidateNewTutorReservationAsync(tutorId, newReservation)))
                 return null;
 
-            var reservation = mapper.Map<Reservation>(newReservation);
+            var reservation = mapper.Map<SingleReservation>(newReservation);
             reservation.TutorId = tutorId;
-            reservation.Cost = newReservation.Cost.HasValue ?
-                newReservation.Cost.Value :
-                (await studentRepository.GetStudentAsync(s => s.Id.Equals(newReservation.StudentId))).HourlRate * (newReservation.Duration / 60.0);
+            reservation.Cost = await CalculateReservationCost(newReservation);
             bool created = false;
             if (await UpdateAvailabilityTutorAsync(tutorId, newReservation))
                 created = await reservationRepository.AddReservationAsync(reservation);
@@ -90,7 +88,7 @@ namespace TutoringSystem.Application.Services
 
         public async Task<PagedList<ReservationDto>> GetReservationsByStudentAsync(long studentId, ReservationParameters parameters)
         {
-            Expression<Func<Reservation, bool>> expression = r => r.StudentId.Equals(studentId);
+            Expression<Func<SingleReservation, bool>> expression = r => r.StudentId.Equals(studentId);
             FilterByStartDate(ref expression, parameters.StartDate);
             FilterByEndDate(ref expression, parameters.EndDate);
             FilterByPlace(ref expression, parameters.Place);
@@ -102,7 +100,7 @@ namespace TutoringSystem.Application.Services
 
         public async Task<PagedList<ReservationDto>> GetReservationsByTutorAsync(long tutorId, ReservationParameters parameters)
         {
-            Expression<Func<Reservation, bool>> expression = r => r.TutorId.Equals(tutorId);
+            Expression<Func<SingleReservation, bool>> expression = r => r.TutorId.Equals(tutorId);
             FilterByStartDate(ref expression, parameters.StartDate);
             FilterByEndDate(ref expression, parameters.EndDate);
             FilterByPlace(ref expression, parameters.Place);
@@ -134,7 +132,23 @@ namespace TutoringSystem.Application.Services
             return await reservationRepository.UpdateReservationAsync(reservation);
         }
 
-        private void FilterByStartDate(ref Expression<Func<Reservation, bool>> expression, DateTime? startDate)
+        private async Task<double> CalculateReservationCost(NewTutorSingleReservationDto newReservation)
+        {
+            double cost = newReservation.Cost.HasValue ?
+                newReservation.Cost.Value :
+                (await studentRepository.GetStudentAsync(s => s.Id.Equals(newReservation.StudentId))).HourlRate * (newReservation.Duration / 60.0);
+
+            return cost;
+        }
+
+        private async Task<double> CalculateReservationCost(long studentId, NewStudentSingleReservationDto newReservation)
+        {
+            double cost = (await studentRepository.GetStudentAsync(s => s.Id.Equals(studentId))).HourlRate * (newReservation.Duration / 60.0);
+
+            return cost;
+        }
+
+        private void FilterByStartDate(ref Expression<Func<SingleReservation, bool>> expression, DateTime? startDate)
         {
             if (!startDate.HasValue)
                 return;
@@ -142,7 +156,7 @@ namespace TutoringSystem.Application.Services
             ExpressionMerger.MergeExpression(ref expression, r => r.StartTime >= startDate.Value);
         }
 
-        private void FilterByEndDate(ref Expression<Func<Reservation, bool>> expression, DateTime? endDate)
+        private void FilterByEndDate(ref Expression<Func<SingleReservation, bool>> expression, DateTime? endDate)
         {
             if (!endDate.HasValue)
                 return;
@@ -150,7 +164,7 @@ namespace TutoringSystem.Application.Services
             ExpressionMerger.MergeExpression(ref expression, r => r.StartTime <= endDate.Value);
         }
 
-        private void FilterByPlace(ref Expression<Func<Reservation, bool>> expression, ReservationPlace? place)
+        private void FilterByPlace(ref Expression<Func<SingleReservation, bool>> expression, ReservationPlace? place)
         {
             if (!place.HasValue)
                 return;
@@ -158,7 +172,7 @@ namespace TutoringSystem.Application.Services
             ExpressionMerger.MergeExpression(ref expression, r => r.Place.Equals(place.Value));
         }
 
-        private async Task<bool> ValidateNewStudentReservationAsync(NewStudentReservationDto reservation)
+        private async Task<bool> ValidateNewStudentReservationAsync(NewStudentSingleReservationDto reservation)
         {
             if (reservation.StartTime.AddMinutes(30) < DateTime.Now)
                 return false;
@@ -172,7 +186,7 @@ namespace TutoringSystem.Application.Services
             return true;
         }
 
-        private async Task<bool> ValidateNewTutorReservationAsync(long tutorId, NewTutorReservationDto reservation)
+        private async Task<bool> ValidateNewTutorReservationAsync(long tutorId, NewTutorSingleReservationDto reservation)
         {
             var reservations = await reservationRepository.GetReservationsCollectionAsync(r => r.TutorId.Equals(tutorId) && r.StartTime.Date.Equals(reservation.StartTime.Date));
             if (reservation is null)
@@ -200,7 +214,7 @@ namespace TutoringSystem.Application.Services
             return true;
         }
 
-        private async Task<bool> UpdateAvailabilityStudentAsync(NewStudentReservationDto reservation)
+        private async Task<bool> UpdateAvailabilityStudentAsync(NewStudentSingleReservationDto reservation)
         {
             var interval = await intervalRepository.GetIntervalAsync(i => i.Id.Equals(reservation.IntervalId));
             var availability = interval.Availability;
@@ -232,7 +246,7 @@ namespace TutoringSystem.Application.Services
             return await availabilityRepository.UpdateAvailabilityAsync(availability);
         }
 
-        private async Task<bool> UpdateAvailabilityTutorAsync(long tutorId, NewTutorReservationDto reservation)
+        private async Task<bool> UpdateAvailabilityTutorAsync(long tutorId, NewTutorSingleReservationDto reservation)
         {
             var availability = await availabilityRepository.GetAvailabilityAsync(a => a.TutorId.Equals(tutorId) && a.Date.Date.Equals(reservation.StartTime.Date));
 
