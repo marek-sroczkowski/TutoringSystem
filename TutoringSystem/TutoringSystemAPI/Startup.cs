@@ -4,7 +4,6 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using TutoringSystem.API.Installers;
-using TutoringSystem.API.ScheduleTasks;
 using TutoringSystem.Infrastructure.Data;
 
 namespace TutoringSystemAPI
@@ -21,7 +20,6 @@ namespace TutoringSystemAPI
         public void ConfigureServices(IServiceCollection services)
         {
             services.InstallServicesAssembly(Configuration);
-            services.AddSingleton<IHostedService, SampleTask1>();
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env, Seeder seeder)

@@ -4,7 +4,7 @@ using System;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace TutoringSystem.API.BackgroundService
+namespace TutoringSystem.Application.BackgroundServices
 {
     public abstract class ScheduledProcessor : ScopedProcessor
     {

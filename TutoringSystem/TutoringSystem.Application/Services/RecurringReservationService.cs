@@ -1,9 +1,7 @@
 ﻿using AutoMapper;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Linq.Expressions;
-using System.Text;
 using System.Threading.Tasks;
 using TutoringSystem.Application.Dtos.ReservationDtos;
 using TutoringSystem.Application.Helpers;
@@ -39,8 +37,7 @@ namespace TutoringSystem.Application.Services
             var reservation = mapper.Map<RecurringReservation>(newReservation);
             reservation.StudentId = studentId;
             reservation.Cost = await CalculateReservationCost(studentId, newReservation);
-            await reservationRepository.AddReservationAsync(reservation);
-            await AddRepeatedReservation(reservation);
+            await repeatedReservationRepository.AddReservationAsync(new RepeatedReservation(reservation));
 
             return mapper.Map<ReservationDto>(reservation);
         }
@@ -51,8 +48,7 @@ namespace TutoringSystem.Application.Services
             var reservation = mapper.Map<RecurringReservation>(newReservation);
             reservation.TutorId = tutorId;
             reservation.Cost = await CalculateReservationCost(newReservation);
-            await reservationRepository.AddReservationAsync(reservation);
-            await AddRepeatedReservation(reservation);
+            await repeatedReservationRepository.AddReservationAsync(new RepeatedReservation(reservation));
 
             return mapper.Map<ReservationDto>(reservation);
         }
@@ -119,13 +115,6 @@ namespace TutoringSystem.Application.Services
                 return;
 
             ExpressionMerger.MergeExpression(ref expression, r => r.Place.Equals(place.Value));
-        }
-
-        private async Task<bool> AddRepeatedReservation(RecurringReservation reservation)
-        {
-            var repeatedReservation = new RepeatedReservation(reservation);
-
-            return await repeatedReservationRepository.AddReservationAsync(repeatedReservation);
         }
 
         private async Task<double> CalculateReservationCost(NewTutorRecurringReservationDto newReservation)
