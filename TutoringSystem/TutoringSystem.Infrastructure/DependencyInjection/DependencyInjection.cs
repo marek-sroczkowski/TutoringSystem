@@ -1,5 +1,7 @@
 ﻿using FluentValidation;
 using FluentValidation.AspNetCore;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using TutoringSystem.Application.Dtos.AccountDtos;
 using TutoringSystem.Domain.Repositories;
@@ -11,10 +13,11 @@ namespace TutoringSystem.Infrastructure.DependencyInjection
 {
     public static class DependencyInjection
     {
-        public static IServiceCollection AddInfrastructure(this IServiceCollection services)
+        public static IServiceCollection AddInfrastructure(this IServiceCollection services, IConfiguration configuration)
         {
             services.AddRepositories();
             services.AddValidators();
+            services.AddDbContext(configuration);
 
             services.AddScoped<Seeder>();
 
@@ -53,6 +56,14 @@ namespace TutoringSystem.Infrastructure.DependencyInjection
                 .AddFluentValidation();
             services.AddScoped<IValidator<RegisterStudentDto>, RegisterStudentValidation>();
             services.AddScoped<IValidator<RegisterTutorDto>, RegisterTutorValidation>();
+
+            return services;
+        }
+
+        public static IServiceCollection AddDbContext(this IServiceCollection services, IConfiguration configuration)
+        {
+            services.AddDbContext<AppDbContext>(options =>
+                options.UseSqlServer(configuration.GetConnectionString("DefaultConnection")));
 
             return services;
         }

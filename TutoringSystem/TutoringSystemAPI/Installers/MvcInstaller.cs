@@ -10,7 +10,7 @@ namespace TutoringSystem.API.Installers
         public void InstallServices(IServiceCollection services, IConfiguration configuration)
         {
             services.AddApplication(configuration);
-            services.AddInfrastructure();
+            services.AddInfrastructure(configuration);
         }
     }
 }
