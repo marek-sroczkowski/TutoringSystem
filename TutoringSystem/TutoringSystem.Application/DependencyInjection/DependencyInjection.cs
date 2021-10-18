@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using FluentValidation;
+using FluentValidation.AspNetCore;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -7,10 +9,12 @@ using Microsoft.IdentityModel.Tokens;
 using System.Reflection;
 using System.Text;
 using TutoringSystem.Application.Authorization;
+using TutoringSystem.Application.Dtos.AccountDtos;
 using TutoringSystem.Application.Identity;
 using TutoringSystem.Application.ScheduleTasks;
 using TutoringSystem.Application.Services;
 using TutoringSystem.Application.Services.Interfaces;
+using TutoringSystem.Application.Validators;
 using TutoringSystem.Domain.Entities;
 
 namespace TutoringSystem.Application.DependencyInjection
@@ -24,6 +28,7 @@ namespace TutoringSystem.Application.DependencyInjection
             services.AddAuthentication(configuration);
             services.AddAuthorization();
             services.AddScheduleTasks();
+            services.AddValidators();
 
             return services;
         }
@@ -99,6 +104,21 @@ namespace TutoringSystem.Application.DependencyInjection
         public static IServiceCollection AddScheduleTasks(this IServiceCollection services)
         {
             services.AddSingleton<IHostedService, RecurringReservationSynchronization>();
+
+            return services;
+        }
+
+        public static IServiceCollection AddValidators(this IServiceCollection services)
+        {
+            services.AddControllers()
+                .AddJsonOptions(o =>
+                {
+                    o.JsonSerializerOptions.IgnoreNullValues = true;
+                    o.JsonSerializerOptions.Converters.Add(new System.Text.Json.Serialization.JsonStringEnumConverter());
+                })
+                .AddFluentValidation();
+            services.AddScoped<IValidator<RegisterStudentDto>, RegisterStudentValidation>();
+            services.AddScoped<IValidator<RegisterTutorDto>, RegisterTutorValidation>();
 
             return services;
         }

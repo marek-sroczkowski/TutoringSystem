@@ -72,7 +72,7 @@ namespace TutoringSystem.Infrastructure.Data
                 Contact = new Contact
                 {
                     DiscordName = "marekes99#3923",
-                    Email = "marekes97@gmail.com",
+                    Email = "marek.sroczkowski.dev@gmail.com",
                     PhoneNumbers = new List<PhoneNumber>
                     {
                         new PhoneNumber

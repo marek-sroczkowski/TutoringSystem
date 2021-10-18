@@ -55,6 +55,19 @@ namespace TutoringSystem.Infrastructure.Repositories
             return users;
         }
 
+        public IEnumerable<User> GetUsersCollection(Expression<Func<User, bool>> expression, bool? isActiv = true)
+        {
+            if (isActiv.HasValue)
+                ExpressionMerger.MergeExpression(ref expression, u => u.IsActiv.Equals(isActiv.Value));
+
+            var users = FindByCondition(expression)
+                .Include(u => u.Address)
+                .Include(u => u.Contact)
+                .ToList();
+
+            return users;
+        }
+
         public async Task<bool> UpdateUser(User user)
         {
             Update(user);

@@ -1,13 +1,9 @@
-﻿using FluentValidation;
-using FluentValidation.AspNetCore;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using TutoringSystem.Application.Dtos.AccountDtos;
 using TutoringSystem.Domain.Repositories;
 using TutoringSystem.Infrastructure.Data;
 using TutoringSystem.Infrastructure.Repositories;
-using TutoringSystem.Infrastructure.Validators;
 
 namespace TutoringSystem.Infrastructure.DependencyInjection
 {
@@ -16,7 +12,6 @@ namespace TutoringSystem.Infrastructure.DependencyInjection
         public static IServiceCollection AddInfrastructure(this IServiceCollection services, IConfiguration configuration)
         {
             services.AddRepositories();
-            services.AddValidators();
             services.AddDbContext(configuration);
 
             services.AddScoped<Seeder>();
@@ -41,21 +36,6 @@ namespace TutoringSystem.Infrastructure.DependencyInjection
             services.AddScoped<IRecurringReservationRepository, RecurringReservationRepository>();
             services.AddScoped<IRepeatedReservationRepository, RepeatedReservationRepository>();
             services.AddScoped<IReservationRepository, ReservationRepository>();
-
-            return services;
-        }
-
-        public static IServiceCollection AddValidators(this IServiceCollection services)
-        {
-            services.AddControllers()
-                .AddJsonOptions(o =>
-                {
-                    o.JsonSerializerOptions.IgnoreNullValues = true;
-                    o.JsonSerializerOptions.Converters.Add(new System.Text.Json.Serialization.JsonStringEnumConverter());
-                })
-                .AddFluentValidation();
-            services.AddScoped<IValidator<RegisterStudentDto>, RegisterStudentValidation>();
-            services.AddScoped<IValidator<RegisterTutorDto>, RegisterTutorValidation>();
 
             return services;
         }
