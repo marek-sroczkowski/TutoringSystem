@@ -41,6 +41,7 @@ namespace TutoringSystem.Infrastructure.Repositories
         public async Task<IEnumerable<RepeatedReservation>> GetReservationsCollectionAsync(Expression<Func<RepeatedReservation, bool>> expression)
         {
             var reservations = await FindByCondition(expression)
+                .Include(r => r.Reservations)
                 .ToListAsync();
 
             return reservations;

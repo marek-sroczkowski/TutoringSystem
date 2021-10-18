@@ -25,6 +25,9 @@ namespace TutoringSystem.Infrastructure.Repositories
 
 		public IQueryable<T> FindByCondition(Expression<Func<T, bool>> expression)
 		{
+			if (expression is null)
+				return DbContext.Set<T>().AsNoTracking();
+
 			return DbContext.Set<T>()
 				.Where(expression)
 				.AsNoTracking();

@@ -2,11 +2,13 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
 using System.Reflection;
 using System.Text;
 using TutoringSystem.Application.Authorization;
 using TutoringSystem.Application.Identity;
+using TutoringSystem.Application.ScheduleTasks;
 using TutoringSystem.Application.Services;
 using TutoringSystem.Application.Services.Interfaces;
 using TutoringSystem.Domain.Entities;
@@ -21,6 +23,7 @@ namespace TutoringSystem.Application.DependencyInjection
             services.AddAutoMapper();
             services.AddAuthentication(configuration);
             services.AddAuthorization();
+            services.AddScheduleTasks();
 
             return services;
         }
@@ -89,6 +92,13 @@ namespace TutoringSystem.Application.DependencyInjection
             services.AddScoped<IAuthorizationHandler, ContactResourceOperationHandler>();
             services.AddScoped<IAuthorizationHandler, AvailabilityResourceOperationHandler>();
             services.AddScoped<IAuthorizationHandler, StudentResourceOperationHandler>();
+
+            return services;
+        }
+
+        public static IServiceCollection AddScheduleTasks(this IServiceCollection services)
+        {
+            services.AddSingleton<IHostedService, RecurringReservationSynchronization>();
 
             return services;
         }

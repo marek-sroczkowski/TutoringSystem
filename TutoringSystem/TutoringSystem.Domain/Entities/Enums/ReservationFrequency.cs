@@ -4,6 +4,6 @@
     {
         Weekly,
         OnceTwoWeeks,
-        OnceMonth
+        Monthly
     }
 }
