@@ -10,6 +10,7 @@ namespace TutoringSystem.Domain.Entities
         public DateTime StartTime { get; set; }
         public int Duration { get; set; }
         public string Description { get; set; }
+        public bool IsPaid { get; set; }
         public ReservationPlace Place { get; set; }
 
         public long SubjectId { get; set; }
