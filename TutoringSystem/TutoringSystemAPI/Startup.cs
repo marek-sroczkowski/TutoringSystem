@@ -1,8 +1,10 @@
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using System.Linq;
 using TutoringSystem.API.Installers;
 using TutoringSystem.Infrastructure.Data;
 
@@ -22,14 +24,17 @@ namespace TutoringSystemAPI
             services.InstallServicesAssembly(Configuration);
         }
 
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, Seeder seeder)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, Seeder seeder, AppDbContext context)
         {
+            RunMigrations(context);
+
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
-                app.UseSwagger();
-                app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "TutoringSystemAPI v1"));
             }
+
+            app.UseSwagger();
+            app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "TutoringSystemAPI v1"));
 
             app.UseAuthentication();
 
@@ -45,6 +50,15 @@ namespace TutoringSystemAPI
             });
 
             seeder.Seed();
+        }
+
+        private void RunMigrations(AppDbContext context)
+        {
+            var pendingMigrations = context.Database.GetPendingMigrations();
+            if (pendingMigrations.Any())
+            {
+                context.Database.Migrate();
+            }
         }
     }
 }
