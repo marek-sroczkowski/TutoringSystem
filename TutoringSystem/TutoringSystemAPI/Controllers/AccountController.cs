@@ -56,7 +56,7 @@ namespace TutoringSystem.API.Controllers
         {
             var loginResult = await userService.TryLoginAsync(model);
             if (loginResult.Status.Equals(LoginStatus.InvalidUsernameOrPassword))
-                return BadRequest(loginResult.Status);
+                return Ok(loginResult.Status);
 
             var token = jwtProvider.GenerateJwtToken(loginResult.User);
             Response.Headers.Add("Authorization", token);
