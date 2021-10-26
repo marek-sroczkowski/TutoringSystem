@@ -23,6 +23,7 @@ namespace TutoringSystem.Domain.Entities
             ReceiptDate = DateTime.Now;
             Status = AdditionalOrderStatus.Pending;
             IsPaid = false;
+            IsActiv = true;
         }
     }
 }
