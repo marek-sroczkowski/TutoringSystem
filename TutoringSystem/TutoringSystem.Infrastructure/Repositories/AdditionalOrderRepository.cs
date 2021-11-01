@@ -25,9 +25,9 @@ namespace TutoringSystem.Infrastructure.Repositories
 
         public async Task<bool> DeleteAdditionalOrderAsync(AdditionalOrder order)
         {
-            Delete(order);
+            order.IsActiv = false;
 
-            return await SaveChangedAsync();
+            return await UpdateAdditionalOrderAsync(order);
         }
 
         public async Task<AdditionalOrder> GetAdditionalOrderAsync(Expression<Func<AdditionalOrder, bool>> expression, bool? isActiv = true)
