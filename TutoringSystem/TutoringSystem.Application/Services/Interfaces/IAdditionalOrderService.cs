@@ -14,5 +14,6 @@ namespace TutoringSystem.Application.Services.Interfaces
         Task<bool> UpdateAdditionalOrderAsync(UpdatedOrderDto updatedOrder);
         Task<bool> DeleteAdditionalOrderAsync(long orderId);
         Task<bool> ChangeOrderStatusAsync(long orderId, AdditionalOrderStatus orderStatus);
+        Task<bool> ChangePaymentStatusAsync(long orderId, bool isPaid);
     }
 }

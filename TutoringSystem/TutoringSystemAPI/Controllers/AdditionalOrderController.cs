@@ -118,38 +118,38 @@ namespace TutoringSystem.API.Controllers
             return NoContent();
         }
 
-        [SwaggerOperation(Summary = "Changes order status to in progress")]
-        [HttpGet("setInProgress/{orderId}")]
+        [SwaggerOperation(Summary = "Changes order status")]
+        [HttpPatch("status/{orderId}")]
         [ValidateOrderExistence]
-        public async Task<ActionResult> SetInProgressStatus(int orderId)
+        public async Task<ActionResult> ChangeStatus(int orderId, AdditionalOrderStatus status)
         {
             var order = await additionalOrderService.GetAdditionalOrderByIdAsync(orderId);
             var authorizationResult = authorizationService.AuthorizeAsync(User, order, new ResourceOperationRequirement(OperationType.Read)).Result;
             if (!authorizationResult.Succeeded)
                 return Forbid();
 
-            var changed = await additionalOrderService.ChangeOrderStatusAsync(orderId, AdditionalOrderStatus.InProgress);
+            var changed = await additionalOrderService.ChangeOrderStatusAsync(orderId, status);
             if (!changed)
                 return BadRequest("Order status could be not changed");
 
-            return Ok();
+            return NoContent();
         }
 
-        [SwaggerOperation(Summary = "Changes order status to realized")]
-        [HttpGet("setRealized/{orderId}")]
+        [SwaggerOperation(Summary = "Changes payment status")]
+        [HttpPatch("payment/{orderId}")]
         [ValidateOrderExistence]
-        public async Task<ActionResult> SetRealizedStatus(int orderId)
+        public async Task<ActionResult> ChangePaymentStatus(int orderId, bool isPaid)
         {
             var order = await additionalOrderService.GetAdditionalOrderByIdAsync(orderId);
             var authorizationResult = authorizationService.AuthorizeAsync(User, order, new ResourceOperationRequirement(OperationType.Read)).Result;
             if (!authorizationResult.Succeeded)
                 return Forbid();
 
-            var changed = await additionalOrderService.ChangeOrderStatusAsync(orderId, AdditionalOrderStatus.Realized);
+            var changed = await additionalOrderService.ChangePaymentStatusAsync(orderId, isPaid);
             if (!changed)
-                return BadRequest("Order status could be not changed");
+                return BadRequest("Payment status could be not changed");
 
-            return Ok();
+            return NoContent();
         }
     }
 }

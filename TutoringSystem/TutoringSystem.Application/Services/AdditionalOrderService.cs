@@ -44,6 +44,14 @@ namespace TutoringSystem.Application.Services
             return await additionalOrderRepository.UpdateAdditionalOrderAsync(order);
         }
 
+        public async Task<bool> ChangePaymentStatusAsync(long orderId, bool isPaid)
+        {
+            var order = await additionalOrderRepository.GetAdditionalOrderAsync(o => o.Id.Equals(orderId));
+            order.IsPaid = isPaid;
+
+            return await additionalOrderRepository.UpdateAdditionalOrderAsync(order);
+        }
+
         public async Task<bool> DeleteAdditionalOrderAsync(long orderId)
         {
             var order = await additionalOrderRepository.GetAdditionalOrderAsync(o => o.Id.Equals(orderId));
