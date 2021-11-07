@@ -25,16 +25,16 @@ namespace TutoringSystem.Infrastructure.Repositories
 
         public async Task<bool> DeleteSubjectAsync(Subject subject)
         {
-            subject.IsActiv = false;
+            subject.IsActive = false;
             Update(subject);
 
             return await SaveChangedAsync();
         }
 
-        public async Task<Subject> GetSubjectAsync(Expression<Func<Subject, bool>> expression, bool? isActiv = true)
+        public async Task<Subject> GetSubjectAsync(Expression<Func<Subject, bool>> expression, bool? isActive = true)
         {
-            if (isActiv.HasValue)
-                ExpressionMerger.MergeExpression(ref expression, s => s.IsActiv.Equals(isActiv.Value));
+            if (isActive.HasValue)
+                ExpressionMerger.MergeExpression(ref expression, s => s.IsActive.Equals(isActive.Value));
 
             var subject = await DbContext.Subjects
                 .Include(s => s.Tutor)
@@ -43,10 +43,10 @@ namespace TutoringSystem.Infrastructure.Repositories
             return subject;
         }
 
-        public async Task<IEnumerable<Subject>> GetSubjectsCollectionAsync(Expression<Func<Subject, bool>> expression, bool? isActiv = true)
+        public async Task<IEnumerable<Subject>> GetSubjectsCollectionAsync(Expression<Func<Subject, bool>> expression, bool? isActive = true)
         {
-            if (isActiv.HasValue)
-                ExpressionMerger.MergeExpression(ref expression, s => s.IsActiv.Equals(isActiv.Value));
+            if (isActive.HasValue)
+                ExpressionMerger.MergeExpression(ref expression, s => s.IsActive.Equals(isActive.Value));
 
             var subjects = await FindByCondition(expression)
                 .ToListAsync();

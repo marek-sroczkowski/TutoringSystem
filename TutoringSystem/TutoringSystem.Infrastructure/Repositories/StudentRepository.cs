@@ -24,24 +24,24 @@ namespace TutoringSystem.Infrastructure.Repositories
             return await SaveChangedAsync();
         }
 
-        public async Task<Student> GetStudentAsync(Expression<Func<Student, bool>> expression, bool? isActiv = true)
+        public async Task<Student> GetStudentAsync(Expression<Func<Student, bool>> expression, bool? isActive = true)
         {
             ExpressionMerger.MergeExpression(ref expression, t => t.IsEnable);
-            if (isActiv.HasValue)
-                ExpressionMerger.MergeExpression(ref expression, s => s.IsActiv.Equals(isActiv.Value));
+            if (isActive.HasValue)
+                ExpressionMerger.MergeExpression(ref expression, s => s.IsActive.Equals(isActive.Value));
 
             var student = await DbContext.Students
-                .Where(s => s.IsActiv.Equals(isActiv))
+                .Where(s => s.IsActive.Equals(isActive))
                 .Include(s => s.Tutors)
                 .FirstOrDefaultAsync(expression);
 
             return student;
         }
 
-        public async Task<IEnumerable<Student>> GetStudentsCollectionAsync(Expression<Func<Student, bool>> expression, bool? isActiv = true)
+        public async Task<IEnumerable<Student>> GetStudentsCollectionAsync(Expression<Func<Student, bool>> expression, bool? isActive = true)
         {
-            if (isActiv.HasValue)
-                ExpressionMerger.MergeExpression(ref expression, s => s.IsActiv.Equals(isActiv.Value));
+            if (isActive.HasValue)
+                ExpressionMerger.MergeExpression(ref expression, s => s.IsActive.Equals(isActive.Value));
 
             var students = await FindByCondition(expression)
                 .Include(s => s.Tutors)

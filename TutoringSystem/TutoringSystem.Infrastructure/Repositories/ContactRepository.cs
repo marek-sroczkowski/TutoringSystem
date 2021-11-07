@@ -35,7 +35,7 @@ namespace TutoringSystem.Infrastructure.Repositories
         {
             var contact = await DbContext.Contacts
                 .Include(c => c.User)
-                .Include(c => c.PhoneNumbers.Where(p => p.IsActiv))
+                .Include(c => c.PhoneNumbers.Where(p => p.IsActive))
                 .FirstOrDefaultAsync(expression);
 
             return contact;
@@ -43,7 +43,7 @@ namespace TutoringSystem.Infrastructure.Repositories
 
         public async Task<IEnumerable<Contact>> GetContactsCollectionAsync(Expression<Func<Contact, bool>> expression)
         {
-            ExpressionMerger.MergeExpression(ref expression, c => c.User.IsActiv);
+            ExpressionMerger.MergeExpression(ref expression, c => c.User.IsActive);
             var contacts = FindByCondition(expression)
                 .Include(c => c.User);
 

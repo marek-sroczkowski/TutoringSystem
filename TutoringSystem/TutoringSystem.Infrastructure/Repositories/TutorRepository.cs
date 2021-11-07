@@ -24,14 +24,14 @@ namespace TutoringSystem.Infrastructure.Repositories
             return await SaveChangedAsync();
         }
 
-        public async Task<Tutor> GetTutorAsync(Expression<Func<Tutor, bool>> expression, bool? isActiv = true)
+        public async Task<Tutor> GetTutorAsync(Expression<Func<Tutor, bool>> expression, bool? isActive = true)
         {
             ExpressionMerger.MergeExpression(ref expression, t => t.IsEnable);
-            if (isActiv.HasValue)
-                ExpressionMerger.MergeExpression(ref expression, t => t.IsActiv.Equals(isActiv.Value));
+            if (isActive.HasValue)
+                ExpressionMerger.MergeExpression(ref expression, t => t.IsActive.Equals(isActive.Value));
 
             var tutor = await DbContext.Tutors
-                .Where(t => t.IsActiv.Equals(isActiv))
+                .Where(t => t.IsActive.Equals(isActive))
                 .Include(t => t.Subjects)
                 .Include(t => t.Students)
                 .FirstOrDefaultAsync(expression);
@@ -39,10 +39,10 @@ namespace TutoringSystem.Infrastructure.Repositories
             return tutor;
         }
 
-        public async Task<IEnumerable<Tutor>> GetTutorsCollectionAsync(Expression<Func<Tutor, bool>> expression, bool? isActiv = true)
+        public async Task<IEnumerable<Tutor>> GetTutorsCollectionAsync(Expression<Func<Tutor, bool>> expression, bool? isActive = true)
         {
-            if (isActiv.HasValue)
-                ExpressionMerger.MergeExpression(ref expression, t => t.IsActiv.Equals(isActiv.Value));
+            if (isActive.HasValue)
+                ExpressionMerger.MergeExpression(ref expression, t => t.IsActive.Equals(isActive.Value));
 
             var tutors = await FindByCondition(expression)
                             .ToListAsync();

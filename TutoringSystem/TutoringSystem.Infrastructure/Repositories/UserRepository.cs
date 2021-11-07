@@ -22,16 +22,17 @@ namespace TutoringSystem.Infrastructure.Repositories
             DeactivatePhones(user);
             await DeactivateOrdersAsync(user.Id);
             await DeactivateSubjectsAsync(user.Id);
-            user.IsActiv = false;
+            user.IsActive = false;
+            user.IsEnable = false;
             Update(user);
 
             return await SaveChangedAsync();
         }
 
-        public async Task<User> GetUserAsync(Expression<Func<User, bool>> expression, bool? isActiv = true)
+        public async Task<User> GetUserAsync(Expression<Func<User, bool>> expression, bool? isActive = true)
         {
-            if (isActiv.HasValue)
-                ExpressionMerger.MergeExpression(ref expression, u => u.IsActiv.Equals(isActiv.Value));
+            if (isActive.HasValue)
+                ExpressionMerger.MergeExpression(ref expression, u => u.IsActive.Equals(isActive.Value));
 
             var user = await DbContext.Users
                 .Include(u => u.Contact)
@@ -42,10 +43,10 @@ namespace TutoringSystem.Infrastructure.Repositories
             return user;
         }
 
-        public async Task<IEnumerable<User>> GetUsersCollectionAsync(Expression<Func<User, bool>> expression, bool? isActiv = true)
+        public async Task<IEnumerable<User>> GetUsersCollectionAsync(Expression<Func<User, bool>> expression, bool? isActive = true)
         {
-            if (isActiv.HasValue)
-                ExpressionMerger.MergeExpression(ref expression, u => u.IsActiv.Equals(isActiv.Value));
+            if (isActive.HasValue)
+                ExpressionMerger.MergeExpression(ref expression, u => u.IsActive.Equals(isActive.Value));
 
             var users = await FindByCondition(expression)
                 .Include(u => u.Address)
@@ -55,10 +56,10 @@ namespace TutoringSystem.Infrastructure.Repositories
             return users;
         }
 
-        public IEnumerable<User> GetUsersCollection(Expression<Func<User, bool>> expression, bool? isActiv = true)
+        public IEnumerable<User> GetUsersCollection(Expression<Func<User, bool>> expression, bool? isActive = true)
         {
-            if (isActiv.HasValue)
-                ExpressionMerger.MergeExpression(ref expression, u => u.IsActiv.Equals(isActiv.Value));
+            if (isActive.HasValue)
+                ExpressionMerger.MergeExpression(ref expression, u => u.IsActive.Equals(isActive.Value));
 
             var users = FindByCondition(expression)
                 .Include(u => u.Address)
@@ -87,7 +88,7 @@ namespace TutoringSystem.Infrastructure.Repositories
             await DbContext.Subjects.ForEachAsync(s =>
             {
                 if (s.TutorId.Equals(userId))
-                    s.IsActiv = false;
+                    s.IsActive = false;
             });
         }
 
@@ -96,13 +97,13 @@ namespace TutoringSystem.Infrastructure.Repositories
             await DbContext.AdditionalOrders.ForEachAsync(o =>
             {
                 if (o.TutorId.Equals(userId))
-                    o.IsActiv = false;
+                    o.IsActive = false;
             });
         }
 
         private void DeactivatePhones(User user)
         {
-            user.Contact.PhoneNumbers.ToList().ForEach(p => p.IsActiv = false);
+            user.Contact.PhoneNumbers.ToList().ForEach(p => p.IsActive = false);
         }
     }
 }

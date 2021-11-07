@@ -13,7 +13,7 @@ namespace TutoringSystem.Domain.Entities
         public string LastName { get; set; }
         public DateTime? LastLoginDate { get; set; }
         public DateTime RegistrationDate { get; set; }
-        public bool IsActiv { get; set; }
+        public bool IsActive { get; set; }
         public bool IsEnable { get; set; }
         public Role Role { get; set; }
 
@@ -26,7 +26,7 @@ namespace TutoringSystem.Domain.Entities
 
         public User()
         {
-            IsActiv = true;
+            IsActive = true;
             IsEnable = false;
             RegistrationDate = DateTime.Now;
             Contact = new Contact { PhoneNumbers = new List<PhoneNumber>() };

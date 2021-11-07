@@ -31,7 +31,7 @@ namespace TutoringSystem.Infrastructure.Repositories
 
         public async Task<bool> DeleteActivationTokenAsync(ActivationToken token)
         {
-            token.IsActiv = false;
+            token.IsActive = false;
 
             return await UpdateActivationTokenAsync(token);
         }

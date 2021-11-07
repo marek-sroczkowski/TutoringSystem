@@ -25,15 +25,15 @@ namespace TutoringSystem.Infrastructure.Repositories
 
         public async Task<bool> DeleteAdditionalOrderAsync(AdditionalOrder order)
         {
-            order.IsActiv = false;
+            order.IsActive = false;
 
             return await UpdateAdditionalOrderAsync(order);
         }
 
-        public async Task<AdditionalOrder> GetAdditionalOrderAsync(Expression<Func<AdditionalOrder, bool>> expression, bool? isActiv = true)
+        public async Task<AdditionalOrder> GetAdditionalOrderAsync(Expression<Func<AdditionalOrder, bool>> expression, bool? isActive = true)
         {
-            if (isActiv.HasValue)
-                ExpressionMerger.MergeExpression(ref expression, o => o.IsActiv.Equals(isActiv.Value));
+            if (isActive.HasValue)
+                ExpressionMerger.MergeExpression(ref expression, o => o.IsActive.Equals(isActive.Value));
 
             var order = await DbContext.AdditionalOrders
                 .Include(o => o.Tutor)
@@ -42,10 +42,10 @@ namespace TutoringSystem.Infrastructure.Repositories
             return order;
         }
 
-        public async Task<IEnumerable<AdditionalOrder>> GetAdditionalOrdersCollectionAsync(Expression<Func<AdditionalOrder, bool>> expression, bool? isActiv = true)
+        public async Task<IEnumerable<AdditionalOrder>> GetAdditionalOrdersCollectionAsync(Expression<Func<AdditionalOrder, bool>> expression, bool? isActive = true)
         {
-            if (isActiv.HasValue)
-                ExpressionMerger.MergeExpression(ref expression, o => o.IsActiv.Equals(isActiv.Value));
+            if (isActive.HasValue)
+                ExpressionMerger.MergeExpression(ref expression, o => o.IsActive.Equals(isActive.Value));
 
             var orders = await FindByCondition(expression)
                 .ToListAsync();

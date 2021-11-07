@@ -24,7 +24,7 @@ namespace TutoringSystem.Application.Services
             var inactiveSubject = await subjectRepository.GetSubjectAsync(s => s.Id.Equals(subjectId));
             if (inactiveSubject is null)
                 return false;
-            inactiveSubject.IsActiv = true;
+            inactiveSubject.IsActive = true;
 
             return await subjectRepository.UpdateSubjectAsync(inactiveSubject);
         }

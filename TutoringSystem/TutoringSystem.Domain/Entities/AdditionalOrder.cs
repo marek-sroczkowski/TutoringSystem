@@ -13,7 +13,7 @@ namespace TutoringSystem.Domain.Entities
         public double Cost { get; set; }
         public bool IsPaid { get; set; }
         public AdditionalOrderStatus Status { get; set; }
-        public bool IsActiv { get; set; }
+        public bool IsActive { get; set; }
 
         public long TutorId { get; set; }
         public virtual Tutor Tutor { get; set; }
@@ -23,7 +23,7 @@ namespace TutoringSystem.Domain.Entities
             ReceiptDate = DateTime.Now;
             Status = AdditionalOrderStatus.Pending;
             IsPaid = false;
-            IsActiv = true;
+            IsActive = true;
         }
     }
 }

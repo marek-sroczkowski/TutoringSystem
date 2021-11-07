@@ -41,7 +41,7 @@ namespace TutoringSystem.Infrastructure.Repositories
 
         public async Task<IEnumerable<Address>> GetAddressesCollectionAsync(Expression<Func<Address, bool>> expression)
         {
-            ExpressionMerger.MergeExpression(ref expression, a => a.User.IsActiv);
+            ExpressionMerger.MergeExpression(ref expression, a => a.User.IsActive);
             var addresses = FindByCondition(expression)
                 .Include(a => a.User);
 

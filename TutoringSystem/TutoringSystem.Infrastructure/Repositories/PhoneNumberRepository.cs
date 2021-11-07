@@ -30,10 +30,10 @@ namespace TutoringSystem.Infrastructure.Repositories
             return await SaveChangedAsync();
         }
 
-        public async Task<PhoneNumber> GetPhoneNumberAsync(Expression<Func<PhoneNumber, bool>> expression, bool? isActiv = true)
+        public async Task<PhoneNumber> GetPhoneNumberAsync(Expression<Func<PhoneNumber, bool>> expression, bool? isActive = true)
         {
-            if (isActiv.HasValue)
-                ExpressionMerger.MergeExpression(ref expression, p => p.IsActiv.Equals(isActiv.Value));
+            if (isActive.HasValue)
+                ExpressionMerger.MergeExpression(ref expression, p => p.IsActive.Equals(isActive.Value));
 
             var phone = await DbContext.PhoneNumbers
                 .Include(p => p.Contact)
@@ -42,10 +42,10 @@ namespace TutoringSystem.Infrastructure.Repositories
             return phone;
         }
 
-        public async Task<IEnumerable<PhoneNumber>> GetPhoneNumbersCollectionAsync(Expression<Func<PhoneNumber, bool>> expression, bool? isActiv = true)
+        public async Task<IEnumerable<PhoneNumber>> GetPhoneNumbersCollectionAsync(Expression<Func<PhoneNumber, bool>> expression, bool? isActive = true)
         {
-            if (isActiv.HasValue)
-                ExpressionMerger.MergeExpression(ref expression, p => p.IsActiv.Equals(isActiv.Value));
+            if (isActive.HasValue)
+                ExpressionMerger.MergeExpression(ref expression, p => p.IsActive.Equals(isActive.Value));
 
             var phones = FindByCondition(expression);
 
@@ -54,7 +54,7 @@ namespace TutoringSystem.Infrastructure.Repositories
 
         public async Task<bool> DeletePhoneNumberAsync(PhoneNumber phoneNumber)
         {
-            phoneNumber.IsActiv = false;
+            phoneNumber.IsActive = false;
 
             return await UpdatePhoneNumberAsync(phoneNumber);
         }

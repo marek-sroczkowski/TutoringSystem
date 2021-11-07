@@ -11,7 +11,7 @@ namespace TutoringSystem.Domain.Repositories
         Task<bool> AddSubjectAsync(Subject subject);
         Task<bool> UpdateSubjectAsync(Subject updatedSubject);
         Task<bool> DeleteSubjectAsync(Subject subject);
-        Task<Subject> GetSubjectAsync(Expression<Func<Subject, bool>> expression, bool? isActiv = true);
-        Task<IEnumerable<Subject>> GetSubjectsCollectionAsync(Expression<Func<Subject, bool>> expression, bool? isActiv = true);
+        Task<Subject> GetSubjectAsync(Expression<Func<Subject, bool>> expression, bool? isActive = true);
+        Task<IEnumerable<Subject>> GetSubjectsCollectionAsync(Expression<Func<Subject, bool>> expression, bool? isActive = true);
     }
 }
