@@ -53,21 +53,21 @@ namespace TutoringSystem.Application.Services
                 TotalHours = reservations.Sum(r => r.Duration / 60.0),
                 TutoringProfit = reservations.Sum(r => r.Cost),
                 OrderProfit = orders.Sum(o => o.Cost),
-                StudentSummary = students.Select(s => GetStudentSummaryAsync(s.Id, parameters).Result)
+                StudentSummary = students.Select(s => GetStudentSummaryAsync(s.Id, tutorId, parameters).Result)
             };
             result.TotalProfit = result.OrderProfit + result.TutoringProfit;
 
             return result;
         }
 
-        public async Task<StudentSummaryDto> GetStudentSummaryAsync(long studentId, ReportParameters parameters)
+        public async Task<StudentSummaryDto> GetStudentSummaryAsync(long studentId, long tutorId, ReportParameters parameters)
         {
             var student = await studentRepository.GetStudentAsync(s => s.Id.Equals(studentId));
             var reservations = await reservationRepository.GetReservationsCollectionAsync(GetExpressionToStudentReservations(studentId, parameters));
 
             return new StudentSummaryDto
             {
-                Student = mapper.Map<StudentDto>(student),
+                Student = new StudentDto(student, tutorId),
                 Hours = reservations.Sum(r => r.Duration / 60.0),
                 Profit = reservations.Sum(r => r.Cost)
             };

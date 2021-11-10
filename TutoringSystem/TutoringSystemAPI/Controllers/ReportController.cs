@@ -50,7 +50,7 @@ namespace TutoringSystem.API.Controllers
             if (!authorizationResult.Succeeded)
                 return Forbid();
 
-            var report = await reportService.GetStudentSummaryAsync(studentId, parameters);
+            var report = await reportService.GetStudentSummaryAsync(studentId, User.GetUserId(), parameters);
 
             return Ok(report);
         }
