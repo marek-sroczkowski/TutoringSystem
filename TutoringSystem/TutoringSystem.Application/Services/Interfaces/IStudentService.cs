@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
+using TutoringSystem.Application.Dtos.Enums;
 using TutoringSystem.Application.Dtos.StudentDtos;
 
 namespace TutoringSystem.Application.Services.Interfaces
@@ -10,6 +11,6 @@ namespace TutoringSystem.Application.Services.Interfaces
         Task<ICollection<StudentDto>> GetStudentsByTutorIdAsync(long tutorId);
         Task<bool> RemoveStudentAsync(long tutorId, long studentId);
         Task<bool> RemoveAllStudentsAsync(long tutorId);
-        Task<bool> AddStudentToTutorAsync(long tutorId, NewTutorsStudentDto student);
+        Task<AddStudentToTutorStatus> AddStudentToTutorAsync(long tutorId, NewTutorsStudentDto student);
     }
 }

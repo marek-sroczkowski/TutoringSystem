@@ -8,6 +8,7 @@ using TutoringSystem.API.Filters.TypeFilters;
 using TutoringSystem.Application.Dtos.TutorDtos;
 using TutoringSystem.Application.Services.Interfaces;
 using TutoringSystem.Application.Dtos.StudentDtos;
+using TutoringSystem.Application.Dtos.Enums;
 
 namespace TutoringSystem.API.Controllers
 {
@@ -48,13 +49,11 @@ namespace TutoringSystem.API.Controllers
         [HttpPost]
         [Authorize(Roles = "Tutor")]
         [ValidateStudentExistence]
-        public async Task<ActionResult> AddStudent([FromBody] NewTutorsStudentDto student)
+        public async Task<ActionResult<AddStudentToTutorStatus>> AddStudent([FromBody] NewTutorsStudentDto student)
         {
-            var added = await studentService.AddStudentToTutorAsync(User.GetUserId(), student);
-            if (!added)
-                return BadRequest("Student could not be added");
+            var addedStatus = await studentService.AddStudentToTutorAsync(User.GetUserId(), student);
 
-            return Ok();
+            return Ok(addedStatus);
         }
 
         [SwaggerOperation(Summary = "Removes a student from the current logged in tutor's student list")]
