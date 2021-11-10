@@ -42,7 +42,7 @@ namespace TutoringSystem.API.Controllers
         [Authorize(Roles = "Tutor")]
         public async Task<ActionResult> RegisterStudent([FromBody] RegisterStudentDto model)
         {
-            var created = await userService.RegisterStudentAsync(model);
+            var created = await userService.RegisterStudentAsync(User.GetUserId(), model);
             if (!created)
                 return BadRequest("New student could not be added");
 
@@ -79,9 +79,7 @@ namespace TutoringSystem.API.Controllers
         [Authorize(Roles = "Tutor,Student")]
         public async Task<ActionResult> ChangePassword([FromBody] PasswordDto passwordModel)
         {
-            var userId = User.GetUserId();
-            var changedErrors = await userService.ChangePasswordAsync(userId, passwordModel);
-
+            var changedErrors = await userService.ChangePasswordAsync(User.GetUserId(), passwordModel);
             if (changedErrors != null)
                 return BadRequest(changedErrors);
 
@@ -93,9 +91,7 @@ namespace TutoringSystem.API.Controllers
         [Authorize(Roles = "Tutor")]
         public async Task<ActionResult> ActivateAccountByToken(string token)
         {
-            var userId = User.GetUserId();
-            var activated = await userService.ActivateUserByTokenAsync(userId, token);
-
+            var activated = await userService.ActivateUserByTokenAsync(User.GetUserId(), token);
             if (!activated)
                 return BadRequest("Account could be not activated");
 
@@ -107,9 +103,7 @@ namespace TutoringSystem.API.Controllers
         [Authorize(Roles = "Tutor")]
         public async Task<ActionResult> SendNewActivationToken()
         {
-            var userId = User.GetUserId();
-            var sent = await userService.SendNewActivationTokenAsync(userId);
-
+            var sent = await userService.SendNewActivationTokenAsync(User.GetUserId());
             if (!sent)
                 return BadRequest("New activation code could not be sent");
 
@@ -121,9 +115,7 @@ namespace TutoringSystem.API.Controllers
         [Authorize(Roles = "Tutor,Student")]
         public async Task<ActionResult> DeactivateAccount()
         {
-            var userId = User.GetUserId();
-            var deleted = await userService.DeactivateUserAsync(userId);
-
+            var deleted = await userService.DeactivateUserAsync(User.GetUserId());
             if (!deleted)
                 return BadRequest("Account could be not deleted");
 

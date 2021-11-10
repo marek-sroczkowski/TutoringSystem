@@ -33,8 +33,7 @@ namespace TutoringSystem.API.Controllers
         [Authorize(Roles = "Tutor")]
         public async Task<ActionResult<IEnumerable<OrderDto>>> GetOrders([FromQuery] AdditionalOrderParameters parameters)
         {
-            var tutorId = User.GetUserId();
-            var orders = await additionalOrderService.GetAdditionalOrdersAsync(tutorId, parameters);
+            var orders = await additionalOrderService.GetAdditionalOrdersAsync(User.GetUserId(), parameters);
 
             var metadata = new
             {
@@ -70,11 +69,7 @@ namespace TutoringSystem.API.Controllers
         [Authorize(Roles = "Tutor")]
         public async Task<ActionResult> AddOrder([FromBody] NewOrderDto model)
         {
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
-
-            var tutorId = User.GetUserId();
-            var order = await additionalOrderService.AddAdditionalOrderAsync(tutorId, model);
+            var order = await additionalOrderService.AddAdditionalOrderAsync(User.GetUserId(), model);
             if (order is null)
                 return BadRequest("New order could be not added");
 
@@ -86,9 +81,6 @@ namespace TutoringSystem.API.Controllers
         [ValidateOrderExistence]
         public async Task<ActionResult> UpdateOrder([FromBody] UpdatedOrderDto model)
         {
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
-
             var order = await additionalOrderService.GetAdditionalOrderByIdAsync(model.Id);
             var authorizationResult = authorizationService.AuthorizeAsync(User, order, new ResourceOperationRequirement(OperationType.Update)).Result;
             if (!authorizationResult.Succeeded)

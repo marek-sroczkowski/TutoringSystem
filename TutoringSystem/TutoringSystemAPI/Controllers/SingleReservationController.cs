@@ -32,8 +32,7 @@ namespace TutoringSystem.API.Controllers
         [Authorize(Roles = "Student")]
         public async Task<ActionResult<List<ReservationDto>>> GetStudentReservations([FromQuery] ReservationParameters parameters)
         {
-            var studentId = User.GetUserId();
-            var resevations = await reservationService.GetReservationsByStudentAsync(studentId, parameters);
+            var resevations = await reservationService.GetReservationsByStudentAsync(User.GetUserId(), parameters);
 
             var metadata = new
             {
@@ -54,8 +53,7 @@ namespace TutoringSystem.API.Controllers
         [Authorize(Roles = "Tutor")]
         public async Task<ActionResult<List<ReservationDto>>> GetTutorReservations([FromQuery] ReservationParameters parameters)
         {
-            var tutorId = User.GetUserId();
-            var resevations = await reservationService.GetReservationsByTutorAsync(tutorId, parameters);
+            var resevations = await reservationService.GetReservationsByTutorAsync(User.GetUserId(), parameters);
 
             var metadata = new
             {
@@ -91,11 +89,7 @@ namespace TutoringSystem.API.Controllers
         [Authorize(Roles = "Student")]
         public async Task<ActionResult> CreateStudentReservation([FromBody] NewStudentSingleReservationDto model)
         {
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
-
-            var studentId = User.GetUserId();
-            var reservation = await reservationService.AddReservationByStudentAsync(studentId, model);
+            var reservation = await reservationService.AddReservationByStudentAsync(User.GetUserId(), model);
             if (reservation is null)
                 return BadRequest("New reservation could be not added");
 
@@ -107,11 +101,7 @@ namespace TutoringSystem.API.Controllers
         [Authorize(Roles = "Tutor")]
         public async Task<ActionResult> CreateTutorReservation([FromBody] NewTutorSingleReservationDto model)
         {
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
-
-            var tutorId = User.GetUserId();
-            var reservation = await reservationService.AddReservationByTutorAsync(tutorId, model);
+            var reservation = await reservationService.AddReservationByTutorAsync(User.GetUserId(), model);
             if (reservation is null)
                 return BadRequest("New reservation could be not added");
 
@@ -124,9 +114,6 @@ namespace TutoringSystem.API.Controllers
         [ValidateSingleReservationExistence]
         public async Task<ActionResult> UpdateReservationByTutor([FromBody] UpdatedTutorReservationDto model)
         {
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
-
             var reservation = await reservationService.GetReservationByIdAsync(model.Id);
             var authorizationResult = authorizationService.AuthorizeAsync(User, reservation, new ResourceOperationRequirement(OperationType.Update)).Result;
             if (!authorizationResult.Succeeded)
@@ -145,9 +132,6 @@ namespace TutoringSystem.API.Controllers
         [ValidateSingleReservationExistence]
         public async Task<ActionResult> UpdateReservationByStudent([FromBody] UpdatedStudentReservationDto model)
         {
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
-
             var reservation = await reservationService.GetReservationByIdAsync(model.Id);
             var authorizationResult = authorizationService.AuthorizeAsync(User, reservation, new ResourceOperationRequirement(OperationType.Update)).Result;
             if (!authorizationResult.Succeeded)

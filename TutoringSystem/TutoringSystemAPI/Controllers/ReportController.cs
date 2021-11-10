@@ -34,8 +34,7 @@ namespace TutoringSystem.API.Controllers
         [Authorize(Roles = "Tutor")]
         public async Task<ActionResult<TutorReportDto>> GetReportAsync([FromQuery] ReportParameters parameters)
         {
-            var tutorId = User.GetUserId();
-            var report = await reportService.GetReportByTutorAsync(tutorId, parameters);
+            var report = await reportService.GetReportByTutorAsync(User.GetUserId(), parameters);
 
             return Ok(report);
         }
@@ -46,7 +45,7 @@ namespace TutoringSystem.API.Controllers
         [ValidateStudentExistence]
         public async Task<ActionResult<TutorReportDto>> GetStudentReport(long studentId, [FromQuery] ReportParameters parameters)
         {
-            var student = await studentService.GetStudentAsync(studentId);
+            var student = await studentService.GetStudentAsync(User.GetUserId(), studentId);
             var authorizationResult = authorizationService.AuthorizeAsync(User, student, new ResourceOperationRequirement(OperationType.Read)).Result;
             if (!authorizationResult.Succeeded)
                 return Forbid();
@@ -77,8 +76,7 @@ namespace TutoringSystem.API.Controllers
         [Authorize(Roles = "Tutor")]
         public async Task<ActionResult<TutorReportDto>> GetSubjectCategoryReport([FromQuery] ReportSubjectCategoryParameters parameters)
         {
-            var tutorId = User.GetUserId();
-            var report = await reportService.GetSubjectCategoryReportAsync(tutorId, parameters);
+            var report = await reportService.GetSubjectCategoryReportAsync(User.GetUserId(), parameters);
 
             return Ok(report);
         }
@@ -88,8 +86,7 @@ namespace TutoringSystem.API.Controllers
         [Authorize(Roles = "Tutor")]
         public async Task<ActionResult<TutorReportDto>> GetPlaceReport([FromQuery] ReportPlaceParameters parameters)
         {
-            var tutorId = User.GetUserId();
-            var report = await reportService.GetPlaceReportAsync(tutorId, parameters);
+            var report = await reportService.GetPlaceReportAsync(User.GetUserId(), parameters);
 
             return Ok(report);
         }

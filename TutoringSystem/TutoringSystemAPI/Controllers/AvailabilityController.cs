@@ -32,8 +32,7 @@ namespace TutoringSystem.API.Controllers
         [Authorize(Roles = "Tutor")]
         public async Task<ActionResult<List<AvailabilityDto>>> GetAllAvailabilities([FromQuery] AvailabilityParameters parameters)
         {
-            var tutorId = User.GetUserId();
-            var availabilities = await availabilityService.GetAvailabilitiesByTutorAsync(tutorId, parameters);
+            var availabilities = await availabilityService.GetAvailabilitiesByTutorAsync(User.GetUserId(), parameters);
 
             var metadata = new
             {
@@ -54,8 +53,7 @@ namespace TutoringSystem.API.Controllers
         [Authorize(Roles = "Tutor")]
         public async Task<ActionResult<List<AvailabilityDto>>> GetFutureAvailabilities([FromQuery] FutureAvailabilityParameters parameters)
         {
-            var tutorId = User.GetUserId();
-            var availabilities = await availabilityService.GetFutureAvailabilitiesByTutorAsync(tutorId, parameters);
+            var availabilities = await availabilityService.GetFutureAvailabilitiesByTutorAsync(User.GetUserId(), parameters);
 
             var metadata = new
             {
@@ -76,8 +74,7 @@ namespace TutoringSystem.API.Controllers
         [Authorize(Roles = "Tutor")]
         public async Task<ActionResult<AvailabilityDetailsDto>> GetTodayAvailability()
         {
-            var tutorId = User.GetUserId();
-            var availability = await availabilityService.GetTodaysAvailabilityByTutorAsync(tutorId);
+            var availability = await availabilityService.GetTodaysAvailabilityByTutorAsync(User.GetUserId());
             if (availability is null)
                 return NotFound();
 
@@ -100,11 +97,7 @@ namespace TutoringSystem.API.Controllers
         [Authorize(Roles = "Tutor")]
         public async Task<ActionResult> AddAvailability([FromBody] NewAvailabilityDto model)
         {
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
-
-            var tutorId = User.GetUserId();
-            var reservation = await availabilityService.AddAvailabilityAsync(tutorId, model);
+            var reservation = await availabilityService.AddAvailabilityAsync(User.GetUserId(), model);
             if (reservation is null)
                 return BadRequest("New availability could be not added");
 
@@ -117,9 +110,6 @@ namespace TutoringSystem.API.Controllers
         [ValidateAvailabilityExistence]
         public async Task<ActionResult> UpdateAvailability([FromBody] UpdatedAvailabilityDto model)
         {
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
-
             var availability = await availabilityService.GetAvailabilityByIdAsync(model.Id);
             var authorizationResult = authorizationService.AuthorizeAsync(User, availability, new ResourceOperationRequirement(OperationType.Update)).Result;
             if (!authorizationResult.Succeeded)

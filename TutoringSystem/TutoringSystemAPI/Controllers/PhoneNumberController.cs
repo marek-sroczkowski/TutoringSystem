@@ -30,11 +30,7 @@ namespace TutoringSystem.API.Controllers
         [Authorize(Roles = "Tutor, Student")]
         public async Task<ActionResult> AddPhones([FromBody] ICollection<NewPhoneNumberDto> model)
         {
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
-
-            var userId = User.GetUserId();
-            var added = await phoneNumberService.AddPhoneNumbersAsync(userId, model);
+            var added = await phoneNumberService.AddPhoneNumbersAsync(User.GetUserId(), model);
             if (!added)
                 return BadRequest("Phones could be not created");
 
@@ -46,8 +42,7 @@ namespace TutoringSystem.API.Controllers
         [Authorize(Roles = "Tutor, Student")]
         public async Task<ActionResult<ICollection<PhoneNumberDto>>> GetPhones()
         {
-            var userId = User.GetUserId();
-            var phones = await phoneNumberService.GetPhoneNumbersByUserAsync(userId);
+            var phones = await phoneNumberService.GetPhoneNumbersByUserAsync(User.GetUserId());
 
             return Ok(phones);
         }
@@ -58,9 +53,6 @@ namespace TutoringSystem.API.Controllers
         [ValidatePhoneNumberExistence]
         public async Task<ActionResult> UpdatePhone([FromBody] UpdatedPhoneNumberDto model)
         {
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
-
             var phone = await phoneNumberService.GetPhoneNumberById(model.Id);
             var authorizationResult = authorizationService.AuthorizeAsync(User, phone, new ResourceOperationRequirement(OperationType.Update)).Result;
             if (!authorizationResult.Succeeded)

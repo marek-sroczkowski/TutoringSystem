@@ -30,8 +30,7 @@ namespace TutoringSystem.API.Controllers
         [Authorize(Roles = "Tutor")]
         public async Task<ActionResult<List<SubjectDto>>> GetSubjects()
         {
-            var tutorId = User.GetUserId();
-            var subjects = await subjectService.GetTutorSubjectsAsync(tutorId);
+            var subjects = await subjectService.GetTutorSubjectsAsync(User.GetUserId());
 
             return Ok(subjects);
         }
@@ -53,7 +52,6 @@ namespace TutoringSystem.API.Controllers
         [ValidateSubjectExistence]
         public async Task<ActionResult<SubjectDetailsDto>> GetSubject(long subjectId)
         {
-            var tutorId = User.GetUserId();
             var subject = await subjectService.GetSubjectByIdAsync(subjectId);
 
             var authorizationResult = authorizationService.AuthorizeAsync(User, subject, new ResourceOperationRequirement(OperationType.Read)).Result;
@@ -71,8 +69,7 @@ namespace TutoringSystem.API.Controllers
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            var tutorId = User.GetUserId();
-            var subject = await subjectService.AddSubjectAsync(tutorId, model);
+            var subject = await subjectService.AddSubjectAsync(User.GetUserId(), model);
             if (subject is null)
                 return BadRequest("New subject could be not added");
 
@@ -85,9 +82,6 @@ namespace TutoringSystem.API.Controllers
         [ValidateSubjectExistence]
         public async Task<ActionResult> UpdateSubject([FromBody] UpdatedSubjectDto model)
         {
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
-
             var subject = await subjectService.GetSubjectByIdAsync(model.Id);
             var authorizationResult = authorizationService.AuthorizeAsync(User, subject, new ResourceOperationRequirement(OperationType.Update)).Result;
             if (!authorizationResult.Succeeded)

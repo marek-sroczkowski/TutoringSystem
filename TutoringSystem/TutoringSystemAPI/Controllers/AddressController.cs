@@ -29,8 +29,7 @@ namespace TutoringSystem.API.Controllers
         [Authorize(Roles = "Tutor, Student")]
         public async Task<ActionResult<AddressDetailsDto>> GetAddress()
         {
-            var userId = User.GetUserId();
-            var address = await addressService.GetAddressByUserAsync(userId);
+            var address = await addressService.GetAddressByUserAsync(User.GetUserId());
 
             return Ok(address);
         }
@@ -41,9 +40,6 @@ namespace TutoringSystem.API.Controllers
         [ValidateAddressExistence]
         public async Task<ActionResult> UpdateAddress([FromBody] UpdatedAddressDto model)
         {
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
-
             var authorizationResult = authorizationService.AuthorizeAsync(User, model, new ResourceOperationRequirement(OperationType.Update)).Result;
             if (!authorizationResult.Succeeded)
                 return Forbid();

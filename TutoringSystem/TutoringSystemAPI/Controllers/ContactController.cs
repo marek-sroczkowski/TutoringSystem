@@ -29,8 +29,7 @@ namespace TutoringSystem.API.Controllers
         [Authorize(Roles = "Tutor, Student")]
         public async Task<ActionResult<ContactDetailsDto>> GetContact()
         {
-            var userId = User.GetUserId();
-            var contact = await contactService.GetContactByUserAsync(userId);
+            var contact = await contactService.GetContactByUserAsync(User.GetUserId());
 
             return Ok(contact);
         }
@@ -41,9 +40,6 @@ namespace TutoringSystem.API.Controllers
         [ValidateContactExistence]
         public async Task<ActionResult> UpdateContact([FromBody] UpdatedContactDto model)
         {
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
-
             var authorizationResult = authorizationService.AuthorizeAsync(User, model, new ResourceOperationRequirement(OperationType.Update)).Result;
             if (!authorizationResult.Succeeded)
                 return Forbid();
