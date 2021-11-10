@@ -56,13 +56,18 @@ namespace TutoringSystem.Application.Services
             return new LoginResultDto(mapper.Map<UserDto>(user), LoginStatus.LoggedInCorrectly);
         }
 
-        public async Task<bool> RegisterStudentAsync(RegisterStudentDto student)
+        public async Task<bool> RegisterStudentAsync(long tutorId, RegisterStudentDto student)
         {
             await DeactivateNotEnabledUsersAsync();
             var newStudent = mapper.Map<Student>(student);
             newStudent.PasswordHash = passwordHasher.HashPassword(newStudent, student.Password);
+            var tutor = await tutorRepository.GetTutorAsync(t => t.Id.Equals(tutorId));
+            if(!(await studentRepository.AddStudentAsync(newStudent)))
+                return false;
 
-            return await studentRepository.AddStudentAsycn(newStudent);
+            newStudent.StudentTutors = new List<StudentTutor> { new StudentTutor(newStudent.Id, tutorId, student.HourlRate, student.Note) };
+
+            return await studentRepository.UpdateStudentAsync(newStudent);
         }
 
         public async Task<bool> RegisterTutorAsync(RegisterTutorDto newTutor)

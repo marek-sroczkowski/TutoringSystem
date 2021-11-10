@@ -108,7 +108,6 @@ namespace TutoringSystem.Infrastructure.Data
                 LastName = "Kowalski",
                 Username = "JanKow",
                 Role = Role.Student,
-                HourlRate = 40,
                 Contact = new Contact
                 {
                     PhoneNumbers = new List<PhoneNumber>
@@ -129,7 +128,6 @@ namespace TutoringSystem.Infrastructure.Data
                 LastName = "Nowak",
                 Username = "JacNow",
                 Role = Role.Student,
-                HourlRate = 50.0,
                 Contact = new Contact
                 {
                     DiscordName = "jacek#1234"
@@ -147,7 +145,7 @@ namespace TutoringSystem.Infrastructure.Data
                 Place = ReservationPlace.AtTutor,
                 Subject = math
             };
-            r1.Cost = (r1.Duration / 60.0) * r1.Student.HourlRate;
+            r1.Cost = (r1.Duration / 60.0) * 40;
             math.Reservations = new List<Reservation> { r1 };
 
             var r2 = new SingleReservation
@@ -159,17 +157,17 @@ namespace TutoringSystem.Infrastructure.Data
                 Tutor = tutor1,
                 Place = ReservationPlace.Online
             };
-            r2.Cost = (r2.Duration / 60.0) * r2.Student.HourlRate;
+            r2.Cost = (r2.Duration / 60.0) * 50;
             programming.Reservations = new List<Reservation> { r2 };
 
             tutor1.Reservations = new List<Reservation> { r1, r2 };
             janKowalski.Reservations = new List<Reservation> { r1 };
             jacekNowak.Reservations = new List<Reservation> { r2 };
 
-            tutor1.Students = new List<Student> { janKowalski, jacekNowak };
+            tutor1.StudentTutors = new List<StudentTutor> { new StudentTutor { Student = janKowalski, HourlRate=40 }, new StudentTutor { Student = jacekNowak, HourlRate = 50 } };
 
-            janKowalski.Tutors = new List<Tutor> { tutor1 };
-            jacekNowak.Tutors = new List<Tutor> { tutor1 };
+            //janKowalski.Tutors = new List<Tutor> { tutor1 };
+            //jacekNowak.Tutors = new List<Tutor> { tutor1 };
 
             dbContext.Tutors.Add(tutor1);
             dbContext.Students.Add(janKowalski);

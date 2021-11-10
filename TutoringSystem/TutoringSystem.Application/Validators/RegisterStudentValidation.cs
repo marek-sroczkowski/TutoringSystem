@@ -18,7 +18,7 @@ namespace TutoringSystem.Application.Validators
                     context.AddFailure("username", "That username is taken");
             });
 
-            RuleFor(u => u.Password).Matches(@"/^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{6,32}$/");
+            RuleFor(u => u.Password).Matches(@"^(?=.*[0-9])(?=.*[A-Za-z]).{6,32}$");
             RuleFor(u => u.Password).Equal(u => u.ConfirmPassword);
         }
     }

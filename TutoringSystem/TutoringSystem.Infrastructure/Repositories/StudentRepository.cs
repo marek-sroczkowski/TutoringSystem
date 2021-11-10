@@ -1,7 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
 using TutoringSystem.Application.Helpers;
@@ -17,7 +16,7 @@ namespace TutoringSystem.Infrastructure.Repositories
         {
         }
 
-        public async Task<bool> AddStudentAsycn(Student student)
+        public async Task<bool> AddStudentAsync(Student student)
         {
             Create(student);
 
@@ -26,12 +25,11 @@ namespace TutoringSystem.Infrastructure.Repositories
 
         public async Task<Student> GetStudentAsync(Expression<Func<Student, bool>> expression, bool? isActive = true)
         {
-            ExpressionMerger.MergeExpression(ref expression, t => t.IsEnable);
             if (isActive.HasValue)
                 ExpressionMerger.MergeExpression(ref expression, s => s.IsActive.Equals(isActive.Value));
 
             var student = await DbContext.Students
-                .Where(s => s.IsActive.Equals(isActive))
+                .Include(s => s.StudentTutors)
                 .Include(s => s.Tutors)
                 .FirstOrDefaultAsync(expression);
 
@@ -44,7 +42,7 @@ namespace TutoringSystem.Infrastructure.Repositories
                 ExpressionMerger.MergeExpression(ref expression, s => s.IsActive.Equals(isActive.Value));
 
             var students = await FindByCondition(expression)
-                .Include(s => s.Tutors)
+                .Include(s => s.StudentTutors)
                 .ToListAsync();
 
             return students;

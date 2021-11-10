@@ -6,7 +6,7 @@ namespace TutoringSystem.Application.Dtos.TutorDtos
 {
     public class TutorDto : IMap
     {
-        public int Id { get; set; }
+        public long Id { get; set; }
         public string Username { get; set; }
         public string FirstName { get; set; }
         public string LastName { get; set; }
@@ -14,6 +14,18 @@ namespace TutoringSystem.Application.Dtos.TutorDtos
         public void Mapping(Profile profile)
         {
             profile.CreateMap<Tutor, TutorDto>();
+        }
+
+        public TutorDto()
+        {
+        }
+
+        public TutorDto(Tutor tutor)
+        {
+            Id = tutor.Id;
+            Username = tutor.Username;
+            FirstName = tutor.FirstName;
+            LastName = tutor.LastName;
         }
     }
 }

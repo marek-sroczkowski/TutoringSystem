@@ -26,7 +26,7 @@ namespace TutoringSystem.Application.Authorization
 
             var tutorId = context.User.GetUserId();
             var tutor = tutorRepository.GetTutorAsync(t => t.Id.Equals(tutorId)).Result;
-            IEnumerable<long> studentIds = tutor.Students.Select(s => s.Id);
+            IEnumerable<long> studentIds = tutor.StudentTutors.Select(s => s.StudentId);
 
             if (studentIds.Contains(resource.Id))
             {

@@ -1,7 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
 using TutoringSystem.Application.Helpers;
@@ -26,14 +25,13 @@ namespace TutoringSystem.Infrastructure.Repositories
 
         public async Task<Tutor> GetTutorAsync(Expression<Func<Tutor, bool>> expression, bool? isActive = true)
         {
-            ExpressionMerger.MergeExpression(ref expression, t => t.IsEnable);
             if (isActive.HasValue)
                 ExpressionMerger.MergeExpression(ref expression, t => t.IsActive.Equals(isActive.Value));
 
             var tutor = await DbContext.Tutors
-                .Where(t => t.IsActive.Equals(isActive))
                 .Include(t => t.Subjects)
                 .Include(t => t.Students)
+                .Include(t => t.StudentTutors)
                 .FirstOrDefaultAsync(expression);
 
             return tutor;

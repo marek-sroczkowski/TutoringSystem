@@ -1,9 +1,10 @@
 ﻿using AutoMapper;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using TutoringSystem.Application.Dtos.StudentDtos;
-using TutoringSystem.Application.Dtos.TutorDtos;
 using TutoringSystem.Application.Services.Interfaces;
+using TutoringSystem.Domain.Entities;
 using TutoringSystem.Domain.Repositories;
 
 namespace TutoringSystem.Application.Services
@@ -12,53 +13,80 @@ namespace TutoringSystem.Application.Services
     {
         private readonly IStudentRepository studentRepository;
         private readonly ITutorRepository tutorRepository;
+        private readonly IStudentTutorRepository studentTutorRepository;
         private readonly IMapper mapper;
 
-        public StudentService(IStudentRepository studentRepository, ITutorRepository tutorRepository, IMapper mapper)
+        public StudentService(IStudentRepository studentRepository,
+            ITutorRepository tutorRepository,
+            IStudentTutorRepository studentTutorRepository, 
+            IMapper mapper)
         {
             this.studentRepository = studentRepository;
             this.tutorRepository = tutorRepository;
+            this.studentTutorRepository = studentTutorRepository;
             this.mapper = mapper;
         }
 
-        public async Task<bool> AddTutorAsync(long studentId, long tutorId)
+        public async Task<bool> AddStudentToTutorAsync(long tutorId, NewTutorsStudentDto student)
         {
-            var student = await studentRepository.GetStudentAsync(s => s.Id.Equals(studentId));
-            student?.Tutors?.Add(await tutorRepository.GetTutorAsync(t => t.Id.Equals(tutorId)));
+            var studentTutors = await studentTutorRepository.GetStudentTuturCollectionAsync(st => st.TutorId.Equals(tutorId), null);
+            var existingStudent = studentTutors.FirstOrDefault(st => st.StudentId.Equals(student.StudentId));
+            if (existingStudent != null)
+                return await ActivateStudent(student, existingStudent);
 
-            return await studentRepository.UpdateStudentAsync(student);
-        }
+            var tutor = await tutorRepository.GetTutorAsync(t => t.Id.Equals(tutorId));
+            if (tutor.StudentTutors is null)
+                tutor.StudentTutors = new List<StudentTutor>();
 
-        public async Task<ICollection<TutorDto>> GetTutorsAsync(long studentId)
-        {
-            var student = await studentRepository.GetStudentAsync(s => s.Id.Equals(studentId));
-
-            return mapper.Map<ICollection<TutorDto>>(student?.Tutors);
-        }
-
-        public async Task<StudentDetailsDto> GetStudentAsync(long studentId)
-        {
-            var student = await studentRepository.GetStudentAsync(s => s.Id.Equals(studentId));
-
-            return mapper.Map<StudentDetailsDto>(student);
-        }
-
-        public async Task<bool> RemoveTutorAsync(long studentId, long tutorId)
-        {
-            var student = await studentRepository.GetStudentAsync(s => s.Id.Equals(studentId));
-            var removed = student?.Tutors?.Remove(await tutorRepository.GetTutorAsync(t => t.Id.Equals(tutorId)));
-            if (!removed.HasValue || !removed.Value)
+            var studentsIds = studentTutors.Select(s => s.StudentId);
+            if (studentsIds.Contains(student.StudentId))
                 return false;
 
-            return await studentRepository.UpdateStudentAsync(student);
+            var studentTutor = mapper.Map<StudentTutor>(student);
+            studentTutor.TutorId = tutorId;
+            tutor.StudentTutors.Add(studentTutor);
+
+            return await tutorRepository.UpdateTutorAsync(tutor);
         }
 
-        public async Task<bool> RemoveAllTutorsAsync(long studentId)
+        public async Task<ICollection<StudentDto>> GetStudentsByTutorIdAsync(long tutorId)
+        {
+            var students = (await studentTutorRepository.GetStudentTuturCollectionAsync(st => st.TutorId.Equals(tutorId)))
+                .Select(st => st.Student);
+
+            return students.Select(s => new StudentDto(s, tutorId)).ToList();
+        }
+
+        public async Task<StudentDetailsDto> GetStudentAsync(long tutorId, long studentId)
         {
             var student = await studentRepository.GetStudentAsync(s => s.Id.Equals(studentId));
-            student?.Tutors?.Clear();
 
-            return await studentRepository.UpdateStudentAsync(student);
+            return new StudentDetailsDto(student, tutorId);
+        }
+
+        public async Task<bool> RemoveStudentAsync(long tutorId, long studentId)
+        {
+            var studentTutor = await studentTutorRepository.GetStudentTutorAsync(st => st.StudentId.Equals(studentId) && st.TutorId.Equals(tutorId));
+            studentTutor.IsActive = false;
+
+            return await studentTutorRepository.UpdateStudentTutorAsync(studentTutor);
+        }
+
+        public async Task<bool> RemoveAllStudentsAsync(long tutorId)
+        {
+            var tutor = await tutorRepository.GetTutorAsync(t => t.Id.Equals(tutorId));
+            tutor.StudentTutors.ToList().ForEach(st => st.IsActive = false);
+
+            return await tutorRepository.UpdateTutorAsync(tutor);
+        }
+
+        private async Task<bool> ActivateStudent(NewTutorsStudentDto student, StudentTutor existingStudent)
+        {
+            existingStudent.IsActive = true;
+            existingStudent.HourlRate = student.HourlRate;
+            existingStudent.Note = student.Note;
+
+            return await studentTutorRepository.UpdateStudentTutorAsync(existingStudent);
         }
     }
 }

@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
@@ -21,22 +22,29 @@ namespace TutoringSystem.Application.Services
         private readonly ITutorRepository tutorRepository;
         private readonly IStudentRepository studentRepository;
         private readonly ISubjectRepository subjectRepository;
+        private readonly IStudentTutorRepository studentTutorRepository;
         private readonly IMapper mapper;
 
-        public ReportService(IReservationRepository reservationRepository, IAdditionalOrderRepository orderRepository, ITutorRepository tutorRepository, IStudentRepository studentRepository, ISubjectRepository subjectRepository, IMapper mapper)
+        public ReportService(IReservationRepository reservationRepository, 
+            IAdditionalOrderRepository orderRepository, 
+            ITutorRepository tutorRepository, 
+            IStudentRepository studentRepository, 
+            ISubjectRepository subjectRepository, 
+            IStudentTutorRepository studentTutorRepository, IMapper mapper)
         {
             this.reservationRepository = reservationRepository;
             this.orderRepository = orderRepository;
             this.tutorRepository = tutorRepository;
             this.studentRepository = studentRepository;
             this.subjectRepository = subjectRepository;
+            this.studentTutorRepository = studentTutorRepository;
             this.mapper = mapper;
         }
 
         public async Task<TutorReportDto> GetReportByTutorAsync(long tutorId, ReportParameters parameters)
         {
             var tutor = await tutorRepository.GetTutorAsync(t => t.Id.Equals(tutorId));
-            var students = await studentRepository.GetStudentsCollectionAsync(s => s.Tutors.Contains(tutor), null);
+            var students = await GetStudents(tutorId);
             var reservations = await reservationRepository.GetReservationsCollectionAsync(GetExpressionToTutorReservations(tutorId, parameters));
             var orders = await orderRepository.GetAdditionalOrdersCollectionAsync(GetExpressionToOrders(tutorId, parameters));
 
@@ -100,6 +108,13 @@ namespace TutoringSystem.Application.Services
                 TotalHours = reservations.Sum(r => r.Duration / 60.0),
                 TotalProfit = reservations.Sum(r => r.Cost)
             };
+        }
+
+        private async Task<IEnumerable<Student>> GetStudents(long tutorId)
+        {
+            var studentTutors = await studentTutorRepository.GetStudentTuturCollectionAsync(st => st.TutorId.Equals(tutorId), null);
+
+            return studentTutors is null ? new List<Student>() : studentTutors.Select(st => st.Student);
         }
 
         private Expression<Func<Reservation, bool>> GetExpressionToTutorReservations(long tutorId, ReportParameters parameters)

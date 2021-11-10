@@ -7,6 +7,7 @@ using TutoringSystem.Application.Extensions;
 using TutoringSystem.API.Filters.TypeFilters;
 using TutoringSystem.Application.Dtos.TutorDtos;
 using TutoringSystem.Application.Services.Interfaces;
+using TutoringSystem.Application.Dtos.StudentDtos;
 
 namespace TutoringSystem.API.Controllers
 {
@@ -22,13 +23,12 @@ namespace TutoringSystem.API.Controllers
             this.studentService = studentService;
         }
 
-        [SwaggerOperation(Summary = "Retrieves all tutors of the current logged in student")]
-        [HttpGet("tutors")]
-        [Authorize(Roles = "Student")]
-        public async Task<ActionResult<List<TutorDto>>> GetTutors()
+        [SwaggerOperation(Summary = "Retrieves all students of the current logged in tutor")]
+        [HttpGet]
+        [Authorize(Roles = "Tutor")]
+        public async Task<ActionResult<List<StudentDto>>> GetStudents()
         {
-            var studentId = User.GetUserId();
-            var students = await studentService.GetTutorsAsync(studentId);
+            var students = await studentService.GetStudentsByTutorIdAsync(User.GetUserId());
 
             return Ok(students);
         }
@@ -39,48 +39,45 @@ namespace TutoringSystem.API.Controllers
         [ValidateStudentExistence]
         public async Task<ActionResult<TutorDetailsDto>> GetStudent(long studentId)
         {
-            var student = await studentService.GetStudentAsync(studentId);
+            var student = await studentService.GetStudentAsync(User.GetUserId(), studentId);
 
             return Ok(student);
         }
 
-        [SwaggerOperation(Summary = "Adds a specific tutor to the tutors of the current logged in student")]
-        [HttpPost("{tutorId}")]
-        [Authorize(Roles = "Student")]
-        [ValidateTutorExistence]
-        public async Task<ActionResult> AddTutor(long tutorId)
+        [SwaggerOperation(Summary = "Adds a existing student to the students of the current logged in tutor")]
+        [HttpPost]
+        [Authorize(Roles = "Tutor")]
+        [ValidateStudentExistence]
+        public async Task<ActionResult> AddStudent([FromBody] NewTutorsStudentDto student)
         {
-            var studentId = User.GetUserId();
-            var added = await studentService.AddTutorAsync(studentId, tutorId);
+            var added = await studentService.AddStudentToTutorAsync(User.GetUserId(), student);
             if (!added)
-                return BadRequest("Tutor could not be added");
+                return BadRequest("Student could not be added");
 
             return Ok();
         }
 
         [SwaggerOperation(Summary = "Removes a student from the current logged in tutor's student list")]
-        [HttpDelete("{tutorId}")]
-        [Authorize(Roles = "Student")]
+        [HttpDelete("{studentId}")]
+        [Authorize(Roles = "Tutor")]
         [ValidateStudentExistence]
-        public async Task<ActionResult> RemoveTutor(long tutorId)
+        public async Task<ActionResult> RemoveStudent(long studentId)
         {
-            var studentId = User.GetUserId();
-            var removed = await studentService.RemoveTutorAsync(studentId, tutorId);
+            var removed = await studentService.RemoveStudentAsync(User.GetUserId(), studentId);
             if (!removed)
-                return BadRequest("Tutor could be not removed from student's tutor list");
+                return BadRequest("Student could be not removed from tutor's student list");
 
             return NoContent();
         }
 
-        [SwaggerOperation(Summary = "Removes all tutors from the current logged in student student's list")]
+        [SwaggerOperation(Summary = "Removes all students from the current logged in tutor's student list")]
         [HttpDelete("all")]
-        [Authorize(Roles = "Student")]
-        public async Task<ActionResult> RemoveAllTutors()
+        [Authorize(Roles = "Tutor")]
+        public async Task<ActionResult> RemoveAllStudent()
         {
-            var studentId = User.GetUserId();
-            var removed = await studentService.RemoveAllTutorsAsync(studentId);
+            var removed = await studentService.RemoveAllStudentsAsync(User.GetUserId());
             if (!removed)
-                return BadRequest("Tutor list could be not cleared");
+                return BadRequest("Student list could be not cleared");
 
             return NoContent();
         }

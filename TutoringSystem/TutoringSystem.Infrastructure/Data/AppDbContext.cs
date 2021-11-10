@@ -23,6 +23,7 @@ namespace TutoringSystem.Infrastructure.Data
         public virtual DbSet<SingleReservation> SingleReservations { get; set; }
         public virtual DbSet<RecurringReservation> RecurringReservations { get; set; }
         public virtual DbSet<RepeatedReservation> RepeatedReservations { get; set; }
+        public virtual DbSet<StudentTutor> StudentTutors { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -45,6 +46,19 @@ namespace TutoringSystem.Infrastructure.Data
             modelBuilder.Entity<Reservation>().HasOne(r => r.Tutor).WithMany(t => t.Reservations)
                    .HasForeignKey(r => r.TutorId)
                     .OnDelete(DeleteBehavior.NoAction);
+
+            modelBuilder.Entity<Tutor>()
+            .HasMany(t => t.Students)
+            .WithMany(s => s.Tutors)
+            .UsingEntity<StudentTutor>(
+                j => j
+                    .HasOne(st => st.Student)
+                    .WithMany(s => s.StudentTutors)
+                    .HasForeignKey(st => st.StudentId),
+                j => j
+                    .HasOne(st => st.Tutor)
+                    .WithMany(t => t.StudentTutors)
+                    .HasForeignKey(st => st.TutorId));
         }
     }
 }

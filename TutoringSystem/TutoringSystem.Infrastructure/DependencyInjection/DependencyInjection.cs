@@ -36,6 +36,7 @@ namespace TutoringSystem.Infrastructure.DependencyInjection
             services.AddScoped<IRecurringReservationRepository, RecurringReservationRepository>();
             services.AddScoped<IRepeatedReservationRepository, RepeatedReservationRepository>();
             services.AddScoped<IReservationRepository, ReservationRepository>();
+            services.AddScoped<IStudentTutorRepository, StudentTutorRepository>();
 
             return services;
         }

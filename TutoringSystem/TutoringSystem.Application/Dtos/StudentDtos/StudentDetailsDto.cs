@@ -1,23 +1,40 @@
-﻿using AutoMapper;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using System.Linq;
 using TutoringSystem.Application.Dtos.TutorDtos;
-using TutoringSystem.Application.Mapping;
 using TutoringSystem.Domain.Entities;
 
 namespace TutoringSystem.Application.Dtos.StudentDtos
 {
-    public class StudentDetailsDto : IMap
+    public class StudentDetailsDto
     {
-        public int Id { get; set; }
+        public long Id { get; set; }
         public string Username { get; set; }
         public string FirstName { get; set; }
         public string LastName { get; set; }
         public double HourlRate { get; set; }
-        public ICollection<TutorDto> Tutors { get; set; }
+        public string Note { get; set; }
+        public IEnumerable<TutorDto> Tutors { get; set; }
 
-        public void Mapping(Profile profile)
+
+        public StudentDetailsDto()
         {
-            profile.CreateMap<Student, StudentDetailsDto>();
+        }
+
+        public StudentDetailsDto(Student student)
+        {
+            Id = student.Id;
+            Username = student.Username;
+            FirstName = student.FirstName;
+            LastName = student.LastName;
+
+            Tutors = student.StudentTutors?.Select(st => new TutorDto(st.Tutor));
+        }
+
+        public StudentDetailsDto(Student student, long tutorId) : this(student)
+        {
+            var studentTutor = student.StudentTutors.FirstOrDefault(st => st.StudentId.Equals(student.Id) && st.TutorId.Equals(tutorId));
+            HourlRate = studentTutor.HourlRate;
+            Note = studentTutor.Note;
         }
     }
 }
