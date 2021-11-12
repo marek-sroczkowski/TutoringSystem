@@ -27,9 +27,19 @@ namespace TutoringSystem.API.Controllers
         [SwaggerOperation(Summary = "Retrieves address of the current logged in user")]
         [HttpGet]
         [Authorize(Roles = "Tutor, Student")]
-        public async Task<ActionResult<AddressDetailsDto>> GetAddress()
+        public async Task<ActionResult<AddressDto>> GetAddress()
         {
             var address = await addressService.GetAddressByUserAsync(User.GetUserId());
+
+            return Ok(address);
+        }
+
+        [SwaggerOperation(Summary = "Retrieves a specific address by unique id")]
+        [HttpGet("{addressId}")]
+        [Authorize(Roles = "Tutor, Student")]
+        public async Task<ActionResult<AddressDetailsDto>> GetAddressById(long addressId)
+        {
+            var address = await addressService.GetAddressByIdAsync(addressId);
 
             return Ok(address);
         }

@@ -10,38 +10,33 @@ namespace TutoringSystem.Application.Services
     public class AddressService : IAddressService
     {
         private readonly IAddressRepository addressRepository;
+        private readonly IUserRepository userRepository;
         private readonly IMapper mapper;
 
-        public AddressService(IAddressRepository addressRepository, IMapper mapper)
+        public AddressService(IAddressRepository addressRepository,
+            IUserRepository userRepository,
+            IMapper mapper)
         {
             this.addressRepository = addressRepository;
+            this.userRepository = userRepository;
             this.mapper = mapper;
-        }
-
-        public async Task<AddressDto> AddAddressAsync(long userId, NewAddressDto newAddress)
-        {
-            var address = mapper.Map<Address>(newAddress);
-            address.UserId = userId;
-
-            var created = await addressRepository.AddAddressAsync(address);
-            if (!created)
-                return null;
-
-            return mapper.Map<AddressDto>(address);
         }
 
         public async Task<AddressDetailsDto> GetAddressByIdAsync(long addressId)
         {
             var address = await addressRepository.GetAddressAsync(a => a.Id.Equals(addressId));
+            var user = await userRepository.GetUserAsync(u => u.Id.Equals(address.UserId));
+            var addressDto = mapper.Map<AddressDetailsDto>(address);
+            addressDto.Owner = $"{user.FirstName} {user.LastName}";
 
-            return mapper.Map<AddressDetailsDto>(address);
+            return addressDto;
         }
 
-        public async Task<AddressDetailsDto> GetAddressByUserAsync(long userId)
+        public async Task<AddressDto> GetAddressByUserAsync(long userId)
         {
             var address = await addressRepository.GetAddressAsync(a => a.UserId.Equals(userId));
 
-            return mapper.Map<AddressDetailsDto>(address);
+            return mapper.Map<AddressDto>(address);
         }
 
         public async Task<bool> UpdateAddressAsync(UpdatedAddressDto updatedAddress)

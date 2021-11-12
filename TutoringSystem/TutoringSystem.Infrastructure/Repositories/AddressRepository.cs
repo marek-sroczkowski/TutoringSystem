@@ -33,7 +33,7 @@ namespace TutoringSystem.Infrastructure.Repositories
         public async Task<Address> GetAddressAsync(Expression<Func<Address, bool>> expression)
         {
             var address = await DbContext.Addresses
-                .Include(c => c.User)
+                .Include(a => a.User)
                 .FirstOrDefaultAsync(expression);
 
             return address;

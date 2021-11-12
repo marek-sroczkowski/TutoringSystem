@@ -16,5 +16,18 @@ namespace TutoringSystem.Application.Dtos.AddressDtos
         {
             profile.CreateMap<Address, AddressDto>();
         }
+
+        public AddressDto()
+        {
+        }
+
+        public AddressDto(Address address)
+        {
+            Id = address.Id;
+            Street = address.Street;
+            HouseAndFlatNumber = address.HouseAndFlatNumber;
+            City = address.City;
+            PostalCode = address.PostalCode;
+        }
     }
 }

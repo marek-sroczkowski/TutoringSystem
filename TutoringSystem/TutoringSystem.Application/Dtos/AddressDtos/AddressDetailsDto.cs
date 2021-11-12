@@ -1,5 +1,4 @@
 ﻿using AutoMapper;
-using TutoringSystem.Application.Dtos.AccountDtos;
 using TutoringSystem.Application.Mapping;
 using TutoringSystem.Domain.Entities;
 
@@ -13,8 +12,7 @@ namespace TutoringSystem.Application.Dtos.AddressDtos
         public string City { get; set; }
         public string PostalCode { get; set; }
         public string Description { get; set; }
-
-        public UserDto User { get; set; }
+        public string Owner { get; set; }
 
         public void Mapping(Profile profile)
         {
