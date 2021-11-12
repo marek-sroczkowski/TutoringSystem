@@ -12,5 +12,6 @@ namespace TutoringSystem.Domain.Repositories
         Task<bool> UpdateTutorAsync(Tutor tutor);
         Task<Tutor> GetTutorAsync(Expression<Func<Tutor, bool>> expression, bool? isActive = true);
         Task<IEnumerable<Tutor>> GetTutorsCollectionAsync(Expression<Func<Tutor, bool>> expression, bool? isActive = true);
+        Task<bool> UpdateTutorsCollection(IEnumerable<Tutor> tutors);
     }
 }

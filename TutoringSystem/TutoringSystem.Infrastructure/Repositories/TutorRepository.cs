@@ -43,7 +43,9 @@ namespace TutoringSystem.Infrastructure.Repositories
                 ExpressionMerger.MergeExpression(ref expression, t => t.IsActive.Equals(isActive.Value));
 
             var tutors = await FindByCondition(expression)
-                            .ToListAsync();
+                .Include(t => t.Contact)
+                .Include(t => t.Address)
+                .ToListAsync();
 
             return tutors;
         }
@@ -51,6 +53,13 @@ namespace TutoringSystem.Infrastructure.Repositories
         public async Task<bool> UpdateTutorAsync(Tutor tutor)
         {
             Update(tutor);
+
+            return await SaveChangedAsync();
+        }
+
+        public async Task<bool> UpdateTutorsCollection(IEnumerable<Tutor> tutors)
+        {
+            DbContext.UpdateRange(tutors);
 
             return await SaveChangedAsync();
         }

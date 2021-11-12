@@ -178,10 +178,10 @@ namespace TutoringSystem.Application.Services
 
         private async Task DeactivateNotEnabledUsersAsync()
         {
-            var users = await userRepository.GetUsersCollectionAsync(u => !u.IsEnable && u.IsActive && u.RegistrationDate.AddDays(1) < DateTime.Now);
-            users.ToList().ForEach(u => u.IsActive = false);
+            var tutors = await tutorRepository.GetTutorsCollectionAsync(u => !u.IsEnable && u.IsActive && u.RegistrationDate.AddDays(1) < DateTime.Now);
+            tutors.ToList().ForEach(u => u.IsActive = false);
 
-            await userRepository.UpdateUsersCollection(users);
+            await tutorRepository.UpdateTutorsCollection(tutors);
         }
     }
 }
