@@ -49,7 +49,7 @@ namespace TutoringSystem.API.Controllers
         [HttpPost]
         [Authorize(Roles = "Tutor")]
         [ValidateStudentExistence]
-        public async Task<ActionResult<AddStudentToTutorStatus>> AddStudent([FromBody] NewTutorsStudentDto student)
+        public async Task<ActionResult<AddStudentToTutorStatus>> AddStudent([FromBody] NewExistingStudentDto student)
         {
             var addedStatus = await studentService.AddStudentToTutorAsync(User.GetUserId(), student);
 

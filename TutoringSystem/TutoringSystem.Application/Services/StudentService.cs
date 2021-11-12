@@ -25,7 +25,7 @@ namespace TutoringSystem.Application.Services
             this.studentTutorRepository = studentTutorRepository;
         }
 
-        public async Task<AddStudentToTutorStatus> AddStudentToTutorAsync(long tutorId, NewTutorsStudentDto newStudent)
+        public async Task<AddStudentToTutorStatus> AddStudentToTutorAsync(long tutorId, NewExistingStudentDto newStudent)
         {
             var studentTutors = await studentTutorRepository.GetStudentTuturCollectionAsync(st => st.TutorId.Equals(tutorId), null);
             var existingStudentTutor = studentTutors.FirstOrDefault(st => st.Student.Username.Equals(newStudent.Username));
@@ -42,7 +42,7 @@ namespace TutoringSystem.Application.Services
             if (tutor.StudentTutors is null)
                 tutor.StudentTutors = new List<StudentTutor>();
 
-            var studentTutor = new StudentTutor(student.Id, tutorId, newStudent.HourlRate, newStudent.Note);
+            var studentTutor = new StudentTutor(student.Id, tutorId, newStudent.HourRate, newStudent.Note);
             tutor.StudentTutors.Add(studentTutor);
 
             return await tutorRepository.UpdateTutorAsync(tutor) ? AddStudentToTutorStatus.Added : AddStudentToTutorStatus.InternalError;
@@ -79,10 +79,10 @@ namespace TutoringSystem.Application.Services
             return await tutorRepository.UpdateTutorAsync(tutor);
         }
 
-        private async Task<bool> ActivateStudent(NewTutorsStudentDto student, StudentTutor existingStudent)
+        private async Task<bool> ActivateStudent(NewExistingStudentDto student, StudentTutor existingStudent)
         {
             return await studentTutorRepository
-                .UpdateStudentTutorAsync(new StudentTutor(existingStudent.StudentId, existingStudent.TutorId, student.HourlRate, student.Note));
+                .UpdateStudentTutorAsync(new StudentTutor(existingStudent.StudentId, existingStudent.TutorId, student.HourRate, student.Note));
         }
     }
 }

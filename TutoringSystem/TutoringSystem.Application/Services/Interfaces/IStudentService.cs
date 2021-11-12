@@ -11,6 +11,6 @@ namespace TutoringSystem.Application.Services.Interfaces
         Task<ICollection<StudentDto>> GetStudentsByTutorIdAsync(long tutorId);
         Task<bool> RemoveStudentAsync(long tutorId, long studentId);
         Task<bool> RemoveAllStudentsAsync(long tutorId);
-        Task<AddStudentToTutorStatus> AddStudentToTutorAsync(long tutorId, NewTutorsStudentDto student);
+        Task<AddStudentToTutorStatus> AddStudentToTutorAsync(long tutorId, NewExistingStudentDto student);
     }
 }

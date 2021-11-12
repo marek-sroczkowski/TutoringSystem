@@ -31,6 +31,8 @@ namespace TutoringSystem.Infrastructure.Repositories
             var student = await DbContext.Students
                 .Include(s => s.StudentTutors)
                 .Include(s => s.Tutors)
+                .Include(s => s.Address)
+                .Include(s => s.Contact)
                 .FirstOrDefaultAsync(expression);
 
             return student;

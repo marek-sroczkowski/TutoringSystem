@@ -1,6 +1,6 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using TutoringSystem.Application.Dtos.TutorDtos;
+﻿using System.Linq;
+using TutoringSystem.Application.Dtos.AddressDtos;
+using TutoringSystem.Application.Dtos.ContactDtos;
 using TutoringSystem.Domain.Entities;
 
 namespace TutoringSystem.Application.Dtos.StudentDtos
@@ -13,7 +13,8 @@ namespace TutoringSystem.Application.Dtos.StudentDtos
         public string LastName { get; set; }
         public double HourlRate { get; set; }
         public string Note { get; set; }
-        public IEnumerable<TutorDto> Tutors { get; set; }
+        public ContactDto Contact { get; set; }
+        public AddressDto Address { get; set; }
 
 
         public StudentDetailsDto()
@@ -26,8 +27,10 @@ namespace TutoringSystem.Application.Dtos.StudentDtos
             Username = student.Username;
             FirstName = student.FirstName;
             LastName = student.LastName;
+            Contact = new ContactDto(student.Contact);
+            Address = new AddressDto(student.Address);
 
-            Tutors = student.StudentTutors?.Select(st => new TutorDto(st.Tutor));
+           // Tutors = student.StudentTutors?.Select(st => new TutorDto(st.Tutor));
         }
 
         public StudentDetailsDto(Student student, long tutorId) : this(student)

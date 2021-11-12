@@ -12,7 +12,6 @@ namespace TutoringSystem.Domain.Entities
         public Student()
         {
             Role = Role.Student;
-            IsEnable = true;
         }
     }
 }
