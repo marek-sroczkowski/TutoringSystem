@@ -27,9 +27,19 @@ namespace TutoringSystem.API.Controllers
         [SwaggerOperation(Summary = "Retrieves contact of the current logged in user")]
         [HttpGet]
         [Authorize(Roles = "Tutor, Student")]
-        public async Task<ActionResult<ContactDetailsDto>> GetContact()
+        public async Task<ActionResult<ContactDto>> GetContact()
         {
             var contact = await contactService.GetContactByUserAsync(User.GetUserId());
+
+            return Ok(contact);
+        }
+
+        [SwaggerOperation(Summary = "Retrieves a specific contact by unique id")]
+        [HttpGet("{contactId}")]
+        [Authorize(Roles = "Tutor, Student")]
+        public async Task<ActionResult<ContactDetailsDto>> GetContactById(long contactId)
+        {
+            var contact = await contactService.GetContactByIdAsync(contactId);
 
             return Ok(contact);
         }

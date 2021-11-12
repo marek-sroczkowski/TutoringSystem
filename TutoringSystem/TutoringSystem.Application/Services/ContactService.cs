@@ -9,26 +9,33 @@ namespace TutoringSystem.Application.Services
     public class ContactService : IContactService
     {
         private readonly IContactRepository contactRepository;
+        private readonly IUserRepository userRepository;
         private readonly IMapper mapper;
 
-        public ContactService(IContactRepository contactRepository, IMapper mapper)
+        public ContactService(IContactRepository contactRepository,
+            IUserRepository userRepository,
+            IMapper mapper)
         {
             this.contactRepository = contactRepository;
+            this.userRepository = userRepository;
             this.mapper = mapper;
         }
 
         public async Task<ContactDetailsDto> GetContactByIdAsync(long contactId)
         {
             var contact = await contactRepository.GetContactAsync(c => c.Id.Equals(contactId));
+            var user = await userRepository.GetUserAsync(u => u.Id.Equals(contact.UserId));
+            var contactDto = mapper.Map<ContactDetailsDto>(contact);
+            contactDto.Owner = $"{user.FirstName} {user.LastName}";
 
-            return mapper.Map<ContactDetailsDto>(contact);
+            return contactDto;
         }
 
-        public async Task<ContactDetailsDto> GetContactByUserAsync(long userId)
+        public async Task<ContactDto> GetContactByUserAsync(long userId)
         {
             var contact = await contactRepository.GetContactAsync(c => c.UserId.Equals(userId));
 
-            return mapper.Map<ContactDetailsDto>(contact);
+            return mapper.Map<ContactDto>(contact);
         }
 
         public async Task<bool> UpdateContactAsync(UpdatedContactDto updatedContact)

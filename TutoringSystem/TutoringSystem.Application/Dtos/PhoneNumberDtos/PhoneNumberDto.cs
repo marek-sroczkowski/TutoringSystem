@@ -14,5 +14,16 @@ namespace TutoringSystem.Application.Dtos.PhoneNumberDtos
         {
             profile.CreateMap<PhoneNumber, PhoneNumberDto>();
         }
+
+        public PhoneNumberDto()
+        {
+        }
+
+        public PhoneNumberDto(PhoneNumber phone)
+        {
+            Id = phone.Id;
+            Owner = phone.Owner;
+            Number = phone.Number;
+        }
     }
 }

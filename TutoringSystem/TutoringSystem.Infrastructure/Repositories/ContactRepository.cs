@@ -34,7 +34,6 @@ namespace TutoringSystem.Infrastructure.Repositories
         public async Task<Contact> GetContactAsync(Expression<Func<Contact, bool>> expression)
         {
             var contact = await DbContext.Contacts
-                .Include(c => c.User)
                 .Include(c => c.PhoneNumbers.Where(p => p.IsActive))
                 .FirstOrDefaultAsync(expression);
 
