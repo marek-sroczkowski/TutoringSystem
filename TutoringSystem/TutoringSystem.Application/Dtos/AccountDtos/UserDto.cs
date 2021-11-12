@@ -8,6 +8,8 @@ namespace TutoringSystem.Application.Dtos.AccountDtos
     public class UserDto : IMap
     {
         public int Id { get; set; }
+        public string FirstName { get; set; }
+        public string LastName { get; set; }
         public string Username { get; set; }
         public string PasswordHash { get; set; }
         public Role Role { get; set; }
