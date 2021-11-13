@@ -2,7 +2,6 @@
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
 using System.Threading.Tasks;
-using TutoringSystem.Application.Authorization;
 using TutoringSystem.Application.Dtos.AddressDtos;
 using TutoringSystem.Application.Services.Interfaces;
 using TutoringSystem.API.Filters.TypeFilters;
@@ -16,12 +15,10 @@ namespace TutoringSystem.API.Controllers
     public class AddressController : ControllerBase
     {
         private readonly IAddressService addressService;
-        private readonly IAuthorizationService authorizationService;
 
-        public AddressController(IAddressService addressService, IAuthorizationService authorizationService)
+        public AddressController(IAddressService addressService)
         {
             this.addressService = addressService;
-            this.authorizationService = authorizationService;
         }
 
         [SwaggerOperation(Summary = "Retrieves address of the current logged in user")]
@@ -50,13 +47,9 @@ namespace TutoringSystem.API.Controllers
         [ValidateAddressExistence]
         public async Task<ActionResult> UpdateAddress([FromBody] UpdatedAddressDto model)
         {
-            var authorizationResult = authorizationService.AuthorizeAsync(User, model, new ResourceOperationRequirement(OperationType.Update)).Result;
-            if (!authorizationResult.Succeeded)
-                return Forbid();
-
             var updated = await addressService.UpdateAddressAsync(model);
             if (!updated)
-                return BadRequest("Contact could be not updated");
+                return BadRequest("Address could be not updated");
 
             return NoContent();
         }

@@ -4,7 +4,6 @@ using Swashbuckle.AspNetCore.Annotations;
 using System.Threading.Tasks;
 using TutoringSystem.Application.Extensions;
 using TutoringSystem.API.Filters.TypeFilters;
-using TutoringSystem.Application.Authorization;
 using TutoringSystem.Application.Dtos.ContactDtos;
 using TutoringSystem.Application.Services.Interfaces;
 
@@ -16,12 +15,10 @@ namespace TutoringSystem.API.Controllers
     public class ContactController : ControllerBase
     {
         private readonly IContactService contactService;
-        private readonly IAuthorizationService authorizationService;
 
-        public ContactController(IContactService contactService, IAuthorizationService authorizationService)
+        public ContactController(IContactService contactService)
         {
             this.contactService = contactService;
-            this.authorizationService = authorizationService;
         }
 
         [SwaggerOperation(Summary = "Retrieves contact of the current logged in user")]
@@ -50,10 +47,6 @@ namespace TutoringSystem.API.Controllers
         [ValidateContactExistence]
         public async Task<ActionResult> UpdateContact([FromBody] UpdatedContactDto model)
         {
-            var authorizationResult = authorizationService.AuthorizeAsync(User, model, new ResourceOperationRequirement(OperationType.Update)).Result;
-            if (!authorizationResult.Succeeded)
-                return Forbid();
-
             var updated = await contactService.UpdateContactAsync(model);
             if (!updated)
                 return BadRequest("Contact could be not updated");
