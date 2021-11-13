@@ -35,6 +35,19 @@ namespace TutoringSystem.API.Filters.TypeFilters
                         }
                     }
                 }
+                else if (context.ActionArguments.ContainsKey("contactId"))
+                {
+                    var contactId = context.ActionArguments["contactId"] as long?;
+                    if (contactId.HasValue)
+                    {
+                        if ((await contactRepository.GetContactAsync(c => c.Id.Equals(contactId.Value))) == null)
+                        {
+                            context.Result = new NotFoundObjectResult(contactId.Value);
+                            return;
+                        }
+                    }
+                }
+
                 await next();
             }
         }

@@ -21,18 +21,27 @@ namespace TutoringSystem.Application.Services
             this.mapper = mapper;
         }
 
-        public async Task<bool> AddPhoneNumbersAsync(long userId, ICollection<NewPhoneNumberDto> phoneNumbers)
+        public async Task<PhoneNumberDto> AddPhoneNumberAsync(long contactId, NewPhoneNumberDto phoneNumber)
         {
-            var contact = await contactRepository.GetContactAsync(c => c.UserId.Equals(userId));
-            var phones = mapper.Map<List<PhoneNumber>>(phoneNumbers);
-            phones.ForEach(p => p.ContactId = contact.Id);
+            var phone = mapper.Map<PhoneNumber>(phoneNumber);
+            phone.ContactId = contactId;
 
-            return await phoneNumberRepository.AddPhoneNumbersAsync(phones);
+            if (!(await phoneNumberRepository.AddPhoneNumberAsync(phone)))
+                return null;
+
+            return mapper.Map<PhoneNumberDto>(phone);
         }
 
         public async Task<ICollection<PhoneNumberDto>> GetPhoneNumbersByUserAsync(long userId)
         {
             var contact = await contactRepository.GetContactAsync(c => c.UserId.Equals(userId));
+
+            return mapper.Map<ICollection<PhoneNumberDto>>(contact.PhoneNumbers);
+        }
+
+        public async Task<ICollection<PhoneNumberDto>> GetPhoneNumbersByContactIdAsync(long contactId)
+        {
+            var contact = await contactRepository.GetContactAsync(c => c.Id.Equals(contactId));
 
             return mapper.Map<ICollection<PhoneNumberDto>>(contact.PhoneNumbers);
         }

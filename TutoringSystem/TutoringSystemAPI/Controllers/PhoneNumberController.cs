@@ -3,48 +3,57 @@ using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using TutoringSystem.Application.Authorization;
 using TutoringSystem.Application.Dtos.PhoneNumberDtos;
 using TutoringSystem.Application.Services.Interfaces;
 using TutoringSystem.API.Filters.TypeFilters;
-using TutoringSystem.Application.Extensions;
 
 namespace TutoringSystem.API.Controllers
 {
-    [Route("/api/contact/phoneNumber")]
+    [Route("/api/contact/{contactId}/phoneNumber")]
     [Authorize]
     [ApiController]
     public class PhoneNumberController : ControllerBase
     {
         private readonly IPhoneNumberService phoneNumberService;
-        private readonly IAuthorizationService authorizationService;
 
-        public PhoneNumberController(IPhoneNumberService phoneNumberService, IAuthorizationService authorizationService)
+        public PhoneNumberController(IPhoneNumberService phoneNumberService)
         {
             this.phoneNumberService = phoneNumberService;
-            this.authorizationService = authorizationService;
         }
 
-        [SwaggerOperation(Summary = "Adds new phones to the contacts of the currently logged in user")]
+        [SwaggerOperation(Summary = "Adds a new phone to a specific contact")]
         [HttpPost]
         [Authorize(Roles = "Tutor, Student")]
-        public async Task<ActionResult> AddPhones([FromBody] ICollection<NewPhoneNumberDto> model)
+        [ValidateContactExistence]
+        public async Task<ActionResult> AddPhones(long contactId, [FromBody] NewPhoneNumberDto model)
         {
-            var added = await phoneNumberService.AddPhoneNumbersAsync(User.GetUserId(), model);
-            if (!added)
-                return BadRequest("Phones could be not created");
+            var createdPhone = await phoneNumberService.AddPhoneNumberAsync(contactId, model);
+            if (createdPhone is null)
+                return BadRequest("Phone could be not added");
 
-            return Created("api/contact/phoneNumber", null);
+            return Created($"api/contact/{contactId}/phoneNumber/{createdPhone.Id}", null);
         }
 
-        [SwaggerOperation(Summary = "Retrieves phone numbers of the current logged in user")]
+        [SwaggerOperation(Summary = "Retrieves phone numbers from a specific contact")]
         [HttpGet]
         [Authorize(Roles = "Tutor, Student")]
-        public async Task<ActionResult<ICollection<PhoneNumberDto>>> GetPhones()
+        [ValidateContactExistence]
+        public async Task<ActionResult<ICollection<PhoneNumberDto>>> GetPhones(long contactId)
         {
-            var phones = await phoneNumberService.GetPhoneNumbersByUserAsync(User.GetUserId());
+            var phones = await phoneNumberService.GetPhoneNumbersByContactIdAsync(contactId);
 
             return Ok(phones);
+        }
+
+        [SwaggerOperation(Summary = "Retrieves phone numbers from a specific contact")]
+        [HttpGet("{phoneNumberId}")]
+        [Authorize(Roles = "Tutor, Student")]
+        [ValidateContactExistence]
+        public async Task<ActionResult<PhoneNumberDto>> GetPhoneById(long phoneNumberId)
+        {
+            var phone = await phoneNumberService.GetPhoneNumberById(phoneNumberId);
+
+            return Ok(phone);
         }
 
         [SwaggerOperation(Summary = "Updates a existing phone number")]
@@ -53,11 +62,6 @@ namespace TutoringSystem.API.Controllers
         [ValidatePhoneNumberExistence]
         public async Task<ActionResult> UpdatePhone([FromBody] UpdatedPhoneNumberDto model)
         {
-            var phone = await phoneNumberService.GetPhoneNumberById(model.Id);
-            var authorizationResult = authorizationService.AuthorizeAsync(User, phone, new ResourceOperationRequirement(OperationType.Update)).Result;
-            if (!authorizationResult.Succeeded)
-                return Forbid();
-
             var updated = await phoneNumberService.UpdatePhoneNumberAsync(model);
             if (!updated)
                 return BadRequest("Phone could be not updated");
@@ -71,14 +75,9 @@ namespace TutoringSystem.API.Controllers
         [ValidatePhoneNumberExistence]
         public async Task<ActionResult> RemovePhone(long phoneNumberId)
         {
-            var phone = await phoneNumberService.GetPhoneNumberById(phoneNumberId);
-            var authorizationResult = authorizationService.AuthorizeAsync(User, phone, new ResourceOperationRequirement(OperationType.Delete)).Result;
-            if (!authorizationResult.Succeeded)
-                return Forbid();
-
             var removed = await phoneNumberService.DeletePhoneNumberAsync(phoneNumberId);
             if (!removed)
-                return BadRequest("Tutor could be not removed from student's tutor list");
+                return BadRequest("Phone number could be not removed");
 
             return NoContent();
         }

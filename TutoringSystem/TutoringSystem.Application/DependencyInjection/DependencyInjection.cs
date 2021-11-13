@@ -92,7 +92,6 @@ namespace TutoringSystem.Application.DependencyInjection
             services.AddScoped<IAuthorizationHandler, OrderResourceOperationHandler>();
             services.AddScoped<IAuthorizationHandler, ReservationResourceOperationHandler>();
             services.AddScoped<IAuthorizationHandler, SubjectResourceOperationHandler>();
-            services.AddScoped<IAuthorizationHandler, PhoneNumberResourceOperationHandler>();
             services.AddScoped<IAuthorizationHandler, AvailabilityResourceOperationHandler>();
             services.AddScoped<IAuthorizationHandler, StudentResourceOperationHandler>();
 
