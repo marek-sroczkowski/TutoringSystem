@@ -79,6 +79,18 @@ namespace TutoringSystem.Application.Services
             return await tutorRepository.UpdateTutorAsync(tutor);
         }
 
+        public async Task<bool> UpdateStudentAsync(long tutorId, UpdatedStudentDto student)
+        {
+            var studentTutor = await studentTutorRepository.GetStudentTutorAsync(st => st.StudentId.Equals(student.StudentId) && st.TutorId.Equals(tutorId));
+            if (studentTutor is null)
+                return false;
+
+            studentTutor.HourlRate = student.HourRate;
+            studentTutor.Note = student.Note;
+
+            return await studentTutorRepository.UpdateStudentTutorAsync(studentTutor);
+        }
+
         private async Task<bool> ActivateStudent(NewExistingStudentDto student, StudentTutor existingStudent)
         {
             return await studentTutorRepository

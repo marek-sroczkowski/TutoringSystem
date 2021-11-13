@@ -12,5 +12,6 @@ namespace TutoringSystem.Application.Services.Interfaces
         Task<bool> RemoveStudentAsync(long tutorId, long studentId);
         Task<bool> RemoveAllStudentsAsync(long tutorId);
         Task<AddStudentToTutorStatus> AddStudentToTutorAsync(long tutorId, NewExistingStudentDto student);
+        Task<bool> UpdateStudentAsync(long tutorId, UpdatedStudentDto student);
     }
 }

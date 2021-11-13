@@ -80,5 +80,17 @@ namespace TutoringSystem.API.Controllers
 
             return NoContent();
         }
+
+        [SwaggerOperation(Summary = "Updates student data related to a specific tutor")]
+        [HttpPut]
+        [Authorize(Roles = "Tutor")]
+        public async Task<ActionResult> UpdateStudent([FromBody] UpdatedStudentDto student)
+        {
+            var updated = await studentService.UpdateStudentAsync(User.GetUserId(), student);
+            if (!updated)
+                return BadRequest("Student could not be updated");
+
+            return NoContent();
+        }
     }
 }
