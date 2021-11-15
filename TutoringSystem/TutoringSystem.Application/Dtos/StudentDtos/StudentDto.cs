@@ -11,6 +11,7 @@ namespace TutoringSystem.Application.Dtos.StudentDtos
         public string LastName { get; set; }
         public double HourlRate { get; set; }
         public string Note { get; set; }
+        public string ProfilePictureBase64 { get; set; }
 
         public StudentDto()
         {
@@ -22,6 +23,7 @@ namespace TutoringSystem.Application.Dtos.StudentDtos
             Username = student.Username;
             FirstName = student.FirstName;
             LastName = student.LastName;
+            ProfilePictureBase64 = student.ProfilePictureBase64;
         }
 
         public StudentDto(Student student, long tutorId) : this(student)

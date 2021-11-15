@@ -75,7 +75,7 @@ namespace TutoringSystem.API.Controllers
         }
 
         [SwaggerOperation(Summary = "Changes password of the currently logged user")]
-        [HttpPost("password")]
+        [HttpPatch("password")]
         [Authorize(Roles = "Tutor,Student")]
         public async Task<ActionResult> ChangePassword([FromBody] PasswordDto passwordModel)
         {
@@ -118,6 +118,30 @@ namespace TutoringSystem.API.Controllers
             var deleted = await userService.DeactivateUserAsync(User.GetUserId());
             if (!deleted)
                 return BadRequest("Account could be not deleted");
+
+            return NoContent();
+        }
+
+        [SwaggerOperation(Summary = "Sets profile picture for the currently logged in user")]
+        [HttpPatch("image")]
+        [Authorize(Roles = "Tutor,Student")]
+        public async Task<ActionResult> SetProfileImage([FromBody] string imageBase64)
+        {
+            var set = await userService.SetProfileImageAsync(User.GetUserId(), imageBase64);
+            if (!set)
+                return BadRequest("Picture could be not set");
+
+            return NoContent();
+        }
+
+        [SwaggerOperation(Summary = "Removes profile picture for the currently logged in user")]
+        [HttpDelete("image")]
+        [Authorize(Roles = "Tutor,Student")]
+        public async Task<ActionResult> RemoveProfileImage()
+        {
+            var deleted = await userService.RemoveProfilePictureAsync(User.GetUserId());
+            if (!deleted)
+                return BadRequest("Picture could be not deleted");
 
             return NoContent();
         }
