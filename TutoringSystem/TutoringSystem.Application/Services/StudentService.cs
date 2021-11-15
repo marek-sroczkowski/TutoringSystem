@@ -87,6 +87,8 @@ namespace TutoringSystem.Application.Services
 
             studentTutor.HourlRate = student.HourRate;
             studentTutor.Note = student.Note;
+            studentTutor.Student.FirstName = student.FirstName;
+            studentTutor.Student.LastName = student.LastName;
 
             return await studentTutorRepository.UpdateStudentTutorAsync(studentTutor);
         }
