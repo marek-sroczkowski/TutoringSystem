@@ -122,30 +122,6 @@ namespace TutoringSystem.API.Controllers
             return NoContent();
         }
 
-        [SwaggerOperation(Summary = "Sets profile picture for the currently logged in user")]
-        [HttpPatch("image")]
-        [Authorize(Roles = "Tutor,Student")]
-        public async Task<ActionResult> SetProfileImage([FromBody] string imageBase64)
-        {
-            var set = await userService.SetProfileImageAsync(User.GetUserId(), imageBase64);
-            if (!set)
-                return BadRequest("Picture could be not set");
-
-            return NoContent();
-        }
-
-        [SwaggerOperation(Summary = "Removes profile picture for the currently logged in user")]
-        [HttpDelete("image")]
-        [Authorize(Roles = "Tutor,Student")]
-        public async Task<ActionResult> RemoveProfileImage()
-        {
-            var deleted = await userService.RemoveProfilePictureAsync(User.GetUserId());
-            if (!deleted)
-                return BadRequest("Picture could be not deleted");
-
-            return NoContent();
-        }
-
         [SwaggerOperation(Summary = "Updates basic user information")]
         [HttpPut]
         [Authorize(Roles = "Tutor,Student")]

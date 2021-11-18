@@ -14,8 +14,6 @@ namespace TutoringSystem.Application.Services.Interfaces
         Task<ICollection<WrongPasswordStatus>> ChangePasswordAsync(long userId, PasswordDto passwordModel);
         Task<bool> ActivateUserByTokenAsync(long userId, string token);
         Task<bool> SendNewActivationTokenAsync(long userId);
-        Task<bool> SetProfileImageAsync(long userId, string imageBase64);
-        Task<bool> RemoveProfilePictureAsync(long userId);
         Task<bool> UpdateGeneralUserInfoAsync(long userId, UpdatedUserDto updatedUser);
         Task<ShortUserDto> GetGeneralUserInfoAsync(long userId);
     }

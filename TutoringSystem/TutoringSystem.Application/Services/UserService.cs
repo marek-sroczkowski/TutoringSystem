@@ -140,22 +140,6 @@ namespace TutoringSystem.Application.Services
             return validationResult;
         }
 
-        public async Task<bool> RemoveProfilePictureAsync(long userId)
-        {
-            var user = await userRepository.GetUserAsync(u => u.Id.Equals(userId));
-            user.ProfilePictureBase64 = null;
-
-            return await userRepository.UpdateUser(user);
-        }
-
-        public async Task<bool> SetProfileImageAsync(long userId, string imageBase64)
-        {
-            var user = await userRepository.GetUserAsync(u => u.Id.Equals(userId));
-            user.ProfilePictureBase64 = imageBase64;
-
-            return await userRepository.UpdateUser(user);
-        }
-
         public async Task<bool> UpdateGeneralUserInfoAsync(long userId, UpdatedUserDto updatedUser)
         {
             var existingUser = await userRepository.GetUserAsync(u => u.Id.Equals(userId));

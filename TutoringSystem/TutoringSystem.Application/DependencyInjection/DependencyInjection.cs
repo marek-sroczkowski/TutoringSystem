@@ -49,6 +49,7 @@ namespace TutoringSystem.Application.DependencyInjection
             services.AddScoped<IReportService, ReportService>();
             services.AddScoped<IEmailService, EmailService>();
             services.AddScoped<IActivationTokenService, ActivationTokenService>();
+            services.AddScoped<IImageService, ImageService>();
 
             return services;
         }
