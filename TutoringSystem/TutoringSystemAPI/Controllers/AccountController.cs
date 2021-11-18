@@ -157,5 +157,15 @@ namespace TutoringSystem.API.Controllers
 
             return NoContent();
         }
+
+        [SwaggerOperation(Summary = "Retrieves basic information about the currently logged in user")]
+        [HttpGet]
+        [Authorize(Roles = "Tutor,Student")]
+        public async Task<ActionResult<ShortUserDto>> GetGeneralUserInfo()
+        {
+            var user = await userService.GetGeneralUserInfoAsync(User.GetUserId());
+
+            return Ok(user);
+        }
     }
 }

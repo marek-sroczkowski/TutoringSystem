@@ -9,7 +9,6 @@ using TutoringSystem.Application.Dtos.EmailDtos;
 using TutoringSystem.Application.Dtos.Enums;
 using TutoringSystem.Application.Services.Interfaces;
 using TutoringSystem.Domain.Entities;
-using TutoringSystem.Domain.Entities.Enums;
 using TutoringSystem.Domain.Repositories;
 
 namespace TutoringSystem.Application.Services
@@ -163,6 +162,13 @@ namespace TutoringSystem.Application.Services
             var user = mapper.Map(updatedUser, existingUser);
 
             return await userRepository.UpdateUser(user);
+        }
+
+        public async Task<ShortUserDto> GetGeneralUserInfoAsync(long userId)
+        {
+            var user = await userRepository.GetUserAsync(u => u.Id.Equals(userId));
+
+            return mapper.Map<ShortUserDto>(user);
         }
 
         private ICollection<WrongPasswordStatus> ValidatePassword(User user, PasswordDto passwordModel)

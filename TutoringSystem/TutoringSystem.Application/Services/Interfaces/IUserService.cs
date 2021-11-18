@@ -17,5 +17,6 @@ namespace TutoringSystem.Application.Services.Interfaces
         Task<bool> SetProfileImageAsync(long userId, string imageBase64);
         Task<bool> RemoveProfilePictureAsync(long userId);
         Task<bool> UpdateGeneralUserInfoAsync(long userId, UpdatedUserDto updatedUser);
+        Task<ShortUserDto> GetGeneralUserInfoAsync(long userId);
     }
 }
