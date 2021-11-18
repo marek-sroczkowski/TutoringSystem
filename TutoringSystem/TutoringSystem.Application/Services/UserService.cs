@@ -157,6 +157,14 @@ namespace TutoringSystem.Application.Services
             return await userRepository.UpdateUser(user);
         }
 
+        public async Task<bool> UpdateGeneralUserInfoAsync(long userId, UpdatedUserDto updatedUser)
+        {
+            var existingUser = await userRepository.GetUserAsync(u => u.Id.Equals(userId));
+            var user = mapper.Map(updatedUser, existingUser);
+
+            return await userRepository.UpdateUser(user);
+        }
+
         private ICollection<WrongPasswordStatus> ValidatePassword(User user, PasswordDto passwordModel)
         {
             var result = new List<WrongPasswordStatus>();

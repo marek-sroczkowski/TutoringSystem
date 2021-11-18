@@ -145,5 +145,17 @@ namespace TutoringSystem.API.Controllers
 
             return NoContent();
         }
+
+        [SwaggerOperation(Summary = "Updates basic user information")]
+        [HttpPut]
+        [Authorize(Roles = "Tutor,Student")]
+        public async Task<ActionResult> UpdateGeneralInformation([FromBody] UpdatedUserDto model)
+        {
+            var updated = await userService.UpdateGeneralUserInfoAsync(User.GetUserId(), model);
+            if (!updated)
+                return BadRequest("User could be not updated");
+
+            return NoContent();
+        }
     }
 }
