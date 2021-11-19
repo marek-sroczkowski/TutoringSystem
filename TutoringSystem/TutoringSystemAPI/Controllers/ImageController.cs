@@ -23,7 +23,7 @@ namespace TutoringSystem.API.Controllers
         [SwaggerOperation(Summary = "Retrieves profile picture for the currently logged in user")]
         [HttpGet]
         [Authorize(Roles = "Tutor,Student")]
-        public async Task<ActionResult<ProfileImageDto>> GetProfileImage()
+        public async Task<ActionResult<ProfileImageDetailsDto>> GetProfileImage()
         {
             var picture = await imageService.GetProfileImageByUserId(User.GetUserId());
 
@@ -33,9 +33,9 @@ namespace TutoringSystem.API.Controllers
         [SwaggerOperation(Summary = "Sets profile picture for the currently logged in user")]
         [HttpPatch]
         [Authorize(Roles = "Tutor,Student")]
-        public async Task<ActionResult> SetProfileImage([FromBody] string imageBase64)
+        public async Task<ActionResult> SetProfileImage([FromBody] ProfileImageDto image)
         {
-            var set = await imageService.SetProfileImageAsync(User.GetUserId(), imageBase64);
+            var set = await imageService.SetProfileImageAsync(User.GetUserId(), image.ProfilePictureBase64);
             if (!set)
                 return BadRequest("Picture could be not set");
 

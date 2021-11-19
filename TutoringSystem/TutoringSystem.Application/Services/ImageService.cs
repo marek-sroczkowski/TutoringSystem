@@ -14,11 +14,11 @@ namespace TutoringSystem.Application.Services
             this.userRepository = userRepository;
         }
 
-        public async Task<ProfileImageDto> GetProfileImageByUserId(long userId)
+        public async Task<ProfileImageDetailsDto> GetProfileImageByUserId(long userId)
         {
             var user = await userRepository.GetUserAsync(u => u.Id.Equals(userId));
 
-            return new ProfileImageDto { UserId = user.Id, ProfilePictureBase64 = user.ProfilePictureBase64 };
+            return new ProfileImageDetailsDto { UserId = user.Id, ProfilePictureBase64 = user.ProfilePictureBase64 };
         }
 
         public async Task<bool> RemoveProfilePictureAsync(long userId)

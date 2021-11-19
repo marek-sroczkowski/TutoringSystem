@@ -5,7 +5,7 @@ namespace TutoringSystem.Application.Services.Interfaces
 {
     public interface IImageService
     {
-        Task<ProfileImageDto> GetProfileImageByUserId(long userId);
+        Task<ProfileImageDetailsDto> GetProfileImageByUserId(long userId);
         Task<bool> RemoveProfilePictureAsync(long userId);
         Task<bool> SetProfileImageAsync(long userId, string imageBase64);
     }
