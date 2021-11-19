@@ -103,7 +103,8 @@ namespace TutoringSystem.Infrastructure.Repositories
 
         private void DeactivatePhones(User user)
         {
-            user.Contact.PhoneNumbers.ToList().ForEach(p => p.IsActive = false);
+            var phones = DbContext.PhoneNumbers.Where(p => p.ContactId.Equals(user.Contact.Id));
+            phones.ToList().ForEach(p => p.IsActive = false);
         }
     }
 }
