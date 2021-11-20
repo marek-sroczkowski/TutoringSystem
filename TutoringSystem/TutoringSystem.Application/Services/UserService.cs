@@ -130,7 +130,7 @@ namespace TutoringSystem.Application.Services
 
                 if (!changed)
                 {
-                    validationResult.Add(WrongPasswordStatus.DatabaseError);
+                    validationResult.Add(WrongPasswordStatus.InternalError);
                     return validationResult;
                 }
 

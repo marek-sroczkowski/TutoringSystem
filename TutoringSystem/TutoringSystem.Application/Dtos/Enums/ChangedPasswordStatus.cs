@@ -2,7 +2,7 @@
 {
     public enum WrongPasswordStatus
     {
-        DatabaseError = -1,
+        InternalError = -1,
         PasswordsVary,
         TooShort,
         DuplicateOfOld,
