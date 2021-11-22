@@ -69,12 +69,9 @@ namespace TutoringSystem.Application.Services
         public async Task<PagedList<OrderDto>> GetAdditionalOrdersAsync(long tutorId, AdditionalOrderParameters parameters)
         {
             Expression<Func<AdditionalOrder, bool>> expression = o => o.TutorId.Equals(tutorId);
-            FilterByStartReceiptDate(ref expression, parameters.ReceiptStartDate);
-            FilterByEndReceiptDate(ref expression, parameters.ReceiptEndDate);
-            FilterByStatus(ref expression, parameters.Status);
-            FilterByPaid(ref expression, parameters.IsPaid);
-            FilterByStartDeadline(ref expression, parameters.DeadlineStart);
-            FilterByEndDeadline(ref expression, parameters.DeadlineEnd);
+            FilterByDate(ref expression, parameters);
+            FilterByPayment(ref expression, parameters);
+            FilterByStatus(ref expression, parameters);
 
             var orders = await additionalOrderRepository.GetAdditionalOrdersCollectionAsync(expression);
             var orderDtos = mapper.Map<ICollection<OrderDto>>(orders);
@@ -90,28 +87,42 @@ namespace TutoringSystem.Application.Services
             return await additionalOrderRepository.UpdateAdditionalOrderAsync(order);
         }
 
-        private void FilterByStatus(ref Expression<Func<AdditionalOrder, bool>> expression, AdditionalOrderStatus? status)
+        private void FilterByStatus(ref Expression<Func<AdditionalOrder, bool>> expression, AdditionalOrderParameters parameters)
         {
-            if (!status.HasValue)
+            if (parameters.IsInProgress && parameters.IsPending && parameters.IsRealized)
                 return;
 
-            ExpressionMerger.MergeExpression(ref expression, o => o.Status.Equals(status.Value));
+            if (parameters.IsPending && !parameters.IsInProgress && !parameters.IsRealized)
+                ExpressionMerger.MergeExpression(ref expression, o => o.Status.Equals(AdditionalOrderStatus.Pending));
+            else if (!parameters.IsPending && parameters.IsInProgress && !parameters.IsRealized)
+                ExpressionMerger.MergeExpression(ref expression, o => o.Status.Equals(AdditionalOrderStatus.InProgress));
+            else if (!parameters.IsPending && !parameters.IsInProgress && parameters.IsRealized)
+                ExpressionMerger.MergeExpression(ref expression, o => o.Status.Equals(AdditionalOrderStatus.Realized));
+            else if (parameters.IsPending && parameters.IsInProgress && !parameters.IsRealized)
+                ExpressionMerger.MergeExpression(ref expression, o => o.Status.Equals(AdditionalOrderStatus.Pending) || o.Status.Equals(AdditionalOrderStatus.InProgress));
+            else if (parameters.IsPending && !parameters.IsInProgress && parameters.IsRealized)
+                ExpressionMerger.MergeExpression(ref expression, o => o.Status.Equals(AdditionalOrderStatus.Pending) || o.Status.Equals(AdditionalOrderStatus.Realized));
+            else if (!parameters.IsPending && parameters.IsInProgress && parameters.IsRealized)
+                ExpressionMerger.MergeExpression(ref expression, o => o.Status.Equals(AdditionalOrderStatus.InProgress) || o.Status.Equals(AdditionalOrderStatus.Realized));
         }
 
-        private void FilterByPaid(ref Expression<Func<AdditionalOrder, bool>> expression, bool? isPaid)
+        private void FilterByPayment(ref Expression<Func<AdditionalOrder, bool>> expression, AdditionalOrderParameters parameters)
         {
-            if (!isPaid.HasValue)
+            if (parameters.IsPaid && parameters.IsNotPaid)
                 return;
 
-            ExpressionMerger.MergeExpression(ref expression, o => o.IsPaid.Equals(isPaid.Value));
+            if (parameters.IsPaid && !parameters.IsNotPaid)
+                ExpressionMerger.MergeExpression(ref expression, o => o.IsPaid.Equals(true));
+            else if(!parameters.IsPaid && parameters.IsNotPaid)
+                ExpressionMerger.MergeExpression(ref expression, o => o.IsPaid.Equals(false));
         }
 
-        private void FilterByStartReceiptDate(ref Expression<Func<AdditionalOrder, bool>> expression, DateTime? startDate)
+        private void FilterByDate(ref Expression<Func<AdditionalOrder, bool>> expression, AdditionalOrderParameters parameters)
         {
-            if (!startDate.HasValue)
-                return;
-
-            ExpressionMerger.MergeExpression(ref expression, o => o.ReceiptDate >= startDate.Value);
+            ExpressionMerger.MergeExpression(ref expression, o => o.ReceiptDate >= parameters.ReceiptStartDate 
+                && o.ReceiptDate <= parameters.ReceiptEndDate
+                && o.Deadline >= parameters.DeadlineStart
+                && o.Deadline <= parameters.DeadlineEnd);
         }
 
         private void FilterByEndReceiptDate(ref Expression<Func<AdditionalOrder, bool>> expression, DateTime? endDate)
@@ -120,22 +131,6 @@ namespace TutoringSystem.Application.Services
                 return;
 
             ExpressionMerger.MergeExpression(ref expression, o => o.ReceiptDate <= endDate.Value);
-        }
-
-        private void FilterByStartDeadline(ref Expression<Func<AdditionalOrder, bool>> expression, DateTime? startDate)
-        {
-            if (!startDate.HasValue)
-                return;
-
-            ExpressionMerger.MergeExpression(ref expression, o => o.Deadline >= startDate.Value);
-        }
-
-        private void FilterByEndDeadline(ref Expression<Func<AdditionalOrder, bool>> expression, DateTime? startDate)
-        {
-            if (!startDate.HasValue)
-                return;
-
-            ExpressionMerger.MergeExpression(ref expression, o => o.Deadline <= startDate.Value);
         }
     }
 }
