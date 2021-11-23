@@ -8,7 +8,7 @@ namespace TutoringSystem.Application.Services.Interfaces
 {
     public interface IAdditionalOrderService
     {
-        Task<PagedList<OrderDto>> GetAdditionalOrdersAsync(long tutorId, AdditionalOrderParameters parameters);
+        PagedList<OrderDto> GetAdditionalOrders(long tutorId, AdditionalOrderParameters parameters);
         Task<OrderDetailsDto> GetAdditionalOrderByIdAsync(long orderId);
         Task<OrderDto> AddAdditionalOrderAsync(long tutorId, NewOrderDto newOrder);
         Task<bool> UpdateAdditionalOrderAsync(UpdatedOrderDto updatedOrder);

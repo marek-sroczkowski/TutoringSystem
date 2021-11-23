@@ -10,6 +10,7 @@ using System.Reflection;
 using System.Text;
 using TutoringSystem.Application.Authorization;
 using TutoringSystem.Application.Dtos.AccountDtos;
+using TutoringSystem.Application.Helpers;
 using TutoringSystem.Application.Identity;
 using TutoringSystem.Application.ScheduleTasks;
 using TutoringSystem.Application.Services;
@@ -29,6 +30,7 @@ namespace TutoringSystem.Application.DependencyInjection
             services.AddAuthorization();
             services.AddScheduleTasks();
             services.AddValidators();
+            services.AddSortHelpers();
 
             return services;
         }
@@ -117,6 +119,13 @@ namespace TutoringSystem.Application.DependencyInjection
                 .AddFluentValidation();
             services.AddScoped<IValidator<RegisterStudentDto>, RegisterStudentValidation>();
             services.AddScoped<IValidator<RegisterTutorDto>, RegisterTutorValidation>();
+
+            return services;
+        }
+
+        public static IServiceCollection AddSortHelpers(this IServiceCollection services)
+        {
+            services.AddScoped<ISortHelper<AdditionalOrder>, SortHelper<AdditionalOrder>>();
 
             return services;
         }

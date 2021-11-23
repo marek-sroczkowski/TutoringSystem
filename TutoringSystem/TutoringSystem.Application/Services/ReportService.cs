@@ -46,7 +46,7 @@ namespace TutoringSystem.Application.Services
             var tutor = await tutorRepository.GetTutorAsync(t => t.Id.Equals(tutorId));
             var students = await GetStudents(tutorId);
             var reservations = await reservationRepository.GetReservationsCollectionAsync(GetExpressionToTutorReservations(tutorId, parameters));
-            var orders = await orderRepository.GetAdditionalOrdersCollectionAsync(GetExpressionToOrders(tutorId, parameters));
+            var orders = orderRepository.GetAdditionalOrdersCollection(GetExpressionToOrders(tutorId, parameters));
 
             var result = new TutorReportDto
             {

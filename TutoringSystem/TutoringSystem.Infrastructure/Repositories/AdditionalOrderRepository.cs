@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using System;
-using System.Collections.Generic;
+using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
 using TutoringSystem.Application.Helpers;
@@ -42,13 +42,12 @@ namespace TutoringSystem.Infrastructure.Repositories
             return order;
         }
 
-        public async Task<IEnumerable<AdditionalOrder>> GetAdditionalOrdersCollectionAsync(Expression<Func<AdditionalOrder, bool>> expression, bool? isActive = true)
+        public IQueryable<AdditionalOrder> GetAdditionalOrdersCollection(Expression<Func<AdditionalOrder, bool>> expression, bool? isActive = true)
         {
             if (isActive.HasValue)
                 ExpressionMerger.MergeExpression(ref expression, o => o.IsActive.Equals(isActive.Value));
 
-            var orders = await FindByCondition(expression)
-                .ToListAsync();
+            var orders = FindByCondition(expression);
 
             return orders;
         }

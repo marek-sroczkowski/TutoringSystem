@@ -31,9 +31,9 @@ namespace TutoringSystem.API.Controllers
         [SwaggerOperation(Summary = "Retrieves all additional order assigned to the currently logged in tutor")]
         [HttpGet]
         [Authorize(Roles = "Tutor")]
-        public async Task<ActionResult<IEnumerable<OrderDto>>> GetOrders([FromQuery] AdditionalOrderParameters parameters)
+        public ActionResult<IEnumerable<OrderDto>> GetOrders([FromQuery] AdditionalOrderParameters parameters)
         {
-            var orders = await additionalOrderService.GetAdditionalOrdersAsync(User.GetUserId(), parameters);
+            var orders = additionalOrderService.GetAdditionalOrders(User.GetUserId(), parameters);
 
             var metadata = new
             {

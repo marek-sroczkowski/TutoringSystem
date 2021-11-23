@@ -1,5 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
+using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
 using TutoringSystem.Domain.Entities;
@@ -12,6 +12,6 @@ namespace TutoringSystem.Domain.Repositories
         Task<bool> UpdateAdditionalOrderAsync(AdditionalOrder updatedOrder);
         Task<bool> DeleteAdditionalOrderAsync(AdditionalOrder order);
         Task<AdditionalOrder> GetAdditionalOrderAsync(Expression<Func<AdditionalOrder, bool>> expression, bool? isActive = true);
-        Task<IEnumerable<AdditionalOrder>> GetAdditionalOrdersCollectionAsync(Expression<Func<AdditionalOrder, bool>> expression, bool? isActive = true);
+        IQueryable<AdditionalOrder> GetAdditionalOrdersCollection(Expression<Func<AdditionalOrder, bool>> expression, bool? isActive = true);
     }
 }

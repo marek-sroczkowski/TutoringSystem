@@ -17,11 +17,15 @@ namespace TutoringSystem.Application.Services
     {
         private readonly IAdditionalOrderRepository additionalOrderRepository;
         private readonly IMapper mapper;
+        private readonly ISortHelper<AdditionalOrder> sortHelper;
 
-        public AdditionalOrderService(IAdditionalOrderRepository additionalOrderRepository, IMapper mapper)
+        public AdditionalOrderService(IAdditionalOrderRepository additionalOrderRepository,
+            IMapper mapper,
+            ISortHelper<AdditionalOrder> sortHelper)
         {
             this.additionalOrderRepository = additionalOrderRepository;
             this.mapper = mapper;
+            this.sortHelper = sortHelper;
         }
 
         public async Task<OrderDto> AddAdditionalOrderAsync(long tutorId, NewOrderDto newOrder)
@@ -66,14 +70,14 @@ namespace TutoringSystem.Application.Services
             return mapper.Map<OrderDetailsDto>(order);
         }
 
-        public async Task<PagedList<OrderDto>> GetAdditionalOrdersAsync(long tutorId, AdditionalOrderParameters parameters)
+        public PagedList<OrderDto> GetAdditionalOrders(long tutorId, AdditionalOrderParameters parameters)
         {
             Expression<Func<AdditionalOrder, bool>> expression = o => o.TutorId.Equals(tutorId);
             FilterByDate(ref expression, parameters);
             FilterByPayment(ref expression, parameters);
             FilterByStatus(ref expression, parameters);
 
-            var orders = await additionalOrderRepository.GetAdditionalOrdersCollectionAsync(expression);
+            var orders = sortHelper.ApplySort(additionalOrderRepository.GetAdditionalOrdersCollection(expression), parameters.OrderBy);
             var orderDtos = mapper.Map<ICollection<OrderDto>>(orders);
 
             return PagedList<OrderDto>.ToPagedList(orderDtos, parameters.PageNumber, parameters.PageSize);
@@ -123,14 +127,6 @@ namespace TutoringSystem.Application.Services
                 && o.ReceiptDate <= parameters.ReceiptEndDate
                 && o.Deadline >= parameters.DeadlineStart
                 && o.Deadline <= parameters.DeadlineEnd);
-        }
-
-        private void FilterByEndReceiptDate(ref Expression<Func<AdditionalOrder, bool>> expression, DateTime? endDate)
-        {
-            if (!endDate.HasValue)
-                return;
-
-            ExpressionMerger.MergeExpression(ref expression, o => o.ReceiptDate <= endDate.Value);
         }
     }
 }
