@@ -52,16 +52,16 @@ namespace TutoringSystem.API.Controllers
         [SwaggerOperation(Summary = "Generates a token when logging in successfully")]
         [HttpPost("login")]
         [AllowAnonymous]
-        public async Task<ActionResult<LoginStatus>> Login([FromBody] LoginUserDto model)
+        public async Task<ActionResult<LoginResposneDto>> Login([FromBody] LoginUserDto model)
         {
             var loginResult = await userService.TryLoginAsync(model);
-            if (loginResult.Status.Equals(LoginStatus.InvalidUsernameOrPassword))
-                return Ok(loginResult.Status);
+            if (loginResult.LoginStatus.Equals(LoginStatus.InvalidUsernameOrPassword))
+                return Ok(loginResult);
 
             var token = jwtProvider.GenerateJwtToken(loginResult.User);
             Response.Headers.Add("Authorization", token);
 
-            return Ok(loginResult.Status);
+            return Ok(loginResult);
         }
 
         [SwaggerOperation(Summary = "Gets role of the currently logged user")]

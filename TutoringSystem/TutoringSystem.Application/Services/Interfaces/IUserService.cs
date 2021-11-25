@@ -7,7 +7,7 @@ namespace TutoringSystem.Application.Services.Interfaces
 {
     public interface IUserService
     {
-        Task<LoginResultDto> TryLoginAsync(LoginUserDto userModel);
+        Task<LoginResposneDto> TryLoginAsync(LoginUserDto userModel);
         Task<bool> RegisterStudentAsync(long tutorId, RegisterStudentDto student);
         Task<bool> RegisterTutorAsync(RegisterTutorDto tutor);
         Task<bool> DeactivateUserAsync(long userId);

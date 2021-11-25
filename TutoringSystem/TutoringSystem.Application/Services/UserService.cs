@@ -40,19 +40,19 @@ namespace TutoringSystem.Application.Services
             this.passwordHasher = passwordHasher;
         }
 
-        public async Task<LoginResultDto> TryLoginAsync(LoginUserDto userModel)
+        public async Task<LoginResposneDto> TryLoginAsync(LoginUserDto userModel)
         {
             await DeactivateNotEnabledUsersAsync();
             var user = await userRepository.GetUserAsync(u => u.Username.Equals(userModel.Username));
             if (user is null || ValidatePassword(userModel, user) == PasswordVerificationResult.Failed)
-                return new LoginResultDto(null, LoginStatus.InvalidUsernameOrPassword);
+                return new LoginResposneDto(LoginStatus.InvalidUsernameOrPassword, null);
 
             await SetLastLoginDateAsync(user);
 
             if (!user.IsEnable)
-                return new LoginResultDto(mapper.Map<UserDto>(user), LoginStatus.InactiveAccount);
+                return new LoginResposneDto(LoginStatus.InactiveAccount, mapper.Map<UserDto>(user));
 
-            return new LoginResultDto(mapper.Map<UserDto>(user), LoginStatus.LoggedInCorrectly);
+            return new LoginResposneDto(LoginStatus.LoggedInCorrectly, mapper.Map<UserDto>(user));
         }
 
         public async Task<bool> RegisterStudentAsync(long tutorId, RegisterStudentDto student)
