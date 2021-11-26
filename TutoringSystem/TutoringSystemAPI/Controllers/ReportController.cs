@@ -56,7 +56,7 @@ namespace TutoringSystem.API.Controllers
         }
 
         [SwaggerOperation(Summary = "Retrieves report with statistics about all subject categories for the logged in tutor")]
-        [HttpGet("summary/subjects/category")]
+        [HttpGet("summary/subjects/categories")]
         [Authorize(Roles = "Tutor")]
         public ActionResult<IEnumerable<TutorReportDto>> GetSubjectCategoryReport([FromQuery] ReportParameters parameters)
         {
@@ -66,7 +66,7 @@ namespace TutoringSystem.API.Controllers
         }
 
         [SwaggerOperation(Summary = "Retrieves report with statistics about all places for the logged in tutor")]
-        [HttpGet("summary/place")]
+        [HttpGet("summary/places")]
         [Authorize(Roles = "Tutor")]
         public ActionResult<IEnumerable<TutorReportDto>> GetPlaceReport([FromQuery] ReportParameters parameters)
         {
