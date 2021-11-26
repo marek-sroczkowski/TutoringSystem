@@ -2,7 +2,7 @@
 
 namespace TutoringSystem.Application.Dtos.ReportDtos
 {
-    public class StudentSummaryDto
+    public class StudentReportDto
     {
         public StudentDto Student { get; set; }
         public double Hours { get; set; }

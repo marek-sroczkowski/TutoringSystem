@@ -4,10 +4,10 @@ using Swashbuckle.AspNetCore.Annotations;
 using System.Threading.Tasks;
 using TutoringSystem.Application.Extensions;
 using TutoringSystem.API.Filters.TypeFilters;
-using TutoringSystem.Application.Authorization;
 using TutoringSystem.Application.Dtos.ReportDtos;
 using TutoringSystem.Application.Parameters;
 using TutoringSystem.Application.Services.Interfaces;
+using System.Collections.Generic;
 
 namespace TutoringSystem.API.Controllers
 {
@@ -17,76 +17,60 @@ namespace TutoringSystem.API.Controllers
     public class ReportController : ControllerBase
     {
         private readonly IReportService reportService;
-        private readonly ISubjectService subjectService;
-        private readonly IStudentService studentService;
-        private readonly IAuthorizationService authorizationService;
 
-        public ReportController(IReportService reportService, ISubjectService subjectService, IStudentService studentService, IAuthorizationService authorizationService)
+        public ReportController(IReportService reportService)
         {
             this.reportService = reportService;
-            this.subjectService = subjectService;
-            this.studentService = studentService;
-            this.authorizationService = authorizationService;
         }
 
         [SwaggerOperation(Summary = "Retrieves report with statistics for the logged in tutor")]
         [HttpGet("summary")]
         [Authorize(Roles = "Tutor")]
-        public async Task<ActionResult<TutorReportDto>> GetReportAsync([FromQuery] ReportParameters parameters)
+        public async Task<ActionResult<TutorReportDto>> GetGeneralReportAsync([FromQuery] ReportParameters parameters)
         {
-            var report = await reportService.GetReportByTutorAsync(User.GetUserId(), parameters);
+            var report = await reportService.GetGeneralReportAsync(User.GetUserId(), parameters);
 
             return Ok(report);
         }
 
-        [SwaggerOperation(Summary = "Retrieves report with statistics about specific student for the logged in tutor")]
-        [HttpGet("summary/student/{studentId}")]
+        [SwaggerOperation(Summary = "Retrieves report with statistics about all students for the logged in tutor")]
+        [HttpGet("summary/students")]
         [Authorize(Roles = "Tutor")]
         [ValidateStudentExistence]
-        public async Task<ActionResult<TutorReportDto>> GetStudentReport(long studentId, [FromQuery] ReportParameters parameters)
+        public async Task<ActionResult<IEnumerable<TutorReportDto>>> GetStudentsReport([FromQuery] ReportParameters parameters)
         {
-            var student = await studentService.GetStudentAsync(User.GetUserId(), studentId);
-            var authorizationResult = authorizationService.AuthorizeAsync(User, student, new ResourceOperationRequirement(OperationType.Read)).Result;
-            if (!authorizationResult.Succeeded)
-                return Forbid();
-
-            var report = await reportService.GetStudentSummaryAsync(studentId, User.GetUserId(), parameters);
+            var report = await reportService.GetStudentsReportAsync(User.GetUserId(), parameters);
 
             return Ok(report);
         }
 
-        [SwaggerOperation(Summary = "Retrieves report with statistics about specific subject for the logged in tutor")]
-        [HttpGet("summary/subject/{subjectId}")]
+        [SwaggerOperation(Summary = "Retrieves report with statistics about all subjects for the logged in tutor")]
+        [HttpGet("summary/subjects")]
         [Authorize(Roles = "Tutor")]
         [ValidateSubjectExistence]
-        public async Task<ActionResult<TutorReportDto>> GetSubjectReport(long subjectId, [FromQuery] ReportParameters parameters)
+        public async Task<ActionResult<IEnumerable<TutorReportDto>>> GetSubjectsReport([FromQuery] ReportParameters parameters)
         {
-            var subject = await subjectService.GetSubjectByIdAsync(subjectId);
-            var authorizationResult = authorizationService.AuthorizeAsync(User, subject, new ResourceOperationRequirement(OperationType.Read)).Result;
-            if (!authorizationResult.Succeeded)
-                return Forbid();
-
-            var report = await reportService.GetSubjectReportAsync(subjectId, parameters);
+            var report = await reportService.GetSubjectsReportAsync(User.GetUserId(), parameters);
 
             return Ok(report);
         }
 
-        [SwaggerOperation(Summary = "Retrieves report with statistics about specific subject category for the logged in tutor")]
-        [HttpGet("summary/subjectCategory")]
+        [SwaggerOperation(Summary = "Retrieves report with statistics about all subject categories for the logged in tutor")]
+        [HttpGet("summary/subjects/category")]
         [Authorize(Roles = "Tutor")]
-        public async Task<ActionResult<TutorReportDto>> GetSubjectCategoryReport([FromQuery] ReportSubjectCategoryParameters parameters)
+        public ActionResult<IEnumerable<TutorReportDto>> GetSubjectCategoryReport([FromQuery] ReportParameters parameters)
         {
-            var report = await reportService.GetSubjectCategoryReportAsync(User.GetUserId(), parameters);
+            var report = reportService.GetSubjectCategoriesReport(User.GetUserId(), parameters);
 
             return Ok(report);
         }
 
-        [SwaggerOperation(Summary = "Retrieves report with statistics about specific place for the logged in tutor")]
+        [SwaggerOperation(Summary = "Retrieves report with statistics about all places for the logged in tutor")]
         [HttpGet("summary/place")]
         [Authorize(Roles = "Tutor")]
-        public async Task<ActionResult<TutorReportDto>> GetPlaceReport([FromQuery] ReportPlaceParameters parameters)
+        public ActionResult<IEnumerable<TutorReportDto>> GetPlaceReport([FromQuery] ReportParameters parameters)
         {
-            var report = await reportService.GetPlaceReportAsync(User.GetUserId(), parameters);
+            var report = reportService.GetPlacesReport(User.GetUserId(), parameters);
 
             return Ok(report);
         }

@@ -1,10 +1,14 @@
 ﻿using System;
+using System.ComponentModel.DataAnnotations;
 
 namespace TutoringSystem.Application.Parameters
 {
     public class ReportParameters
     {
-        public DateTime? StartDate { get; set; }
-        public DateTime? EndDate { get; set; }
+        [Required]
+        public DateTime StartDate { get; set; }
+
+        [Required]
+        public DateTime EndDate { get; set; }
     }
 }
