@@ -10,6 +10,7 @@
         Physics,
         Biology,
         Chemistry,
-        Music
+        Music,
+        Geography
     }
 }
