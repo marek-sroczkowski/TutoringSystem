@@ -10,6 +10,7 @@ using System.Reflection;
 using System.Text;
 using TutoringSystem.Application.Authorization;
 using TutoringSystem.Application.Dtos.AccountDtos;
+using TutoringSystem.Application.Dtos.ReportDtos;
 using TutoringSystem.Application.Helpers;
 using TutoringSystem.Application.Identity;
 using TutoringSystem.Application.ScheduleTasks;
@@ -126,6 +127,10 @@ namespace TutoringSystem.Application.DependencyInjection
         public static IServiceCollection AddSortHelpers(this IServiceCollection services)
         {
             services.AddScoped<ISortHelper<AdditionalOrder>, SortHelper<AdditionalOrder>>();
+            services.AddScoped<ISortHelper<StudentReportDto>, SortHelper<StudentReportDto>>();
+            services.AddScoped<ISortHelper<SubjectReportDto>, SortHelper<SubjectReportDto>>();
+            services.AddScoped<ISortHelper<PlaceReportDto>, SortHelper<PlaceReportDto>>();
+            services.AddScoped<ISortHelper<SubjectCategoryReportDto>, SortHelper<SubjectCategoryReportDto>>();
 
             return services;
         }

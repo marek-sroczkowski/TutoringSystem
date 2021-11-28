@@ -10,5 +10,7 @@ namespace TutoringSystem.Application.Parameters
 
         [Required]
         public DateTime EndDate { get; set; }
+
+        public string OrderBy { get; set; }
     }
 }

@@ -1,12 +1,10 @@
-﻿using AutoMapper;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
 using TutoringSystem.Application.Dtos.ReportDtos;
-using TutoringSystem.Application.Dtos.StudentDtos;
-using TutoringSystem.Application.Dtos.SubjectDtos;
+using TutoringSystem.Application.Helpers;
 using TutoringSystem.Application.Parameters;
 using TutoringSystem.Application.Services.Interfaces;
 using TutoringSystem.Domain.Entities;
@@ -21,18 +19,28 @@ namespace TutoringSystem.Application.Services
         private readonly IAdditionalOrderRepository orderRepository;
         private readonly ISubjectRepository subjectRepository;
         private readonly IStudentTutorRepository studentTutorRepository;
-        private readonly IMapper mapper;
+        private readonly ISortHelper<StudentReportDto> studentSortHelper;
+        private readonly ISortHelper<SubjectReportDto> subjectSortHelper;
+        private readonly ISortHelper<PlaceReportDto> placeSortHelper;
+        private readonly ISortHelper<SubjectCategoryReportDto> subjectCategorySortHelper;
 
         public ReportService(IReservationRepository reservationRepository,
             IAdditionalOrderRepository orderRepository,
             ISubjectRepository subjectRepository,
-            IStudentTutorRepository studentTutorRepository, IMapper mapper)
+            IStudentTutorRepository studentTutorRepository, 
+            ISortHelper<StudentReportDto> studentSortHelper, 
+            ISortHelper<SubjectReportDto> subjectSortHelper, 
+            ISortHelper<PlaceReportDto> placeSortHelper, 
+            ISortHelper<SubjectCategoryReportDto> subjectCategorySortHelper)
         {
             this.reservationRepository = reservationRepository;
             this.orderRepository = orderRepository;
             this.subjectRepository = subjectRepository;
             this.studentTutorRepository = studentTutorRepository;
-            this.mapper = mapper;
+            this.studentSortHelper = studentSortHelper;
+            this.subjectSortHelper = subjectSortHelper;
+            this.placeSortHelper = placeSortHelper;
+            this.subjectCategorySortHelper = subjectCategorySortHelper;
         }
 
         public async Task<TutorReportDto> GetGeneralReportAsync(long tutorId, ReportParameters parameters)
@@ -55,6 +63,7 @@ namespace TutoringSystem.Application.Services
         {
             var students = await GetStudents(tutorId);
             var studentsSummary = students.Select(s => GetStudentSummaryAsync(s, tutorId, parameters).Result);
+            studentsSummary = studentSortHelper.ApplySort(studentsSummary.AsQueryable(), parameters.OrderBy).AsEnumerable();
 
             return studentsSummary;
         }
@@ -64,6 +73,7 @@ namespace TutoringSystem.Application.Services
             var subjects = await subjectRepository.GetSubjectsCollectionAsync(s => s.TutorId.Equals(tutorId), null);
             var subjectsSummary = subjects.Select(s => GetSubjectReportAsync(s, parameters).Result);
             subjectsSummary = subjectsSummary.Where(p => p != null);
+            subjectsSummary = subjectSortHelper.ApplySort(subjectsSummary.AsQueryable(), parameters.OrderBy).AsEnumerable();
 
             return subjectsSummary;
         }
@@ -73,6 +83,7 @@ namespace TutoringSystem.Application.Services
             var categories = Enum.GetValues<SubjectCategory>();
             var subjectCategoriesSummary = categories.Select(c => GetSubjectCategorySummaryAsync(tutorId, c, parameters).Result);
             subjectCategoriesSummary = subjectCategoriesSummary.Where(p => p != null);
+            subjectCategoriesSummary = subjectCategorySortHelper.ApplySort(subjectCategoriesSummary.AsQueryable(), parameters.OrderBy).AsEnumerable();
 
             return subjectCategoriesSummary;
         }
@@ -82,6 +93,7 @@ namespace TutoringSystem.Application.Services
             var places = Enum.GetValues<ReservationPlace>();
             var placesSummary = places.Select(p => GetPlaceSummaryAsync(tutorId, p, parameters).Result);
             placesSummary = placesSummary.Where(p => p != null);
+            placesSummary = placeSortHelper.ApplySort(placesSummary.AsQueryable(), parameters.OrderBy).AsEnumerable();
 
             return placesSummary;
         }
