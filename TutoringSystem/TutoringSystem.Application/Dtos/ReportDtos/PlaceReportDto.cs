@@ -2,10 +2,8 @@
 
 namespace TutoringSystem.Application.Dtos.ReportDtos
 {
-    public class PlaceReportDto
+    public class PlaceReportDto : BaseReportDto
     {
         public ReservationPlace Place { get; set; }
-        public double TotalHours { get; set; }
-        public double TotalProfit { get; set; }
     }
 }

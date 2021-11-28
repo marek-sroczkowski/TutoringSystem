@@ -37,7 +37,7 @@ namespace TutoringSystem.API.Controllers
         [HttpGet("summary/students")]
         [Authorize(Roles = "Tutor")]
         [ValidateStudentExistence]
-        public async Task<ActionResult<IEnumerable<TutorReportDto>>> GetStudentsReport([FromQuery] ReportParameters parameters)
+        public async Task<ActionResult<IEnumerable<StudentReportDto>>> GetStudentsReport([FromQuery] ReportParameters parameters)
         {
             var report = await reportService.GetStudentsReportAsync(User.GetUserId(), parameters);
 
@@ -48,7 +48,7 @@ namespace TutoringSystem.API.Controllers
         [HttpGet("summary/subjects")]
         [Authorize(Roles = "Tutor")]
         [ValidateSubjectExistence]
-        public async Task<ActionResult<IEnumerable<TutorReportDto>>> GetSubjectsReport([FromQuery] ReportParameters parameters)
+        public async Task<ActionResult<IEnumerable<SubjectReportDto>>> GetSubjectsReport([FromQuery] ReportParameters parameters)
         {
             var report = await reportService.GetSubjectsReportAsync(User.GetUserId(), parameters);
 
@@ -58,7 +58,7 @@ namespace TutoringSystem.API.Controllers
         [SwaggerOperation(Summary = "Retrieves report with statistics about all subject categories for the logged in tutor")]
         [HttpGet("summary/subjects/categories")]
         [Authorize(Roles = "Tutor")]
-        public ActionResult<IEnumerable<TutorReportDto>> GetSubjectCategoryReport([FromQuery] ReportParameters parameters)
+        public ActionResult<IEnumerable<SubjectCategoryReportDto>> GetSubjectCategoryReport([FromQuery] ReportParameters parameters)
         {
             var report = reportService.GetSubjectCategoriesReport(User.GetUserId(), parameters);
 
@@ -68,7 +68,7 @@ namespace TutoringSystem.API.Controllers
         [SwaggerOperation(Summary = "Retrieves report with statistics about all places for the logged in tutor")]
         [HttpGet("summary/places")]
         [Authorize(Roles = "Tutor")]
-        public ActionResult<IEnumerable<TutorReportDto>> GetPlaceReport([FromQuery] ReportParameters parameters)
+        public ActionResult<IEnumerable<PlaceReportDto>> GetPlaceReport([FromQuery] ReportParameters parameters)
         {
             var report = reportService.GetPlacesReport(User.GetUserId(), parameters);
 

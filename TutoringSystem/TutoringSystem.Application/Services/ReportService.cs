@@ -88,13 +88,15 @@ namespace TutoringSystem.Application.Services
 
         private async Task<StudentReportDto> GetStudentSummaryAsync(Student student, long tutorId, ReportParameters parameters)
         {
-            var reservations = await reservationRepository.GetReservationsCollectionAsync(GetExpressionToStudentReservations(student.Id, parameters));
+            var reservations = await reservationRepository.GetReservationsCollectionAsync(GetExpressionToStudentReservations(student.Id, tutorId, parameters));
 
             return new StudentReportDto
             {
-                Student = new StudentDto(student, tutorId),
-                Hours = reservations.Sum(r => r.Duration / 60.0),
-                Profit = reservations.Sum(r => r.Cost)
+                Username = student.Username,
+                StudentName = $"{student.FirstName} {student.LastName}",
+                ReservationsCount = reservations.ToList().Count,
+                TotalHours = reservations.Sum(r => r.Duration / 60.0),
+                TotalProfit = reservations.Sum(r => r.Cost)
             };
         }
 
@@ -106,7 +108,8 @@ namespace TutoringSystem.Application.Services
 
             return new SubjectReportDto
             {
-                Subject = mapper.Map<SubjectDto>(subject),
+                SubjectName = subject.Name,
+                ReservationsCount = reservations.ToList().Count,
                 TotalHours = reservations.Sum(r => r.Duration / 60.0),
                 TotalProfit = reservations.Sum(r => r.Cost)
             };
@@ -122,6 +125,7 @@ namespace TutoringSystem.Application.Services
             return new SubjectCategoryReportDto
             {
                 SubjectCategory = category,
+                ReservationsCount = reservations.ToList().Count,
                 TotalHours = reservations.Sum(r => r.Duration / 60.0),
                 TotalProfit = reservations.Sum(r => r.Cost)
             };
@@ -137,6 +141,7 @@ namespace TutoringSystem.Application.Services
             return new PlaceReportDto
             {
                 Place = place,
+                ReservationsCount = reservations.ToList().Count,
                 TotalHours = reservations.Sum(r => r.Duration / 60.0),
                 TotalProfit = reservations.Sum(r => r.Cost)
             };
@@ -158,9 +163,10 @@ namespace TutoringSystem.Application.Services
             return expression;
         }
 
-        private Expression<Func<Reservation, bool>> GetExpressionToStudentReservations(long studentId, ReportParameters parameters)
+        private Expression<Func<Reservation, bool>> GetExpressionToStudentReservations(long studentId, long tutorId, ReportParameters parameters)
         {
             Expression<Func<Reservation, bool>> expression = r => r.StudentId.Equals(studentId) &&
+                    r.TutorId.Equals(tutorId) &&
                     r.StartTime.Date >= parameters.StartDate.Date &&
                     r.StartTime.Date <= parameters.EndDate.Date;
 

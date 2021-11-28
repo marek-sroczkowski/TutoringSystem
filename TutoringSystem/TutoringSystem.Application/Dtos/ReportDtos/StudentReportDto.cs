@@ -1,11 +1,8 @@
-﻿using TutoringSystem.Application.Dtos.StudentDtos;
-
-namespace TutoringSystem.Application.Dtos.ReportDtos
+﻿namespace TutoringSystem.Application.Dtos.ReportDtos
 {
-    public class StudentReportDto
+    public class StudentReportDto : BaseReportDto
     {
-        public StudentDto Student { get; set; }
-        public double Hours { get; set; }
-        public double Profit { get; set; }
+        public string Username { get; set; }
+        public string StudentName { get; set; }
     }
 }
