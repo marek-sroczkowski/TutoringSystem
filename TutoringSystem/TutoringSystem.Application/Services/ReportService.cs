@@ -129,7 +129,7 @@ namespace TutoringSystem.Application.Services
 
         private async Task<SubjectCategoryReportDto> GetSubjectCategorySummaryAsync(long tutorId, SubjectCategory category, ReportParameters parameters)
         {
-            if (!(await reservationRepository.GetReservationsCollectionAsync(r => r.TutorId.Equals(tutorId) && r.Subject.Category.Equals(category))).Any())
+            if (!(await subjectRepository.GetSubjectsCollectionAsync(r => r.TutorId.Equals(tutorId) && r.Category.Equals(category))).Any())
                 return null;
 
             var reservations = await reservationRepository.GetReservationsCollectionAsync(GetExpressionToSubjectCategoryReservations(tutorId, category, parameters));
