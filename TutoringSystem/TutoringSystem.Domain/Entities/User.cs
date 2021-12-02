@@ -21,8 +21,6 @@ namespace TutoringSystem.Domain.Entities
         public virtual Contact Contact { get; set; }
         public virtual Address Address { get; set; }
 
-        public virtual ICollection<Message> MessagesSent { get; set; }
-        public virtual ICollection<Message> MessagesRecived { get; set; }
         public virtual ICollection<ActivationToken> ActivationTokens { get; set; }
 
         public User()

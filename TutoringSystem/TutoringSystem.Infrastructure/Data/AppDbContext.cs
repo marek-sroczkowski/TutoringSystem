@@ -18,7 +18,6 @@ namespace TutoringSystem.Infrastructure.Data
         public virtual DbSet<Address> Addresses { get; set; }
         public virtual DbSet<Availability> Availabilities { get; set; }
         public virtual DbSet<Interval> Intervals { get; set; }
-        public virtual DbSet<Message> Messages { get; set; }
         public virtual DbSet<ActivationToken> ActivationTokens { get; set; }
         public virtual DbSet<SingleReservation> SingleReservations { get; set; }
         public virtual DbSet<RecurringReservation> RecurringReservations { get; set; }
@@ -34,14 +33,6 @@ namespace TutoringSystem.Infrastructure.Data
             modelBuilder.Entity<Reservation>().ToTable("Reservations");
             modelBuilder.Entity<SingleReservation>().ToTable("SingleReservations");
             modelBuilder.Entity<RecurringReservation>().ToTable("RecurringReservations");
-
-            modelBuilder.Entity<Message>().HasOne(u => u.Sender)
-                                     .WithMany(m => m.MessagesSent)
-                                     .OnDelete(DeleteBehavior.Restrict);
-
-            modelBuilder.Entity<Message>().HasOne(u => u.Recipient)
-                                     .WithMany(m => m.MessagesRecived)
-                                     .OnDelete(DeleteBehavior.Restrict);
 
             modelBuilder.Entity<Reservation>().HasOne(r => r.Tutor).WithMany(t => t.Reservations)
                    .HasForeignKey(r => r.TutorId)
