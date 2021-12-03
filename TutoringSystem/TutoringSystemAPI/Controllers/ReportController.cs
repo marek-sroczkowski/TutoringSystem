@@ -23,6 +23,16 @@ namespace TutoringSystem.API.Controllers
             this.reportService = reportService;
         }
 
+        [SwaggerOperation(Summary = "Retrieves a general statistics report with a monthly time stamp")]
+        [HttpGet("summary/timed")]
+        [Authorize(Roles = "Tutor")]
+        public async Task<ActionResult<IEnumerable<GeneralTimedReportDto>>> GetGeneralTimedReport([FromQuery] ReportParameters parameters)
+        {
+            var report = await reportService.GetGeneralTimedReport(User.GetUserId(), parameters);
+
+            return Ok(report);
+        }
+
         [SwaggerOperation(Summary = "Retrieves report with statistics for the logged in tutor")]
         [HttpGet("summary")]
         [Authorize(Roles = "Tutor")]

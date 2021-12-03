@@ -12,5 +12,6 @@ namespace TutoringSystem.Application.Services.Interfaces
         Task<IEnumerable<StudentReportDto>> GetStudentsReportAsync(long tutorId, ReportParameters parameters);
         IEnumerable<SubjectCategoryReportDto> GetSubjectCategoriesReport(long tutorId, ReportParameters parameters);
         Task<IEnumerable<SubjectReportDto>> GetSubjectsReportAsync(long tutorId, ReportParameters parameters);
+        Task<IEnumerable<GeneralTimedReportDto>> GetGeneralTimedReport(long tutorId, ReportParameters parameters);
     }
 }

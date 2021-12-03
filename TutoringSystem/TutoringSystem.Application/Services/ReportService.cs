@@ -59,6 +59,26 @@ namespace TutoringSystem.Application.Services
             return result;
         }
 
+        public async Task<IEnumerable<GeneralTimedReportDto>> GetGeneralTimedReport(long tutorId, ReportParameters parameters)
+        {
+            var intervals = new List<KeyValuePair<DateTime, DateTime>>();
+            for(var date = parameters.StartDate; date <= parameters.EndDate; date = date.AddMonths(1))
+            {
+                var firstDayOfMonth = new DateTime(date.Year, date.Month, 1);
+                var lastDayOfMonth = firstDayOfMonth.AddMonths(1).AddDays(-1);
+                intervals.Add(KeyValuePair.Create(firstDayOfMonth, lastDayOfMonth));
+            }
+
+            var result = new List<GeneralTimedReportDto>();
+            foreach (var inteval in intervals)
+            {
+                var report = await GetGeneralReportAsync(tutorId, new ReportParameters(inteval.Key, inteval.Value));
+                result.Add(new GeneralTimedReportDto(inteval.Key, inteval.Value, report));
+            }
+
+            return result;
+        }
+
         public async Task<IEnumerable<StudentReportDto>> GetStudentsReportAsync(long tutorId, ReportParameters parameters)
         {
             var students = await GetStudents(tutorId);
