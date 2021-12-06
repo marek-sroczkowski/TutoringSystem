@@ -27,7 +27,7 @@ namespace TutoringSystem.API.Controllers
         [SwaggerOperation(Summary = "Retrieves all students of the current logged in tutor")]
         [HttpGet]
         [Authorize(Roles = "Tutor")]
-        public async Task<ActionResult<List<StudentDto>>> GetStudents()
+        public async Task<ActionResult<IEnumerable<StudentDto>>> GetStudents()
         {
             var students = await studentService.GetStudentsByTutorIdAsync(User.GetUserId());
 
