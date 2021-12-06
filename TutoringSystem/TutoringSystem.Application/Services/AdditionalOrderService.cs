@@ -123,10 +123,10 @@ namespace TutoringSystem.Application.Services
 
         private void FilterByDate(ref Expression<Func<AdditionalOrder, bool>> expression, AdditionalOrderParameters parameters)
         {
-            ExpressionMerger.MergeExpression(ref expression, o => o.ReceiptDate >= parameters.ReceiptStartDate 
-                && o.ReceiptDate <= parameters.ReceiptEndDate
-                && o.Deadline >= parameters.DeadlineStart
-                && o.Deadline <= parameters.DeadlineEnd);
+            ExpressionMerger.MergeExpression(ref expression, o => o.ReceiptDate.Date >= parameters.ReceiptStartDate.Date
+                && o.ReceiptDate.Date <= parameters.ReceiptEndDate.Date
+                && o.Deadline.Date >= parameters.DeadlineStart.Date
+                && o.Deadline.Date <= parameters.DeadlineEnd.Date);
         }
     }
 }
