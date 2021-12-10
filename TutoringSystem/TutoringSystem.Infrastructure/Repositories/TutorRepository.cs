@@ -29,8 +29,8 @@ namespace TutoringSystem.Infrastructure.Repositories
                 ExpressionMerger.MergeExpression(ref expression, t => t.IsActive.Equals(isActive.Value));
 
             var tutor = await DbContext.Tutors
-                .Include(t => t.Subjects)
-                .Include(t => t.Students)
+                .Include(t => t.Contact)
+                .Include(t => t.Address)
                 .Include(t => t.StudentTutors)
                 .FirstOrDefaultAsync(expression);
 

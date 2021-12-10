@@ -1,5 +1,4 @@
-﻿using AutoMapper;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using TutoringSystem.Application.Dtos.TutorDtos;
@@ -14,17 +13,14 @@ namespace TutoringSystem.Application.Services
         private readonly ITutorRepository tutorRepository;
         private readonly IStudentRepository studentRepository;
         private readonly IStudentTutorRepository studentTutorRepository;
-        private readonly IMapper mapper;
 
         public TutorService(ITutorRepository tutorRepository, 
             IStudentRepository studentRepository, 
-            IStudentTutorRepository studentTutorRepository, 
-            IMapper mapper)
+            IStudentTutorRepository studentTutorRepository)
         {
             this.tutorRepository = tutorRepository;
             this.studentRepository = studentRepository;
             this.studentTutorRepository = studentTutorRepository;
-            this.mapper = mapper;
         }
 
         public async Task<bool> AddTutorToStudentAsync(long studentId, long tutorId)
@@ -52,14 +48,14 @@ namespace TutoringSystem.Application.Services
             var tutors = (await studentTutorRepository.GetStudentTuturCollectionAsync(st => st.StudentId.Equals(studentId)))
                 .Select(st => st.Tutor);
 
-            return mapper.Map<ICollection<TutorDto>>(tutors);
+            return tutors.Select(t => new TutorDto(t, studentId)).ToList();
         }
 
-        public async Task<TutorDetailsDto> GetTutorByIdAsync(long tutorId)
+        public async Task<TutorDetailsDto> GetTutorAsync(long tutorId, long studentId)
         {
             var tutor = await tutorRepository.GetTutorAsync(t => t.Id.Equals(tutorId));
 
-            return mapper.Map<TutorDetailsDto>(tutor);
+            return new TutorDetailsDto(tutor, studentId);
         }
 
         public async Task<bool> RemoveTutorAsync(long studentId, long tutorId)

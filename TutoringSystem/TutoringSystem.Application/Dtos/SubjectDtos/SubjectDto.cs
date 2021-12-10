@@ -17,5 +17,18 @@ namespace TutoringSystem.Application.Dtos.SubjectDtos
         {
             profile.CreateMap<Subject, SubjectDto>();
         }
+
+        public SubjectDto()
+        {
+        }
+
+        public SubjectDto(Subject subject)
+        {
+            Id = subject.Id;
+            Name = subject.Name;
+            Description = subject.Description;
+            Place = subject.Place;
+            Category = subject.Category;
+        }
     }
 }

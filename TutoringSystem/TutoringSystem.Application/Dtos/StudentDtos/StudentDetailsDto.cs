@@ -13,7 +13,6 @@ namespace TutoringSystem.Application.Dtos.StudentDtos
         public string LastName { get; set; }
         public double HourlRate { get; set; }
         public string Note { get; set; }
-        public string ProfilePictureBase64 { get; set; }
         public ContactDto Contact { get; set; }
         public AddressDto Address { get; set; }
 
@@ -28,11 +27,8 @@ namespace TutoringSystem.Application.Dtos.StudentDtos
             Username = student.Username;
             FirstName = student.FirstName;
             LastName = student.LastName;
-            ProfilePictureBase64 = student.ProfilePictureBase64;
             Contact = new ContactDto(student.Contact);
             Address = new AddressDto(student.Address);
-
-           // Tutors = student.StudentTutors?.Select(st => new TutorDto(st.Tutor));
         }
 
         public StudentDetailsDto(Student student, long tutorId) : this(student)

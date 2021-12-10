@@ -38,7 +38,7 @@ namespace TutoringSystem.API.Controllers
         [ValidateTutorExistence]
         public async Task<ActionResult<TutorDetailsDto>> GetTutor(long tutorId)
         {
-            var tutor = await tutorService.GetTutorByIdAsync(tutorId);
+            var tutor = await tutorService.GetTutorAsync(tutorId, User.GetUserId());
 
             return Ok(tutor);
         }
