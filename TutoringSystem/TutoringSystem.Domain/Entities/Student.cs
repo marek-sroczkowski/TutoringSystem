@@ -8,6 +8,7 @@ namespace TutoringSystem.Domain.Entities
         public virtual ICollection<Reservation> Reservations { get; set; }
         public virtual ICollection<StudentTutor> StudentTutors { get; set; }
         public virtual ICollection<Tutor> Tutors { get; set; }
+        public virtual ICollection<StudentTutorRequest> StudentTutorRequests { get; set; }
 
         public Student()
         {

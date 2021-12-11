@@ -11,6 +11,7 @@ namespace TutoringSystem.Domain.Entities
         public virtual ICollection<Subject> Subjects { get; set; }
         public virtual ICollection<Student> Students { get; set; }
         public virtual ICollection<StudentTutor> StudentTutors { get; set; }
+        public virtual ICollection<StudentTutorRequest> StudentTutorRequests { get; set; }
 
         public Tutor()
         {

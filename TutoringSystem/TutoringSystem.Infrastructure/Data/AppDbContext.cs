@@ -23,6 +23,7 @@ namespace TutoringSystem.Infrastructure.Data
         public virtual DbSet<RecurringReservation> RecurringReservations { get; set; }
         public virtual DbSet<RepeatedReservation> RepeatedReservations { get; set; }
         public virtual DbSet<StudentTutor> StudentTutors { get; set; }
+        public virtual DbSet<StudentTutorRequest> StudentTutorRequests { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

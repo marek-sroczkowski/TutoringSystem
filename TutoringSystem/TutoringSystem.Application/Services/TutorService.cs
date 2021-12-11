@@ -1,7 +1,13 @@
-﻿using System.Collections.Generic;
+﻿using AutoMapper;
+using System;
+using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Threading.Tasks;
+using TutoringSystem.Application.Dtos.Enums;
 using TutoringSystem.Application.Dtos.TutorDtos;
+using TutoringSystem.Application.Helpers;
+using TutoringSystem.Application.Parameters;
 using TutoringSystem.Application.Services.Interfaces;
 using TutoringSystem.Domain.Entities;
 using TutoringSystem.Domain.Repositories;
@@ -13,42 +19,57 @@ namespace TutoringSystem.Application.Services
         private readonly ITutorRepository tutorRepository;
         private readonly IStudentRepository studentRepository;
         private readonly IStudentTutorRepository studentTutorRepository;
+        private readonly IStudentTutorRequestRepository requestRepository;
+        private readonly IMapper mapper;
 
-        public TutorService(ITutorRepository tutorRepository, 
-            IStudentRepository studentRepository, 
-            IStudentTutorRepository studentTutorRepository)
+        public TutorService(ITutorRepository tutorRepository,
+            IStudentRepository studentRepository,
+            IStudentTutorRepository studentTutorRepository,
+            IStudentTutorRequestRepository requestRepository,
+            IMapper mapper)
         {
             this.tutorRepository = tutorRepository;
             this.studentRepository = studentRepository;
             this.studentTutorRepository = studentTutorRepository;
+            this.requestRepository = requestRepository;
+            this.mapper = mapper;
         }
 
-        public async Task<bool> AddTutorToStudentAsync(long studentId, long tutorId)
+        public async Task<AddTutorToStudentStatus> AddTutorToStudentAsync(long studentId, long tutorId)
         {
-            var studentTutors = await studentTutorRepository.GetStudentTuturCollectionAsync(st => st.StudentId.Equals(studentId));
-            var existingTutor = studentTutors.FirstOrDefault(st => st.TutorId.Equals(tutorId));
-            if (existingTutor != null)
-                return await ActivateTutor(existingTutor);
+            var existingStudentTutor = await studentTutorRepository.GetStudentTutorAsync(st => st.StudentId.Equals(studentId) && st.TutorId.Equals(tutorId));
+            if (existingStudentTutor != null && existingStudentTutor.IsActive)
+                return AddTutorToStudentStatus.TutorWasAlreadyAdded;
 
-            var student = await studentRepository.GetStudentAsync(s => s.Id.Equals(studentId));
-            if (student.StudentTutors is null)
-                student.StudentTutors = new List<StudentTutor>();
+            var tutor = await tutorRepository.GetTutorAsync(s => s.Id.Equals(tutorId));
+            if (tutor is null)
+                return AddTutorToStudentStatus.IncorrectTutor;
 
-            var tutorsIds = student.StudentTutors.Select(st => st.TutorId);
-            if (tutorsIds.Contains(tutorId))
-                return false;
+            var request = await requestRepository.GetRequestAsync(r => r.StudentId.Equals(studentId) && r.TutorId.Equals(tutorId));
+            if (request != null && request.IsActive)
+                return AddTutorToStudentStatus.RequestWasAlreadyCreated;
+            else if(request != null && !request.IsActive)
+                return await ActivateRequestAsync(request);
 
-            student.StudentTutors.Add(new StudentTutor(studentId, tutorId, 0, null));
-
-            return await studentRepository.UpdateStudentAsync(student);
+            return await TryCreateRequest(studentId, tutorId);
         }
 
-        public async Task<ICollection<TutorDto>> GetTutorsByStudentIdAsync(long studentId)
+        public async Task<IEnumerable<TutorDto>> GetTutorsByStudentIdAsync(long studentId)
         {
             var tutors = (await studentTutorRepository.GetStudentTuturCollectionAsync(st => st.StudentId.Equals(studentId)))
                 .Select(st => st.Tutor);
 
-            return tutors.Select(t => new TutorDto(t, studentId)).ToList();
+            return tutors.Select(t => new TutorDto(t, studentId));
+        }
+
+        public async Task<PagedList<TutorSimpleDto>> GetTutors(SearchedTutorParameters parameters)
+        {
+            var tutors = string.IsNullOrWhiteSpace(parameters.Params) ?
+                new List<Tutor>() :
+                await tutorRepository.GetTutorsCollectionAsync(GetExpressionToSearchedTutors(parameters));
+            var tutorDtos = mapper.Map<ICollection<TutorSimpleDto>>(tutors);
+
+            return PagedList<TutorSimpleDto>.ToPagedList(tutorDtos, parameters.PageNumber, parameters.PageSize);
         }
 
         public async Task<TutorDetailsDto> GetTutorAsync(long tutorId, long studentId)
@@ -74,11 +95,29 @@ namespace TutoringSystem.Application.Services
             return await studentRepository.UpdateStudentAsync(student);
         }
 
-        private async Task<bool> ActivateTutor(StudentTutor existingStudent)
+        private Expression<Func<Tutor, bool>> GetExpressionToSearchedTutors(SearchedTutorParameters parameters)
         {
-            existingStudent.IsActive = true;
+            Expression<Func<Tutor, bool>> expression = r => r.Username.ToLower().Contains(parameters.Params.Trim().ToLower()) ||
+                r.FirstName.ToLower().Contains(parameters.Params.Trim().ToLower()) ||
+                r.LastName.ToLower().Contains(parameters.Params.Trim().ToLower());
 
-            return await studentTutorRepository.UpdateStudentTutorAsync(existingStudent);
+            return expression;
+        }
+
+        private async Task<AddTutorToStudentStatus> ActivateRequestAsync(StudentTutorRequest request)
+        {
+            request.IsActive = true;
+            request.IsAccepted = false;
+            return await requestRepository.UpdateRequestAsync(request) ?
+                AddTutorToStudentStatus.RequestCreated :
+                AddTutorToStudentStatus.InternalError;
+        }
+
+        private async Task<AddTutorToStudentStatus> TryCreateRequest(long studentId, long tutorId)
+        {
+            return await requestRepository.AddRequestAsync(new StudentTutorRequest { StudentId = studentId, TutorId = tutorId }) ?
+                AddTutorToStudentStatus.RequestCreated :
+                AddTutorToStudentStatus.InternalError;
         }
     }
 }

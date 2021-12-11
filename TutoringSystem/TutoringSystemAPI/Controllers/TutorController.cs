@@ -7,6 +7,9 @@ using TutoringSystem.Application.Extensions;
 using TutoringSystem.API.Filters.TypeFilters;
 using TutoringSystem.Application.Dtos.TutorDtos;
 using TutoringSystem.Application.Services.Interfaces;
+using Newtonsoft.Json;
+using TutoringSystem.Application.Parameters;
+using TutoringSystem.Application.Dtos.Enums;
 
 namespace TutoringSystem.API.Controllers
 {
@@ -22,10 +25,31 @@ namespace TutoringSystem.API.Controllers
             this.tutorService = tutorService;
         }
 
+        [SwaggerOperation(Summary = "Retrieves tutors filtered by specific parameters")]
+        [HttpGet("all")]
+        [Authorize(Roles = "Student")]
+        public async Task<ActionResult<IEnumerable<TutorSimpleDto>>> GetTutors([FromQuery] SearchedTutorParameters parameters)
+        {
+            var tutors = await tutorService.GetTutors(parameters);
+
+            var metadata = new
+            {
+                tutors.TotalCount,
+                tutors.PageSize,
+                tutors.CurrentPage,
+                tutors.TotalPages,
+                tutors.HasNext,
+                tutors.HasPrevious
+            };
+            Response.Headers.Add("X-Pagination", JsonConvert.SerializeObject(metadata));
+
+            return Ok(tutors);
+        }
+
         [SwaggerOperation(Summary = "Retrieves all tutors of the current logged in student")]
         [HttpGet]
         [Authorize(Roles = "Student")]
-        public async Task<ActionResult<List<TutorDto>>> GetTutors()
+        public async Task<ActionResult<IEnumerable<TutorDto>>> GetTutorsByStudent()
         {
             var students = await tutorService.GetTutorsByStudentIdAsync(User.GetUserId());
 
@@ -47,13 +71,11 @@ namespace TutoringSystem.API.Controllers
         [HttpPost("{tutorId}")]
         [Authorize(Roles = "Student")]
         [ValidateTutorExistence]
-        public async Task<ActionResult> AddTutor(long tutorId)
+        public async Task<ActionResult<AddTutorToStudentStatus>> AddTutor(long tutorId)
         {
-            var added = await tutorService.AddTutorToStudentAsync(User.GetUserId(), tutorId);
-            if (!added)
-                return BadRequest("Tutor could not be added");
+            var addedStatus = await tutorService.AddTutorToStudentAsync(User.GetUserId(), tutorId);
 
-            return Ok();
+            return Ok(addedStatus);
         }
 
         [SwaggerOperation(Summary = "Removes a student from the current logged in tutor's student list")]
