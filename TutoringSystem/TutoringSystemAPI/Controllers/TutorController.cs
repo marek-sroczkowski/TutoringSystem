@@ -77,10 +77,10 @@ namespace TutoringSystem.API.Controllers
         public async Task<ActionResult<AddTutorToStudentStatus>> AddTutor(long tutorId)
         {
             var addedStatus = await tutorService.AddTutorToStudentAsync(User.GetUserId(), tutorId);
-            if(addedStatus == AddTutorToStudentStatus.RequestCreated)
-            {
-                await notificationService.SendNotificationToTutorDevice(User.GetUserId(), tutorId);
-            }
+            //if(addedStatus == AddTutorToStudentStatus.RequestCreated)
+            //{
+            //    await notificationService.SendNotificationToTutorDevice(User.GetUserId(), tutorId);
+            //}
 
             return Ok(addedStatus);
         }
