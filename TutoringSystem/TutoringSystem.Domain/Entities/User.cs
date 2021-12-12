@@ -20,6 +20,7 @@ namespace TutoringSystem.Domain.Entities
 
         public virtual Contact Contact { get; set; }
         public virtual Address Address { get; set; }
+        public virtual PushNotificationToken PushNotificationToken { get; set; }
 
         public virtual ICollection<ActivationToken> ActivationTokens { get; set; }
 
@@ -30,6 +31,7 @@ namespace TutoringSystem.Domain.Entities
             RegistrationDate = DateTime.Now;
             Contact = new Contact { PhoneNumbers = new List<PhoneNumber>() };
             Address = new Address();
+            PushNotificationToken = new PushNotificationToken();
         }
     }
 }

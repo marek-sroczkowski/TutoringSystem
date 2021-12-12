@@ -24,6 +24,7 @@ namespace TutoringSystem.Infrastructure.Data
         public virtual DbSet<RepeatedReservation> RepeatedReservations { get; set; }
         public virtual DbSet<StudentTutor> StudentTutors { get; set; }
         public virtual DbSet<StudentTutorRequest> StudentTutorRequests { get; set; }
+        public virtual DbSet<PushNotificationToken> PushNotificationTokens { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
