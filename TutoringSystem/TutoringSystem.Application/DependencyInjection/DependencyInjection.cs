@@ -54,6 +54,7 @@ namespace TutoringSystem.Application.DependencyInjection
             services.AddScoped<IActivationTokenService, ActivationTokenService>();
             services.AddScoped<IImageService, ImageService>();
             services.AddScoped<IPushNotificationTokenService, PushNotificationTokenService>();
+            services.AddScoped<IStudentTutorRequestNotificationService, StudentTutorRequestNotificationService>();
 
             return services;
         }

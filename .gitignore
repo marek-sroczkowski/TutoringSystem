@@ -351,3 +351,6 @@ MigrationBackup/
 
 appsettings.json
 **/appsettings.json
+
+firebase_private_key.json
+**/firebase_private_key.json

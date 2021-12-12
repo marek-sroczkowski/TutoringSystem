@@ -19,10 +19,13 @@ namespace TutoringSystem.API.Controllers
     public class TutorController : ControllerBase
     {
         private readonly ITutorService tutorService;
+        private readonly IStudentTutorRequestNotificationService notificationService;
 
-        public TutorController(ITutorService tutorService)
+        public TutorController(ITutorService tutorService,
+            IStudentTutorRequestNotificationService notificationService)
         {
             this.tutorService = tutorService;
+            this.notificationService = notificationService;
         }
 
         [SwaggerOperation(Summary = "Retrieves tutors filtered by specific parameters")]
@@ -74,6 +77,10 @@ namespace TutoringSystem.API.Controllers
         public async Task<ActionResult<AddTutorToStudentStatus>> AddTutor(long tutorId)
         {
             var addedStatus = await tutorService.AddTutorToStudentAsync(User.GetUserId(), tutorId);
+            if(addedStatus == AddTutorToStudentStatus.RequestCreated)
+            {
+                await notificationService.SendNotificationToTutorDevice(User.GetUserId(), tutorId);
+            }
 
             return Ok(addedStatus);
         }
