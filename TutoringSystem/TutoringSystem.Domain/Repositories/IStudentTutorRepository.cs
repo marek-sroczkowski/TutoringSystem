@@ -8,6 +8,7 @@ namespace TutoringSystem.Domain.Repositories
 {
     public interface IStudentTutorRepository
     {
+        Task<bool> AddStudentTutorAsync(StudentTutor studentTutor);
         Task<StudentTutor> GetStudentTutorAsync(Expression<Func<StudentTutor, bool>> expression, bool? isActive = true);
         Task<IEnumerable<StudentTutor>> GetStudentTuturCollectionAsync(Expression<Func<StudentTutor, bool>> expression, bool? isActive = true);
         Task<bool> UpdateStudentTutorAsync(StudentTutor studentTutor);

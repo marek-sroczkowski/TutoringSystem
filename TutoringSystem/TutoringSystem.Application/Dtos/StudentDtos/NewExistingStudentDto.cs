@@ -2,7 +2,7 @@
 {
     public class NewExistingStudentDto
     {
-        public string Username { get; set; }
+        public long StudentId { get; set; }
         public double HourRate { get; set; }
         public string Note { get; set; }
     }

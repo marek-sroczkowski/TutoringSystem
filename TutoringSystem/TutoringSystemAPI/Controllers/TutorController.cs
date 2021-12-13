@@ -19,13 +19,10 @@ namespace TutoringSystem.API.Controllers
     public class TutorController : ControllerBase
     {
         private readonly ITutorService tutorService;
-        private readonly IStudentTutorRequestNotificationService notificationService;
 
-        public TutorController(ITutorService tutorService,
-            IStudentTutorRequestNotificationService notificationService)
+        public TutorController(ITutorService tutorService)
         {
             this.tutorService = tutorService;
-            this.notificationService = notificationService;
         }
 
         [SwaggerOperation(Summary = "Retrieves tutors filtered by specific parameters")]
@@ -68,21 +65,6 @@ namespace TutoringSystem.API.Controllers
             var tutor = await tutorService.GetTutorAsync(tutorId, User.GetUserId());
 
             return Ok(tutor);
-        }
-
-        [SwaggerOperation(Summary = "Adds a specific tutor to the tutors of the current logged in student")]
-        [HttpPost("{tutorId}")]
-        [Authorize(Roles = "Student")]
-        [ValidateTutorExistence]
-        public async Task<ActionResult<AddTutorToStudentStatus>> AddTutor(long tutorId)
-        {
-            var addedStatus = await tutorService.AddTutorToStudentAsync(User.GetUserId(), tutorId);
-            //if(addedStatus == AddTutorToStudentStatus.RequestCreated)
-            //{
-            //    await notificationService.SendNotificationToTutorDevice(User.GetUserId(), tutorId);
-            //}
-
-            return Ok(addedStatus);
         }
 
         [SwaggerOperation(Summary = "Removes a student from the current logged in tutor's student list")]

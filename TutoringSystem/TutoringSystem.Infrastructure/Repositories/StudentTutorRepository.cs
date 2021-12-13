@@ -16,6 +16,13 @@ namespace TutoringSystem.Infrastructure.Repositories
         {
         }
 
+        public async Task<bool> AddStudentTutorAsync(StudentTutor studentTutor)
+        {
+            Create(studentTutor);
+
+            return await SaveChangedAsync();
+        }
+
         public async Task<StudentTutor> GetStudentTutorAsync(Expression<Func<StudentTutor, bool>> expression, bool? isActive = true)
         {
             if (isActive.HasValue)

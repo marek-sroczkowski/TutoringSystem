@@ -4,7 +4,7 @@
     {
         InternalError = -1,
         Added,
-        IncorrectUsername,
+        StudentNotExist,
         StudentWasAlreadyAdded
     }
 }

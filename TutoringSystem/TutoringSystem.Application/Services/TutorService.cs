@@ -35,25 +35,6 @@ namespace TutoringSystem.Application.Services
             this.mapper = mapper;
         }
 
-        public async Task<AddTutorToStudentStatus> AddTutorToStudentAsync(long studentId, long tutorId)
-        {
-            var existingStudentTutor = await studentTutorRepository.GetStudentTutorAsync(st => st.StudentId.Equals(studentId) && st.TutorId.Equals(tutorId));
-            if (existingStudentTutor != null && existingStudentTutor.IsActive)
-                return AddTutorToStudentStatus.TutorWasAlreadyAdded;
-
-            var tutor = await tutorRepository.GetTutorAsync(s => s.Id.Equals(tutorId));
-            if (tutor is null)
-                return AddTutorToStudentStatus.IncorrectTutor;
-
-            var request = await requestRepository.GetRequestAsync(r => r.StudentId.Equals(studentId) && r.TutorId.Equals(tutorId));
-            if (request != null && request.IsActive)
-                return AddTutorToStudentStatus.RequestWasAlreadyCreated;
-            else if(request != null && !request.IsActive)
-                return await ActivateRequestAsync(request);
-
-            return await TryCreateRequest(studentId, tutorId);
-        }
-
         public async Task<IEnumerable<TutorDto>> GetTutorsByStudentIdAsync(long studentId)
         {
             var tutors = (await studentTutorRepository.GetStudentTuturCollectionAsync(st => st.StudentId.Equals(studentId)))

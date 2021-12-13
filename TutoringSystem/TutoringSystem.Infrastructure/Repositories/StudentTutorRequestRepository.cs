@@ -49,6 +49,8 @@ namespace TutoringSystem.Infrastructure.Repositories
         public async Task<IEnumerable<StudentTutorRequest>> GetRequestsCollectionAsync(Expression<Func<StudentTutorRequest, bool>> expression)
         {
             var requests = await FindByCondition(expression)
+                .Include(r => r.Student)
+                .Include(r => r.Tutor)
                 .ToListAsync();
 
             return requests;
