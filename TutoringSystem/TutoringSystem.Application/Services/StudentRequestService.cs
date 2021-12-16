@@ -3,7 +3,6 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using TutoringSystem.Application.Dtos.Enums;
-using TutoringSystem.Application.Dtos.StudentDtos;
 using TutoringSystem.Application.Dtos.StudentRequestDtos;
 using TutoringSystem.Application.Services.Interfaces;
 using TutoringSystem.Domain.Entities;
@@ -16,19 +15,16 @@ namespace TutoringSystem.Application.Services
         private readonly ITutorRepository tutorRepository;
         private readonly IStudentTutorRepository studentTutorRepository;
         private readonly IStudentTutorRequestRepository requestRepository;
-        private readonly IStudentService studentService;
         private readonly IMapper mapper;
 
         public StudentRequestService(ITutorRepository tutorRepository,
             IStudentTutorRepository studentTutorRepository,
             IStudentTutorRequestRepository requestRepository,
-            IStudentService studentService,
             IMapper mapper)
         {
             this.tutorRepository = tutorRepository;
             this.studentTutorRepository = studentTutorRepository;
             this.requestRepository = requestRepository;
-            this.studentService = studentService;
             this.mapper = mapper;
         }
 
@@ -49,19 +45,6 @@ namespace TutoringSystem.Application.Services
                 return await ActivateRequestAsync(request);
 
             return await TryCreateRequest(studentId, tutorId);
-        }
-
-        public async Task<bool> AcceptRequest(long requestId, NewExistingStudentDto student)
-        {
-            var request = await requestRepository.GetRequestAsync(r => r.Id.Equals(requestId));
-            if (!request.IsActive || request.IsAccepted || request.StudentId != student.StudentId)
-                return false;
-
-            request.IsAccepted = true;
-            request.IsActive = false;
-
-            return await requestRepository.UpdateRequestAsync(request) &&
-                await studentService.AddStudentToTutorAsync(request.TutorId, student) == AddStudentToTutorStatus.Added;
         }
 
         public async Task<bool> DeclineRequest(long requestId)

@@ -9,9 +9,10 @@ namespace TutoringSystem.Application.Dtos.StudentRequestDtos
     {
         public long Id { get; set; }
         public DateTime CreatedDate { get; set; }
-        public bool IsAccepted { get; set; }
+        public long StudentId { get; set; }
         public string StudentUsername { get; set; }
         public string StudentName { get; set; }
+        public long TutorId { get; set; }
         public string TutorUsername { get; set; }
         public string TutorName { get; set; }
 

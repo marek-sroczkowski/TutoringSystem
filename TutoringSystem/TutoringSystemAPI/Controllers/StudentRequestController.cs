@@ -5,7 +5,6 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using TutoringSystem.API.Filters.TypeFilters;
 using TutoringSystem.Application.Dtos.Enums;
-using TutoringSystem.Application.Dtos.StudentDtos;
 using TutoringSystem.Application.Dtos.StudentRequestDtos;
 using TutoringSystem.Application.Extensions;
 using TutoringSystem.Application.Services.Interfaces;
@@ -40,19 +39,6 @@ namespace TutoringSystem.API.Controllers
             //}
 
             return Ok(addedStatus);
-        }
-
-        [SwaggerOperation(Summary = "Accepts a student's request to join a specific tutor")]
-        [HttpPut("accept/{requestId}")]
-        [Authorize(Roles = "Tutor")]
-        [ValidateStudentRequestExistence]
-        public async Task<ActionResult> AcceptRequest(long requestId, [FromBody] NewExistingStudentDto student)
-        {
-            var accepted = await requestService.AcceptRequest(requestId, student);
-            if (!accepted)
-                return BadRequest("Request could be not accepted");
-
-            return Ok();
         }
 
         [SwaggerOperation(Summary = "Declines a student's request to join a specific tutor")]
