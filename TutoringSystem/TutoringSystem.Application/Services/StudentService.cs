@@ -42,6 +42,8 @@ namespace TutoringSystem.Application.Services
             {
                 request.IsAccepted = true;
                 request.IsActive = false;
+                if (!(await requestRepository.UpdateRequestAsync(request)))
+                    return AddStudentToTutorStatus.InternalError;
             }
 
             var existingStudentTutor = await studentTutorRepository.GetStudentTutorAsync(st => st.StudentId.Equals(newStudent.StudentId) && st.TutorId.Equals(tutorId), null);
@@ -56,8 +58,7 @@ namespace TutoringSystem.Application.Services
 
             var studentTutor = new StudentTutor(student.Id, tutorId, newStudent.HourRate, newStudent.Note);
 
-            return await studentTutorRepository.AddStudentTutorAsync(studentTutor) &&
-                await requestRepository.UpdateRequestAsync(request) ?
+            return await studentTutorRepository.AddStudentTutorAsync(studentTutor) ?
                 AddStudentToTutorStatus.Added : AddStudentToTutorStatus.InternalError;
         }
 
