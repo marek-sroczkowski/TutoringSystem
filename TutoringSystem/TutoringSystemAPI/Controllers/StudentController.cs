@@ -9,6 +9,8 @@ using TutoringSystem.Application.Dtos.TutorDtos;
 using TutoringSystem.Application.Services.Interfaces;
 using TutoringSystem.Application.Dtos.StudentDtos;
 using TutoringSystem.Application.Dtos.Enums;
+using TutoringSystem.Application.Parameters;
+using Newtonsoft.Json;
 
 namespace TutoringSystem.API.Controllers
 {
@@ -22,6 +24,27 @@ namespace TutoringSystem.API.Controllers
         public StudentController(IStudentService studentService)
         {
             this.studentService = studentService;
+        }
+
+        [SwaggerOperation(Summary = "Retrieves students filtered by specific parameters")]
+        [HttpGet("all")]
+        [Authorize(Roles = "Tutor")]
+        public async Task<ActionResult<IEnumerable<StudentSimpleDto>>> GetTutors([FromQuery] SearchedUserParameters parameters)
+        {
+            var students = await studentService.GetStudents(parameters);
+
+            var metadata = new
+            {
+                students.TotalCount,
+                students.PageSize,
+                students.CurrentPage,
+                students.TotalPages,
+                students.HasNext,
+                students.HasPrevious
+            };
+            Response.Headers.Add("X-Pagination", JsonConvert.SerializeObject(metadata));
+
+            return Ok(students);
         }
 
         [SwaggerOperation(Summary = "Retrieves all students of the current logged in tutor")]

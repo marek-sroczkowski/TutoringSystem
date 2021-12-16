@@ -1,8 +1,13 @@
-﻿using System.Collections.Generic;
+﻿using AutoMapper;
+using System;
+using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Threading.Tasks;
 using TutoringSystem.Application.Dtos.Enums;
 using TutoringSystem.Application.Dtos.StudentDtos;
+using TutoringSystem.Application.Helpers;
+using TutoringSystem.Application.Parameters;
 using TutoringSystem.Application.Services.Interfaces;
 using TutoringSystem.Domain.Entities;
 using TutoringSystem.Domain.Repositories;
@@ -15,16 +20,19 @@ namespace TutoringSystem.Application.Services
         private readonly ITutorRepository tutorRepository;
         private readonly IStudentTutorRepository studentTutorRepository;
         private readonly IStudentTutorRequestRepository requestRepository;
+        private readonly IMapper mapper;
 
         public StudentService(IStudentRepository studentRepository,
             ITutorRepository tutorRepository,
             IStudentTutorRepository studentTutorRepository,
-            IStudentTutorRequestRepository requestRepository)
+            IStudentTutorRequestRepository requestRepository,
+            IMapper mapper)
         {
             this.studentRepository = studentRepository;
             this.tutorRepository = tutorRepository;
             this.studentTutorRepository = studentTutorRepository;
             this.requestRepository = requestRepository;
+            this.mapper = mapper;
         }
 
         public async Task<AddStudentToTutorStatus> AddStudentToTutorAsync(long tutorId, NewExistingStudentDto newStudent)
@@ -53,12 +61,22 @@ namespace TutoringSystem.Application.Services
                 AddStudentToTutorStatus.Added : AddStudentToTutorStatus.InternalError;
         }
 
-        public async Task<ICollection<StudentDto>> GetStudentsByTutorIdAsync(long tutorId)
+        public async Task<IEnumerable<StudentDto>> GetStudentsByTutorIdAsync(long tutorId)
         {
             var students = (await studentTutorRepository.GetStudentTuturCollectionAsync(st => st.TutorId.Equals(tutorId)))
                 .Select(st => st.Student);
 
             return students.Select(s => new StudentDto(s, tutorId)).ToList();
+        }
+
+        public async Task<PagedList<StudentSimpleDto>> GetStudents(SearchedUserParameters parameters)
+        {
+            var students = string.IsNullOrWhiteSpace(parameters.Params) ?
+                new List<Student>() :
+                await studentRepository.GetStudentsCollectionAsync(GetExpressionToSearchedStudents(parameters));
+            var studentDtos = mapper.Map<ICollection<StudentSimpleDto>>(students);
+
+            return PagedList<StudentSimpleDto>.ToPagedList(studentDtos, parameters.PageNumber, parameters.PageSize);
         }
 
         public async Task<StudentDetailsDto> GetStudentAsync(long tutorId, long studentId)
@@ -96,6 +114,15 @@ namespace TutoringSystem.Application.Services
             studentTutor.Student.LastName = student.LastName;
 
             return await studentTutorRepository.UpdateStudentTutorAsync(studentTutor);
+        }
+
+        private Expression<Func<Student, bool>> GetExpressionToSearchedStudents(SearchedUserParameters parameters)
+        {
+            Expression<Func<Student, bool>> expression = r => r.Username.ToLower().Contains(parameters.Params.Trim().ToLower()) ||
+                r.FirstName.ToLower().Contains(parameters.Params.Trim().ToLower()) ||
+                r.LastName.ToLower().Contains(parameters.Params.Trim().ToLower());
+
+            return expression;
         }
 
         private async Task<AddStudentToTutorStatus> ActivateStudent(NewExistingStudentDto student, StudentTutor existingStudent)

@@ -1,6 +1,6 @@
 ﻿namespace TutoringSystem.Application.Parameters
 {
-    public class SearchedTutorParameters : QueryStringParameters
+    public class SearchedUserParameters : QueryStringParameters
     {
         public string Params { get; set; }
     }

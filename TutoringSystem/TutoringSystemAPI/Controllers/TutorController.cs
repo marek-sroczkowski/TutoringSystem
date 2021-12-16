@@ -28,7 +28,7 @@ namespace TutoringSystem.API.Controllers
         [SwaggerOperation(Summary = "Retrieves tutors filtered by specific parameters")]
         [HttpGet("all")]
         [Authorize(Roles = "Student")]
-        public async Task<ActionResult<IEnumerable<TutorSimpleDto>>> GetTutors([FromQuery] SearchedTutorParameters parameters)
+        public async Task<ActionResult<IEnumerable<TutorSimpleDto>>> GetTutors([FromQuery] SearchedUserParameters parameters)
         {
             var tutors = await tutorService.GetTutors(parameters);
 

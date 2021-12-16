@@ -43,7 +43,7 @@ namespace TutoringSystem.Application.Services
             return tutors.Select(t => new TutorDto(t, studentId));
         }
 
-        public async Task<PagedList<TutorSimpleDto>> GetTutors(SearchedTutorParameters parameters)
+        public async Task<PagedList<TutorSimpleDto>> GetTutors(SearchedUserParameters parameters)
         {
             var tutors = string.IsNullOrWhiteSpace(parameters.Params) ?
                 new List<Tutor>() :
@@ -76,7 +76,7 @@ namespace TutoringSystem.Application.Services
             return await studentRepository.UpdateStudentAsync(student);
         }
 
-        private Expression<Func<Tutor, bool>> GetExpressionToSearchedTutors(SearchedTutorParameters parameters)
+        private Expression<Func<Tutor, bool>> GetExpressionToSearchedTutors(SearchedUserParameters parameters)
         {
             Expression<Func<Tutor, bool>> expression = r => r.Username.ToLower().Contains(parameters.Params.Trim().ToLower()) ||
                 r.FirstName.ToLower().Contains(parameters.Params.Trim().ToLower()) ||
