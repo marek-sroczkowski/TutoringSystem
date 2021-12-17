@@ -33,17 +33,7 @@ namespace TutoringSystem.API.Controllers
         public async Task<ActionResult<List<AvailabilityDto>>> GetAllAvailabilities([FromQuery] AvailabilityParameters parameters)
         {
             var availabilities = await availabilityService.GetAvailabilitiesByTutorAsync(User.GetUserId(), parameters);
-
-            var metadata = new
-            {
-                availabilities.TotalCount,
-                availabilities.PageSize,
-                availabilities.CurrentPage,
-                availabilities.TotalPages,
-                availabilities.HasNext,
-                availabilities.HasPrevious
-            };
-            Response.Headers.Add("X-Pagination", JsonConvert.SerializeObject(metadata));
+            Response.Headers.Add("X-Pagination", availabilities.GetPaginationJsonMetadata());
 
             return Ok(availabilities);
         }
@@ -54,17 +44,7 @@ namespace TutoringSystem.API.Controllers
         public async Task<ActionResult<List<AvailabilityDto>>> GetFutureAvailabilities([FromQuery] FutureAvailabilityParameters parameters)
         {
             var availabilities = await availabilityService.GetFutureAvailabilitiesByTutorAsync(User.GetUserId(), parameters);
-
-            var metadata = new
-            {
-                availabilities.TotalCount,
-                availabilities.PageSize,
-                availabilities.CurrentPage,
-                availabilities.TotalPages,
-                availabilities.HasNext,
-                availabilities.HasPrevious
-            };
-            Response.Headers.Add("X-Pagination", JsonConvert.SerializeObject(metadata));
+            Response.Headers.Add("X-Pagination", availabilities.GetPaginationJsonMetadata());
 
             return Ok(availabilities);
         }

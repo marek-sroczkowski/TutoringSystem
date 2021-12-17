@@ -34,17 +34,7 @@ namespace TutoringSystem.API.Controllers
         public ActionResult<IEnumerable<OrderDto>> GetOrders([FromQuery] AdditionalOrderParameters parameters)
         {
             var orders = additionalOrderService.GetAdditionalOrders(User.GetUserId(), parameters);
-
-            var metadata = new
-            {
-                orders.TotalCount,
-                orders.PageSize,
-                orders.CurrentPage,
-                orders.TotalPages,
-                orders.HasNext,
-                orders.HasPrevious
-            };
-            Response.Headers.Add("X-Pagination", JsonConvert.SerializeObject(metadata));
+            Response.Headers.Add("X-Pagination", orders.GetPaginationJsonMetadata());
 
             return Ok(orders);
         }

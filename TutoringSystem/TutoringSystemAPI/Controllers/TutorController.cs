@@ -31,17 +31,7 @@ namespace TutoringSystem.API.Controllers
         public async Task<ActionResult<IEnumerable<TutorSimpleDto>>> GetTutors([FromQuery] SearchedUserParameters parameters)
         {
             var tutors = await tutorService.GetTutors(parameters);
-
-            var metadata = new
-            {
-                tutors.TotalCount,
-                tutors.PageSize,
-                tutors.CurrentPage,
-                tutors.TotalPages,
-                tutors.HasNext,
-                tutors.HasPrevious
-            };
-            Response.Headers.Add("X-Pagination", JsonConvert.SerializeObject(metadata));
+            Response.Headers.Add("X-Pagination", tutors.GetPaginationJsonMetadata());
 
             return Ok(tutors);
         }

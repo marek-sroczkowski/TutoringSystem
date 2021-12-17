@@ -33,17 +33,7 @@ namespace TutoringSystem.API.Controllers
         public async Task<ActionResult<List<ReservationDto>>> GetStudentReservations([FromQuery] ReservationParameters parameters)
         {
             var resevations = await reservationService.GetReservationsByStudentAsync(User.GetUserId(), parameters);
-
-            var metadata = new
-            {
-                resevations.TotalCount,
-                resevations.PageSize,
-                resevations.CurrentPage,
-                resevations.TotalPages,
-                resevations.HasNext,
-                resevations.HasPrevious
-            };
-            Response.Headers.Add("X-Pagination", JsonConvert.SerializeObject(metadata));
+            Response.Headers.Add("X-Pagination", resevations.GetPaginationJsonMetadata());
 
             return Ok(resevations);
         }
@@ -54,17 +44,7 @@ namespace TutoringSystem.API.Controllers
         public async Task<ActionResult<List<ReservationDto>>> GetTutorReservations([FromQuery] ReservationParameters parameters)
         {
             var resevations = await reservationService.GetReservationsByTutorAsync(User.GetUserId(), parameters);
-
-            var metadata = new
-            {
-                resevations.TotalCount,
-                resevations.PageSize,
-                resevations.CurrentPage,
-                resevations.TotalPages,
-                resevations.HasNext,
-                resevations.HasPrevious
-            };
-            Response.Headers.Add("X-Pagination", JsonConvert.SerializeObject(metadata));
+            Response.Headers.Add("X-Pagination", resevations.GetPaginationJsonMetadata());
 
             return Ok(resevations);
         }
