@@ -10,9 +10,10 @@ namespace TutoringSystem.Domain.Entities
 
         public RecurringReservation()
         {
+            Type = ReservationType.Recurring;
         }
 
-        public RecurringReservation(RecurringReservation reservation)
+        public RecurringReservation(RecurringReservation reservation) : this()
         {
             Cost = reservation.Cost;
             Duration = reservation.Duration;

@@ -12,6 +12,7 @@ namespace TutoringSystem.Domain.Entities
         public string Description { get; set; }
         public bool IsPaid { get; set; }
         public ReservationPlace Place { get; set; }
+        public ReservationType Type { get; set; }
 
         public long SubjectId { get; set; }
         public virtual Subject Subject { get; set; }
