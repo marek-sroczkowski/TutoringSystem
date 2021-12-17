@@ -40,6 +40,7 @@ namespace TutoringSystem.Application.DependencyInjection
         {
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<IAdditionalOrderService, AdditionalOrderService>();
+            services.AddScoped<IReservationService, ReservationService>();
             services.AddScoped<ISingleReservationService, SingleReservationService>();
             services.AddScoped<IRecurringReservationService, RecurringReservationService>();
             services.AddScoped<ISubjectService, SubjectService>();
@@ -134,6 +135,7 @@ namespace TutoringSystem.Application.DependencyInjection
             services.AddScoped<ISortHelper<SubjectReportDto>, SortHelper<SubjectReportDto>>();
             services.AddScoped<ISortHelper<PlaceReportDto>, SortHelper<PlaceReportDto>>();
             services.AddScoped<ISortHelper<SubjectCategoryReportDto>, SortHelper<SubjectCategoryReportDto>>();
+            services.AddScoped<ISortHelper<Reservation>, SortHelper<Reservation>>();
 
             return services;
         }

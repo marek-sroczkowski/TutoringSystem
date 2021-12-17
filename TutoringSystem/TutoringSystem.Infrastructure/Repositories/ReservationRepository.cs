@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using System;
-using System.Collections.Generic;
+using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
 using TutoringSystem.Domain.Entities;
@@ -33,13 +33,12 @@ namespace TutoringSystem.Infrastructure.Repositories
             return reservation;
         }
 
-        public async Task<IEnumerable<Reservation>> GetReservationsCollectionAsync(Expression<Func<Reservation, bool>> expression)
+        public IQueryable<Reservation> GetReservationsCollection(Expression<Func<Reservation, bool>> expression)
         {
-            var reservations = await FindByCondition(expression)
+            var reservations = FindByCondition(expression)
                 .Include(r => r.Student)
                 .Include(r => r.Subject)
-                .Include(r => r.Tutor)
-                .ToListAsync();
+                .Include(r => r.Tutor);
 
             return reservations;
         }

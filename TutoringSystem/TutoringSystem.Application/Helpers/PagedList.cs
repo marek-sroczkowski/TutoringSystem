@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -22,6 +23,21 @@ namespace TutoringSystem.Application.Helpers
 			TotalPages = (int)Math.Ceiling(count / (double)pageSize);
 
 			AddRange(items);
+		}
+
+		public string GetPaginationJsonMetadata()
+        {
+			var metadata = new
+			{
+				TotalCount,
+				PageSize,
+				CurrentPage,
+				TotalPages,
+				HasNext,
+				HasPrevious
+			};
+
+			return JsonConvert.SerializeObject(metadata);
 		}
 
 		public static PagedList<T> ToPagedList(ICollection<T> source, int pageNumber, int pageSize)

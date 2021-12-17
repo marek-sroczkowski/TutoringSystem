@@ -43,9 +43,9 @@ namespace TutoringSystem.Application.Services
             this.subjectCategorySortHelper = subjectCategorySortHelper;
         }
 
-        public async Task<TutorReportDto> GetGeneralReportAsync(long tutorId, ReportParameters parameters)
+        public TutorReportDto GetGeneralReport(long tutorId, ReportParameters parameters)
         {
-            var reservations = await reservationRepository.GetReservationsCollectionAsync(GetExpressionToTutorReservations(tutorId, parameters));
+            var reservations = reservationRepository.GetReservationsCollection(GetExpressionToTutorReservations(tutorId, parameters));
             var orders = orderRepository.GetAdditionalOrdersCollection(GetExpressionToOrders(tutorId, parameters));
 
             var result = new TutorReportDto
@@ -59,7 +59,7 @@ namespace TutoringSystem.Application.Services
             return result;
         }
 
-        public async Task<IEnumerable<GeneralTimedReportDto>> GetGeneralTimedReport(long tutorId, ReportParameters parameters)
+        public IEnumerable<GeneralTimedReportDto> GetGeneralTimedReport(long tutorId, ReportParameters parameters)
         {
             var intervals = new List<KeyValuePair<DateTime, DateTime>>();
             for(var date = parameters.StartDate; date <= parameters.EndDate; date = date.AddMonths(1))
@@ -72,7 +72,7 @@ namespace TutoringSystem.Application.Services
             var result = new List<GeneralTimedReportDto>();
             foreach (var inteval in intervals)
             {
-                var report = await GetGeneralReportAsync(tutorId, new ReportParameters(inteval.Key, inteval.Value));
+                var report = GetGeneralReport(tutorId, new ReportParameters(inteval.Key, inteval.Value));
                 result.Add(new GeneralTimedReportDto(inteval.Key, inteval.Value, report));
             }
 
@@ -82,7 +82,7 @@ namespace TutoringSystem.Application.Services
         public async Task<IEnumerable<StudentReportDto>> GetStudentsReportAsync(long tutorId, ReportParameters parameters)
         {
             var students = await GetStudents(tutorId);
-            var studentsSummary = students.Select(s => GetStudentSummaryAsync(s, tutorId, parameters).Result);
+            var studentsSummary = students.Select(s => GetStudentSummary(s, tutorId, parameters));
             studentsSummary = studentSortHelper.ApplySort(studentsSummary.AsQueryable(), parameters.OrderBy).AsEnumerable();
 
             return studentsSummary;
@@ -91,7 +91,7 @@ namespace TutoringSystem.Application.Services
         public async Task<IEnumerable<SubjectReportDto>> GetSubjectsReportAsync(long tutorId, ReportParameters parameters)
         {
             var subjects = await subjectRepository.GetSubjectsCollectionAsync(s => s.TutorId.Equals(tutorId), null);
-            var subjectsSummary = subjects.Select(s => GetSubjectReportAsync(s, parameters).Result);
+            var subjectsSummary = subjects.Select(s => GetSubjectReport(s, parameters));
             subjectsSummary = subjectsSummary.Where(p => p != null);
             subjectsSummary = subjectSortHelper.ApplySort(subjectsSummary.AsQueryable(), parameters.OrderBy).AsEnumerable();
 
@@ -111,16 +111,16 @@ namespace TutoringSystem.Application.Services
         public IEnumerable<PlaceReportDto> GetPlacesReport(long tutorId, ReportParameters parameters)
         {
             var places = Enum.GetValues<ReservationPlace>();
-            var placesSummary = places.Select(p => GetPlaceSummaryAsync(tutorId, p, parameters).Result);
+            var placesSummary = places.Select(p => GetPlaceSummary(tutorId, p, parameters));
             placesSummary = placesSummary.Where(p => p != null);
             placesSummary = placeSortHelper.ApplySort(placesSummary.AsQueryable(), parameters.OrderBy).AsEnumerable();
 
             return placesSummary;
         }
 
-        private async Task<StudentReportDto> GetStudentSummaryAsync(Student student, long tutorId, ReportParameters parameters)
+        private StudentReportDto GetStudentSummary(Student student, long tutorId, ReportParameters parameters)
         {
-            var reservations = await reservationRepository.GetReservationsCollectionAsync(GetExpressionToStudentReservations(student.Id, tutorId, parameters));
+            var reservations = reservationRepository.GetReservationsCollection(GetExpressionToStudentReservations(student.Id, tutorId, parameters));
 
             return new StudentReportDto
             {
@@ -132,9 +132,9 @@ namespace TutoringSystem.Application.Services
             };
         }
 
-        private async Task<SubjectReportDto> GetSubjectReportAsync(Subject subject, ReportParameters parameters)
+        private SubjectReportDto GetSubjectReport(Subject subject, ReportParameters parameters)
         {
-            var reservations = await reservationRepository.GetReservationsCollectionAsync(GetExpressionToSubjectReservations(subject.Id, parameters));
+            var reservations = reservationRepository.GetReservationsCollection(GetExpressionToSubjectReservations(subject.Id, parameters));
             if (!subject.IsActive && reservations.ToList().Count == 0)
                 return null;
 
@@ -152,7 +152,7 @@ namespace TutoringSystem.Application.Services
             if (!(await subjectRepository.GetSubjectsCollectionAsync(r => r.TutorId.Equals(tutorId) && r.Category.Equals(category))).Any())
                 return null;
 
-            var reservations = await reservationRepository.GetReservationsCollectionAsync(GetExpressionToSubjectCategoryReservations(tutorId, category, parameters));
+            var reservations = reservationRepository.GetReservationsCollection(GetExpressionToSubjectCategoryReservations(tutorId, category, parameters));
 
             return new SubjectCategoryReportDto
             {
@@ -163,12 +163,12 @@ namespace TutoringSystem.Application.Services
             };
         }
 
-        private async Task<PlaceReportDto> GetPlaceSummaryAsync(long tutorId, ReservationPlace place, ReportParameters parameters)
+        private PlaceReportDto GetPlaceSummary(long tutorId, ReservationPlace place, ReportParameters parameters)
         {
-            if (!(await reservationRepository.GetReservationsCollectionAsync(r => r.TutorId.Equals(tutorId) && r.Place.Equals(place))).Any())
+            if (!reservationRepository.GetReservationsCollection(r => r.TutorId.Equals(tutorId) && r.Place.Equals(place)).Any())
                 return null;
 
-            var reservations = await reservationRepository.GetReservationsCollectionAsync(GetExpressionToPlaceReservations(tutorId, place, parameters));
+            var reservations = reservationRepository.GetReservationsCollection(GetExpressionToPlaceReservations(tutorId, place, parameters));
 
             return new PlaceReportDto
             {

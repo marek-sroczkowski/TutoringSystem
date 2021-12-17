@@ -5,8 +5,8 @@ namespace TutoringSystem.Application.Parameters
 {
     public class ReservationParameters : QueryStringParameters
     {
-        public DateTime? StartDate { get; set; }
-        public DateTime? EndDate { get; set; }
+        public DateTime StartDate { get; set; }
+        public DateTime EndDate { get; set; }
         public ReservationPlace? Place { get; set; }
     }
 }
