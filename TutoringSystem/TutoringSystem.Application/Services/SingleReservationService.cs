@@ -90,9 +90,8 @@ namespace TutoringSystem.Application.Services
         public async Task<PagedList<ReservationDto>> GetReservationsByStudentAsync(long studentId, ReservationParameters parameters)
         {
             Expression<Func<SingleReservation, bool>> expression = r => r.StudentId.Equals(studentId);
-            FilterByStartDate(ref expression, parameters.StartDate);
-            FilterByEndDate(ref expression, parameters.EndDate);
-            FilterByPlace(ref expression, parameters.Place);
+            FilterByDate(ref expression, parameters);
+            FilterByPlace(ref expression, parameters);
             var resevations = await reservationRepository.GetReservationsCollectionAsync(expression);
             var reservationDtos = mapper.Map<ICollection<ReservationDto>>(resevations);
 
@@ -102,9 +101,8 @@ namespace TutoringSystem.Application.Services
         public async Task<PagedList<ReservationDto>> GetReservationsByTutorAsync(long tutorId, ReservationParameters parameters)
         {
             Expression<Func<SingleReservation, bool>> expression = r => r.TutorId.Equals(tutorId);
-            FilterByStartDate(ref expression, parameters.StartDate);
-            FilterByEndDate(ref expression, parameters.EndDate);
-            FilterByPlace(ref expression, parameters.Place);
+            FilterByDate(ref expression, parameters);
+            FilterByPlace(ref expression, parameters);
             var resevations = await reservationRepository.GetReservationsCollectionAsync(expression);
             var reservationDtos = mapper.Map<ICollection<ReservationDto>>(resevations);
 
@@ -151,28 +149,29 @@ namespace TutoringSystem.Application.Services
             return cost;
         }
 
-        private void FilterByStartDate(ref Expression<Func<SingleReservation, bool>> expression, DateTime? startDate)
+        private void FilterByPlace(ref Expression<Func<SingleReservation, bool>> expression, ReservationParameters parameters)
         {
-            if (!startDate.HasValue)
+            if (parameters.IsAtTutor && parameters.IsAtStudent && parameters.IsOnline)
                 return;
 
-            ExpressionMerger.MergeExpression(ref expression, r => r.StartTime >= startDate.Value);
+            if (parameters.IsAtTutor && !parameters.IsAtStudent && !parameters.IsOnline)
+                ExpressionMerger.MergeExpression(ref expression, r => r.Place.Equals(ReservationPlace.AtTutor));
+            else if (!parameters.IsAtTutor && parameters.IsAtStudent && !parameters.IsOnline)
+                ExpressionMerger.MergeExpression(ref expression, r => r.Place.Equals(ReservationPlace.AtStudent));
+            else if (!parameters.IsAtTutor && !parameters.IsAtStudent && parameters.IsOnline)
+                ExpressionMerger.MergeExpression(ref expression, r => r.Place.Equals(ReservationPlace.Online));
+            else if (parameters.IsAtTutor && parameters.IsAtStudent && !parameters.IsOnline)
+                ExpressionMerger.MergeExpression(ref expression, r => r.Place.Equals(ReservationPlace.AtTutor) || r.Place.Equals(ReservationPlace.AtStudent));
+            else if (parameters.IsAtTutor && !parameters.IsAtStudent && parameters.IsOnline)
+                ExpressionMerger.MergeExpression(ref expression, r => r.Place.Equals(ReservationPlace.AtTutor) || r.Place.Equals(ReservationPlace.Online));
+            else if (!parameters.IsAtTutor && parameters.IsAtStudent && parameters.IsOnline)
+                ExpressionMerger.MergeExpression(ref expression, r => r.Place.Equals(ReservationPlace.AtStudent) || r.Place.Equals(ReservationPlace.Online));
         }
 
-        private void FilterByEndDate(ref Expression<Func<SingleReservation, bool>> expression, DateTime? endDate)
+        private void FilterByDate(ref Expression<Func<SingleReservation, bool>> expression, ReservationParameters parameters)
         {
-            if (!endDate.HasValue)
-                return;
-
-            ExpressionMerger.MergeExpression(ref expression, r => r.StartTime <= endDate.Value);
-        }
-
-        private void FilterByPlace(ref Expression<Func<SingleReservation, bool>> expression, ReservationPlace? place)
-        {
-            if (!place.HasValue)
-                return;
-
-            ExpressionMerger.MergeExpression(ref expression, r => r.Place.Equals(place.Value));
+            ExpressionMerger.MergeExpression(ref expression, r => r.StartTime.Date >= parameters.StartDate.Date &&
+                    r.StartTime.AddMinutes(r.Duration).Date <= parameters.EndDate.Date);
         }
 
         private async Task<bool> ValidateNewStudentReservationAsync(NewStudentSingleReservationDto reservation)
