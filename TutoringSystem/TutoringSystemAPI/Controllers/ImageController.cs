@@ -30,12 +30,32 @@ namespace TutoringSystem.API.Controllers
             return Ok(picture);
         }
 
+        [SwaggerOperation(Summary = "Retrieves profile pictures of all students of the currently logged-in tutor")]
+        [HttpGet("students")]
+        [Authorize(Roles = "Tutor")]
+        public async Task<ActionResult<ProfileImageDetailsDto>> GetStudentPhotos()
+        {
+            var pictures = await imageService.GetStudentPhotos(User.GetUserId());
+
+            return Ok(pictures);
+        }
+
+        [SwaggerOperation(Summary = "Retrieves profile pictures of all tutors of the currently logged-in student")]
+        [HttpGet("tutors")]
+        [Authorize(Roles = "Student")]
+        public async Task<ActionResult<ProfileImageDetailsDto>> GetTutorPhotos()
+        {
+            var pictures = await imageService.GetTutorPhotos(User.GetUserId());
+
+            return Ok(pictures);
+        }
+
         [SwaggerOperation(Summary = "Sets profile picture for the currently logged in user")]
         [HttpPatch]
         [Authorize(Roles = "Tutor,Student")]
         public async Task<ActionResult> SetProfileImage([FromBody] ProfileImageDto image)
         {
-            var set = await imageService.SetProfileImageAsync(User.GetUserId(), image.ProfilePictureBase64);
+            var set = await imageService.SetProfileImageAsync(User.GetUserId(), image.ProfilePictureFirebaseUrl);
             if (!set)
                 return BadRequest("Picture could be not set");
 

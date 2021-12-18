@@ -22,7 +22,7 @@ namespace TutoringSystem.Application.Dtos.TutorDtos
             Username = tutor.Username;
             FirstName = tutor.FirstName;
             LastName = tutor.LastName;
-            ProfilePictureBase64 = tutor.ProfilePictureBase64;
+            ProfilePictureBase64 = tutor.ProfilePictureFirebaseUrl;
         }
 
         public TutorDto(Tutor tutor, long studentId) : this(tutor)

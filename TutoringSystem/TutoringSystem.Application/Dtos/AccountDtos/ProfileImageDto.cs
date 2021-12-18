@@ -2,6 +2,6 @@
 {
     public class ProfileImageDto
     {
-        public string ProfilePictureBase64 { get; set; }
+        public string ProfilePictureFirebaseUrl { get; set; }
     }
 }

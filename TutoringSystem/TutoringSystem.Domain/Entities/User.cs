@@ -16,7 +16,7 @@ namespace TutoringSystem.Domain.Entities
         public bool IsActive { get; set; }
         public bool IsEnable { get; set; }
         public Role Role { get; set; }
-        public string ProfilePictureBase64 { get; set; }
+        public string ProfilePictureFirebaseUrl { get; set; }
 
         public virtual Contact Contact { get; set; }
         public virtual Address Address { get; set; }
