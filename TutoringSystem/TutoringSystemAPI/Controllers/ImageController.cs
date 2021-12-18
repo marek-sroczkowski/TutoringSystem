@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using TutoringSystem.Application.Dtos.AccountDtos;
 using TutoringSystem.Application.Extensions;
@@ -33,7 +34,7 @@ namespace TutoringSystem.API.Controllers
         [SwaggerOperation(Summary = "Retrieves profile pictures of all students of the currently logged-in tutor")]
         [HttpGet("students")]
         [Authorize(Roles = "Tutor")]
-        public async Task<ActionResult<ProfileImageDetailsDto>> GetStudentPhotos()
+        public async Task<ActionResult<IEnumerable<ProfileImageDetailsDto>>> GetStudentPhotos()
         {
             var pictures = await imageService.GetStudentPhotos(User.GetUserId());
 
@@ -43,7 +44,7 @@ namespace TutoringSystem.API.Controllers
         [SwaggerOperation(Summary = "Retrieves profile pictures of all tutors of the currently logged-in student")]
         [HttpGet("tutors")]
         [Authorize(Roles = "Student")]
-        public async Task<ActionResult<ProfileImageDetailsDto>> GetTutorPhotos()
+        public async Task<ActionResult<IEnumerable<ProfileImageDetailsDto>>> GetTutorPhotos()
         {
             var pictures = await imageService.GetTutorPhotos(User.GetUserId());
 
