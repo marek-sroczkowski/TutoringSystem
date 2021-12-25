@@ -12,9 +12,7 @@ namespace TutoringSystem.Application.Dtos.ReservationDtos
         public double Cost { get; set; }
         public DateTime StartTime { get; set; }
         public int Duration { get; set; }
-        public string Description { get; set; }
         public ReservationPlace Place { get; set; }
-        public ReservationType Type { get; set; }
         public string SubjectName { get; set; }
         public long TutorId { get; set; }
         public string Tutor { get; set; }

@@ -45,6 +45,7 @@ namespace TutoringSystem.Infrastructure.Repositories
             var tutors = await FindByCondition(expression)
                 .Include(t => t.Contact)
                 .Include(t => t.Address)
+                .Include(t => t.PushNotificationToken)
                 .ToListAsync();
 
             return tutors;

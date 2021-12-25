@@ -2,6 +2,9 @@
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
 using System.Collections.Generic;
+using System.Threading.Tasks;
+using TutoringSystem.API.Filters.TypeFilters;
+using TutoringSystem.Application.Authorization;
 using TutoringSystem.Application.Dtos.ReservationDtos;
 using TutoringSystem.Application.Extensions;
 using TutoringSystem.Application.Parameters;
@@ -15,10 +18,13 @@ namespace TutoringSystem.API.Controllers
     public class ReservationController : ControllerBase
     {
         private readonly IReservationService reservationService;
+        private readonly IAuthorizationService authorizationService;
 
-        public ReservationController(IReservationService reservationService)
+        public ReservationController(IReservationService reservationService,
+            IAuthorizationService authorizationService)
         {
             this.reservationService = reservationService;
+            this.authorizationService = authorizationService;
         }
 
         [SwaggerOperation(Summary = "Retrieves all reservations of the current logged in student filtered with selected parameters")]
@@ -41,6 +47,21 @@ namespace TutoringSystem.API.Controllers
             Response.Headers.Add("X-Pagination", resevations.GetPaginationJsonMetadata());
 
             return Ok(resevations);
+        }
+
+        [SwaggerOperation(Summary = "Retrieves a specific reservation by unique id")]
+        [HttpGet("{reservationId}")]
+        [Authorize(Roles = "Tutor, Student")]
+        [ValidateReservationExistence]
+        public async Task<ActionResult<ReservationDetailsDto>> GetReservation(long reservationId)
+        {
+            var reservation = await reservationService.GetReservationByIdAsync(reservationId);
+
+            var authorizationResult = authorizationService.AuthorizeAsync(User, reservation, new ResourceOperationRequirement(OperationType.Read)).Result;
+            if (!authorizationResult.Succeeded)
+                return Forbid();
+
+            return Ok(reservation);
         }
     }
 }

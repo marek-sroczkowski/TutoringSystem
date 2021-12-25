@@ -16,7 +16,7 @@ namespace TutoringSystem.Application.Authorization
 
             var userId = context.User.GetUserId();
 
-            if (resource.Tutor.Id == userId || resource.Student.Id == userId)
+            if (resource.TutorId == userId || resource.StudentId == userId)
             {
                 context.Succeed(requirement);
             }

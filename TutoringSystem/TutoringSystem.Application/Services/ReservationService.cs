@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq.Expressions;
+using System.Threading.Tasks;
 using TutoringSystem.Application.Dtos.ReservationDtos;
 using TutoringSystem.Application.Helpers;
 using TutoringSystem.Application.Parameters;
@@ -47,6 +48,13 @@ namespace TutoringSystem.Application.Services
             var reservationDtos = mapper.Map<ICollection<ReservationDto>>(resevations);
 
             return PagedList<ReservationDto>.ToPagedList(reservationDtos, parameters.PageNumber, parameters.PageSize);
+        }
+
+        public async Task<ReservationDetailsDto> GetReservationByIdAsync(long reservationId)
+        {
+            var reservation = await reservationRepository.GetReservationAsync(r => r.Id.Equals(reservationId));
+
+            return mapper.Map<ReservationDetailsDto>(reservation);
         }
 
         private void FilterByPlace(ref Expression<Func<Reservation, bool>> expression, ReservationParameters parameters)
