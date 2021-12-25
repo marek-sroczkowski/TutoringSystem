@@ -15,6 +15,7 @@ namespace TutoringSystem.Application.Dtos.ReservationDtos
         public string Description { get; set; }
         public ReservationPlace Place { get; set; }
         public ReservationType Type { get; set; }
+        public ReservationFrequency? Frequency { get; set; }
         public long SubjectId { get; set; }
         public string SubjectName { get; set; }
         public long TutorId { get; set; }
@@ -26,6 +27,11 @@ namespace TutoringSystem.Application.Dtos.ReservationDtos
         public void Mapping(Profile profile)
         {
             profile.CreateMap<Reservation, ReservationDetailsDto>()
+                .ForMember(dto => dto.SubjectName, map => map.MapFrom(entity => entity.Subject.Name))
+                .ForMember(dto => dto.Tutor, map => map.MapFrom(entity => $"{entity.Tutor.FirstName} {entity.Tutor.LastName}"))
+                .ForMember(dto => dto.Student, map => map.MapFrom(entity => $"{entity.Student.FirstName} {entity.Student.LastName}"));
+
+            profile.CreateMap<RecurringReservation, ReservationDetailsDto>()
                 .ForMember(dto => dto.SubjectName, map => map.MapFrom(entity => entity.Subject.Name))
                 .ForMember(dto => dto.Tutor, map => map.MapFrom(entity => $"{entity.Tutor.FirstName} {entity.Tutor.LastName}"))
                 .ForMember(dto => dto.Student, map => map.MapFrom(entity => $"{entity.Student.FirstName} {entity.Student.LastName}"));
