@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
+using TutoringSystem.Application.Dtos.Enums;
 using TutoringSystem.Application.Dtos.ReservationDtos;
 using TutoringSystem.Application.Extensions;
 using TutoringSystem.Application.Helpers;
@@ -54,11 +55,13 @@ namespace TutoringSystem.Application.Services
             return mapper.Map<ReservationDto>(reservation);
         }
 
-        public async Task<bool> DeleteReservationAsync(long reservationId)
+        public async Task<bool> DeleteReservationAsync(long reservationId, RecurringReservationRemovingMode mode)
         {
             var reservation = await reservationRepository.GetReservationAsync(r => r.Id.Equals(reservationId));
-            var deleted = await reservationRepository.DeleteReservationAsync(reservation) && 
-                await repeatedReservationRepository.DeleteReservationAsync(reservation.Reservation);
+            var deleted = await reservationRepository.DeleteReservationAsync(reservation);
+
+            if (deleted && mode == RecurringReservationRemovingMode.OneLessonAndFuture)
+                deleted = await repeatedReservationRepository.DeleteReservationAsync(reservation.Reservation);
 
             return deleted;
         }

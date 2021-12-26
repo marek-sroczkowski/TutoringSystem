@@ -1,11 +1,11 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Newtonsoft.Json;
 using Swashbuckle.AspNetCore.Annotations;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using TutoringSystem.API.Filters.TypeFilters;
 using TutoringSystem.Application.Authorization;
+using TutoringSystem.Application.Dtos.Enums;
 using TutoringSystem.Application.Dtos.ReservationDtos;
 using TutoringSystem.Application.Extensions;
 using TutoringSystem.Application.Parameters;
@@ -92,14 +92,14 @@ namespace TutoringSystem.API.Controllers
         [HttpDelete("{reservationId}")]
         [Authorize(Roles = "Tutor, Student")]
         [ValidateRecurringReservationExistence ]
-        public async Task<ActionResult> DeleteReservation(long reservationId)
+        public async Task<ActionResult> DeleteReservation(long reservationId, [FromQuery] RecurringReservationRemovingMode mode)
         {
             var reservation = await reservationService.GetReservationByIdAsync(reservationId);
             var authorizationResult = authorizationService.AuthorizeAsync(User, reservation, new ResourceOperationRequirement(OperationType.Delete)).Result;
             if (!authorizationResult.Succeeded)
                 return Forbid();
 
-            var deleted = await reservationService.DeleteReservationAsync(reservationId);
+            var deleted = await reservationService.DeleteReservationAsync(reservationId, mode);
             if (!deleted)
                 return BadRequest("Reservation could be not deleted");
 

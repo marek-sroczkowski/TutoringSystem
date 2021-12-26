@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using TutoringSystem.Infrastructure.Data;
 
 namespace TutoringSystem.Infrastructure.Data.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20211226202229_IsActiveInRepeatedReservation")]
+    partial class IsActiveInRepeatedReservation
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -249,9 +251,6 @@ namespace TutoringSystem.Infrastructure.Data.Migrations
                     b.Property<DateTime>("CreationDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<double>("Duration")
-                        .HasColumnType("float");
-
                     b.Property<int>("Frequency")
                         .HasColumnType("int");
 
@@ -263,15 +262,6 @@ namespace TutoringSystem.Infrastructure.Data.Migrations
 
                     b.Property<DateTime>("NextAddedDate")
                         .HasColumnType("datetime2");
-
-                    b.Property<DateTime>("StartTime")
-                        .HasColumnType("datetime2");
-
-                    b.Property<long>("StudentId")
-                        .HasColumnType("bigint");
-
-                    b.Property<long>("TutorId")
-                        .HasColumnType("bigint");
 
                     b.HasKey("Id");
 
@@ -293,9 +283,6 @@ namespace TutoringSystem.Infrastructure.Data.Migrations
 
                     b.Property<int>("Duration")
                         .HasColumnType("int");
-
-                    b.Property<bool>("IsActive")
-                        .HasColumnType("bit");
 
                     b.Property<bool>("IsPaid")
                         .HasColumnType("bit");

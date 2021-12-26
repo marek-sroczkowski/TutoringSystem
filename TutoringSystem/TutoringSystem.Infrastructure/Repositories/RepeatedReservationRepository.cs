@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
+using TutoringSystem.Application.Helpers;
 using TutoringSystem.Domain.Entities;
 using TutoringSystem.Domain.Repositories;
 using TutoringSystem.Infrastructure.Data;
@@ -24,9 +25,9 @@ namespace TutoringSystem.Infrastructure.Repositories
 
         public async Task<bool> DeleteReservationAsync(RepeatedReservation reservation)
         {
-            Delete(reservation);
+            reservation.IsActive = false;
 
-            return await SaveChangedAsync();
+            return await UpdateReservationAsync(reservation);
         }
 
         public async Task<RepeatedReservation> GetReservationAsync(Expression<Func<RepeatedReservation, bool>> expression)
@@ -38,11 +39,13 @@ namespace TutoringSystem.Infrastructure.Repositories
             return reservation;
         }
 
-        public async Task<IEnumerable<RepeatedReservation>> GetReservationsCollectionAsync(Expression<Func<RepeatedReservation, bool>> expression)
+        public IEnumerable<RepeatedReservation> GetReservationsCollection(Expression<Func<RepeatedReservation, bool>> expression, bool? isActive = true)
         {
-            var reservations = await FindByCondition(expression)
-                .Include(r => r.Reservations)
-                .ToListAsync();
+            if (isActive.HasValue)
+                ExpressionMerger.MergeExpression(ref expression, o => o.IsActive.Equals(isActive.Value));
+
+            var reservations = FindByCondition(expression)
+                .Include(r => r.Reservations);
 
             return reservations;
         }

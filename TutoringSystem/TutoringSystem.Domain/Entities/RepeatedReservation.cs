@@ -7,21 +7,33 @@ namespace TutoringSystem.Domain.Entities
     public class RepeatedReservation
     {
         public long Id { get; set; }
+        public DateTime StartTime { get; set; }
+        public double Duration { get; set; }
         public DateTime CreationDate { get; set; }
         public DateTime LastAddedDate { get; set; }
         public DateTime NextAddedDate { get; set; }
         public ReservationFrequency Frequency { get; set; }
+        public bool IsActive { get; set; }
+
+        public long StudentId { get; set; }
+        public long TutorId { get; set; }
 
         public virtual ICollection<RecurringReservation> Reservations { get; set; }
 
         public RepeatedReservation()
         {
             CreationDate = DateTime.Now;
+            IsActive = true;
         }
 
         public RepeatedReservation(RecurringReservation reservation) : this()
         {
-            LastAddedDate = reservation.StartTime;
+            LastAddedDate = DateTime.Now;
+            StartTime = reservation.StartTime;
+            Duration = reservation.Duration;
+            StudentId = reservation.StudentId;
+            TutorId = reservation.TutorId;
+
             Reservations = new List<RecurringReservation> { reservation };
             Frequency = reservation.Frequency;
             SetNextSynchronizationDate();
@@ -29,18 +41,13 @@ namespace TutoringSystem.Domain.Entities
 
         private void SetNextSynchronizationDate()
         {
-            switch (Frequency)
+            NextAddedDate = Frequency switch
             {
-                case ReservationFrequency.Weekly:
-                    NextAddedDate = LastAddedDate.AddDays(7);
-                    break;
-                case ReservationFrequency.OnceTwoWeeks:
-                    NextAddedDate = LastAddedDate.AddDays(14);
-                    break;
-                case ReservationFrequency.Monthly:
-                    NextAddedDate = LastAddedDate.AddDays(28);
-                    break;
-            }
+                ReservationFrequency.Weekly => LastAddedDate.AddDays(7),
+                ReservationFrequency.OnceTwoWeeks => LastAddedDate.AddDays(14),
+                ReservationFrequency.Monthly => LastAddedDate.AddDays(28),
+                _ => LastAddedDate.AddDays(7)
+            };
         }
     }
 }

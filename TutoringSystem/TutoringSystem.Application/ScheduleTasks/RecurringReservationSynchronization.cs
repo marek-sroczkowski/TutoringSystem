@@ -20,7 +20,7 @@ namespace TutoringSystem.Application.ScheduleTasks
         public override async Task ProcessInScope(IServiceProvider scopeServiceProvider)
         {
             IRepeatedReservationRepository reservationRepository = scopeServiceProvider.GetRequiredService<IRepeatedReservationRepository>();
-            var reservations = (await reservationRepository.GetReservationsCollectionAsync(r => r.NextAddedDate.Date.Equals(DateTime.Now.AddDays(1).Date) || r.NextAddedDate.Date <= DateTime.Now.Date)).ToList();
+            var reservations = reservationRepository.GetReservationsCollection(r => r.NextAddedDate.Date.Equals(DateTime.Now.AddDays(1).Date) || r.NextAddedDate.Date <= DateTime.Now.Date).ToList();
             for (int i = 0; i < reservations.Count; i++)
             {
                 switch (reservations[i].Frequency)

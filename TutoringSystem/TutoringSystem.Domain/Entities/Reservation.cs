@@ -13,6 +13,7 @@ namespace TutoringSystem.Domain.Entities
         public bool IsPaid { get; set; }
         public ReservationPlace Place { get; set; }
         public ReservationType Type { get; set; }
+        public bool IsActive { get; set; }
 
         public long SubjectId { get; set; }
         public virtual Subject Subject { get; set; }
@@ -22,5 +23,10 @@ namespace TutoringSystem.Domain.Entities
 
         public long StudentId { get; set; }
         public virtual Student Student { get; set; }
+
+        public Reservation()
+        {
+            IsActive = true;
+        }
     }
 }

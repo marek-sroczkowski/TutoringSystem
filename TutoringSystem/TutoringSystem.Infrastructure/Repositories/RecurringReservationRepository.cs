@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
+using TutoringSystem.Application.Helpers;
 using TutoringSystem.Domain.Entities;
 using TutoringSystem.Domain.Repositories;
 using TutoringSystem.Infrastructure.Data;
@@ -35,13 +36,17 @@ namespace TutoringSystem.Infrastructure.Repositories
                 .Include(r => r.Student)
                 .Include(r => r.Subject)
                 .Include(r => r.Tutor)
+                .Include(r => r.Reservation)
                 .FirstOrDefaultAsync(expression);
 
             return reservation;
         }
 
-        public async Task<IEnumerable<RecurringReservation>> GetReservationsCollectionAsync(Expression<Func<RecurringReservation, bool>> expression)
+        public async Task<IEnumerable<RecurringReservation>> GetReservationsCollectionAsync(Expression<Func<RecurringReservation, bool>> expression, bool? isActive = true)
         {
+            if (isActive.HasValue)
+                ExpressionMerger.MergeExpression(ref expression, o => o.IsActive.Equals(isActive.Value));
+
             var reservations = await FindByCondition(expression)
                 .Include(r => r.Student)
                 .Include(r => r.Subject)

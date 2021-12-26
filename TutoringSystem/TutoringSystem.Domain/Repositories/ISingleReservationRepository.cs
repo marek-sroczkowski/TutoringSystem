@@ -12,6 +12,6 @@ namespace TutoringSystem.Domain.Repositories
         Task<bool> UpdateReservationAsync(SingleReservation updatedReservation);
         Task<bool> DeleteReservationAsync(SingleReservation reservation);
         Task<SingleReservation> GetReservationAsync(Expression<Func<SingleReservation, bool>> expression);
-        Task<IEnumerable<SingleReservation>> GetReservationsCollectionAsync(Expression<Func<SingleReservation, bool>> expression);
+        Task<IEnumerable<SingleReservation>> GetReservationsCollectionAsync(Expression<Func<SingleReservation, bool>> expression, bool? isActive = true);
     }
 }
