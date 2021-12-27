@@ -33,10 +33,25 @@ namespace TutoringSystem.Domain.Entities
             Duration = reservation.Duration;
             StudentId = reservation.StudentId;
             TutorId = reservation.TutorId;
+            Frequency = reservation.Frequency;
 
             Reservations = new List<RecurringReservation> { reservation };
-            Frequency = reservation.Frequency;
+            AddReservations(reservation);
             SetNextSynchronizationDate();
+        }
+
+        private void AddReservations(RecurringReservation reservation)
+        {
+            var reservationDate = reservation.StartTime.Date;
+            int i = 1;
+            while (reservationDate.AddDays((int)Frequency * i) <= DateTime.Now.Date)
+            {
+                Reservations.Add(new RecurringReservation(reservation)
+                {
+                    StartTime = reservation.StartTime.AddDays((int)Frequency * i)
+                });
+                i++;
+            }
         }
 
         private void SetNextSynchronizationDate()

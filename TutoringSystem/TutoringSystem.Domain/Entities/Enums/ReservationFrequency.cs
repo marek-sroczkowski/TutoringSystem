@@ -2,8 +2,8 @@
 {
     public enum ReservationFrequency
     {
-        Weekly,
-        OnceTwoWeeks,
-        Monthly
+        Weekly = 7,
+        OnceTwoWeeks = 14,
+        Monthly = 28
     }
 }
