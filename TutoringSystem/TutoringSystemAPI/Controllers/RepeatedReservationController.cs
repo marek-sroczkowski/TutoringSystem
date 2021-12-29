@@ -1,9 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
-using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using TutoringSystem.Application.Dtos.ReservationDtos;
 using TutoringSystem.Application.Extensions;
@@ -14,11 +12,11 @@ namespace TutoringSystem.API.Controllers
     [Route("api/reservation/repeated")]
     [ApiController]
     [Authorize]
-    public class RepeatedReservationConstroller : ControllerBase
+    public class RepeatedReservationController : ControllerBase
     {
         private readonly IRepeatedReservationService reservationService;
 
-        public RepeatedReservationConstroller(IRepeatedReservationService reservationService)
+        public RepeatedReservationController(IRepeatedReservationService reservationService)
         {
             this.reservationService = reservationService;
         }
@@ -26,9 +24,9 @@ namespace TutoringSystem.API.Controllers
         [SwaggerOperation(Summary = "Retrieves all repeated reservations of the current logged in student filtered with selected parameters")]
         [HttpGet("student")]
         [Authorize(Roles = "Student")]
-        public ActionResult<IEnumerable<RepeatedReservationDto>> GetStudentReservations()
+        public async Task<ActionResult<IEnumerable<RepeatedReservationDto>>> GetStudentReservations()
         {
-            var resevations = reservationService.GetReservationsByStudent(User.GetUserId());
+            var resevations = await reservationService.GetReservationsByStudent(User.GetUserId());
 
             return Ok(resevations);
         }
@@ -36,9 +34,9 @@ namespace TutoringSystem.API.Controllers
         [SwaggerOperation(Summary = "Retrieves all repeated reservations of the current logged in tutor filtered with selected parameters")]
         [HttpGet("tutor")]
         [Authorize(Roles = "Tutor")]
-        public ActionResult<IEnumerable<RepeatedReservationDto>> GetTutorReservations()
+        public async Task<ActionResult<IEnumerable<RepeatedReservationDto>>> GetTutorReservations()
         {
-            var resevations = reservationService.GetReservationsByTutor(User.GetUserId());
+            var resevations = await reservationService.GetReservationsByTutor(User.GetUserId());
 
             return Ok(resevations);
         }

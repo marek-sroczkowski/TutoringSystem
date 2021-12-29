@@ -1,11 +1,12 @@
 ﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 using TutoringSystem.Application.Dtos.ReservationDtos;
 
 namespace TutoringSystem.Application.Services.Interfaces
 {
     public interface IRepeatedReservationService
     {
-        IEnumerable<RepeatedReservationDto> GetReservationsByStudent(long studentId);
-        IEnumerable<RepeatedReservationDto> GetReservationsByTutor(long tutorId);
+        Task<IEnumerable<RepeatedReservationDto>> GetReservationsByStudent(long studentId);
+        Task<IEnumerable<RepeatedReservationDto>> GetReservationsByTutor(long tutorId);
     }
 }

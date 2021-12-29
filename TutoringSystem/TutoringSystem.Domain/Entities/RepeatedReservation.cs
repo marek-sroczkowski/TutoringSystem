@@ -9,6 +9,7 @@ namespace TutoringSystem.Domain.Entities
         public long Id { get; set; }
         public DateTime StartTime { get; set; }
         public double Duration { get; set; }
+        public ReservationPlace Place { get; set; }
         public DateTime CreationDate { get; set; }
         public DateTime LastAddedDate { get; set; }
         public DateTime NextAddedDate { get; set; }
@@ -17,6 +18,7 @@ namespace TutoringSystem.Domain.Entities
 
         public long StudentId { get; set; }
         public long TutorId { get; set; }
+        public long SubjectId { get; set; }
 
         public virtual ICollection<RecurringReservation> Reservations { get; set; }
 
@@ -31,8 +33,10 @@ namespace TutoringSystem.Domain.Entities
             LastAddedDate = DateTime.Now;
             StartTime = reservation.StartTime;
             Duration = reservation.Duration;
+            Place = reservation.Place;
             StudentId = reservation.StudentId;
             TutorId = reservation.TutorId;
+            SubjectId = reservation.SubjectId;
             Frequency = reservation.Frequency;
 
             Reservations = new List<RecurringReservation> { reservation };
