@@ -29,8 +29,8 @@ namespace TutoringSystem.Application.Services
         {
             var student = await studentRepository.GetStudentAsync(s => s.Id.Equals(studentId));
             var resevations = reservationRepository.GetReservationsCollection(r => r.StudentId.Equals(studentId))
-                .Select(reservation => new RepeatedReservationDto(reservation));
-            resevations.ToList().ForEach(reservation =>
+                .Select(reservation => new RepeatedReservationDto(reservation)).ToList();
+            resevations.ForEach(reservation =>
             {
                 var tutor = tutorRepository.GetTutorAsync(t => t.Id.Equals(reservation.TutorId)).Result;
                 var subject = subjectRepository.GetSubjectAsync(s => s.Id.Equals(reservation.SubjectId)).Result;
