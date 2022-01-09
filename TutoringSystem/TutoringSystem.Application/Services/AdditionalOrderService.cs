@@ -72,15 +72,21 @@ namespace TutoringSystem.Application.Services
 
         public PagedList<OrderDto> GetAdditionalOrders(long tutorId, AdditionalOrderParameters parameters)
         {
+            var expression = GetExpression(tutorId, parameters);
+            var orders = sortHelper.ApplySort(additionalOrderRepository.GetAdditionalOrdersCollection(expression), parameters.OrderBy);
+            var orderDtos = mapper.Map<ICollection<OrderDto>>(orders);
+
+            return PagedList<OrderDto>.ToPagedList(orderDtos, parameters.PageNumber, parameters.PageSize);
+        }
+
+        private Expression<Func<AdditionalOrder, bool>> GetExpression(long tutorId, AdditionalOrderParameters parameters)
+        {
             Expression<Func<AdditionalOrder, bool>> expression = o => o.TutorId.Equals(tutorId);
             FilterByDate(ref expression, parameters);
             FilterByPayment(ref expression, parameters);
             FilterByStatus(ref expression, parameters);
 
-            var orders = sortHelper.ApplySort(additionalOrderRepository.GetAdditionalOrdersCollection(expression), parameters.OrderBy);
-            var orderDtos = mapper.Map<ICollection<OrderDto>>(orders);
-
-            return PagedList<OrderDto>.ToPagedList(orderDtos, parameters.PageNumber, parameters.PageSize);
+            return expression;
         }
 
         public async Task<bool> UpdateAdditionalOrderAsync(UpdatedOrderDto updatedOrder)
