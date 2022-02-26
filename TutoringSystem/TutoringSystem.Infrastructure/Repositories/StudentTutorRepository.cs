@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
 using TutoringSystem.Application.Helpers;
@@ -23,30 +24,58 @@ namespace TutoringSystem.Infrastructure.Repositories
             return await SaveChangedAsync();
         }
 
-        public async Task<StudentTutor> GetStudentTutorAsync(Expression<Func<StudentTutor, bool>> expression, bool? isActive = true)
+        public async Task<bool> AddStudentTutorsCollectionAsync(IEnumerable<StudentTutor> studentTutors)
+        {
+            CreateRange(studentTutors);
+
+            return await SaveChangedAsync();
+        }
+
+        public async Task<StudentTutor> GetStudentTutorAsync(Expression<Func<StudentTutor, bool>> expression, bool? isActive = true, bool isEagerLoadingEnabled = false)
         {
             if (isActive.HasValue)
+            {
                 ExpressionMerger.MergeExpression(ref expression, s => s.IsActive.Equals(isActive.Value));
+            }
 
-            var result = await DbContext.StudentTutors
-                .Include(st => st.Student)
-                .Include(st => st.Tutor)
-                .FirstOrDefaultAsync(expression);
+            var result = isEagerLoadingEnabled
+                ? await GetObjectWithEagerLoadingAsync(expression)
+                : await GetObjectWithoutEagerLoadingAsync(expression);
 
             return result;
         }
 
-        public async Task<IEnumerable<StudentTutor>> GetStudentTuturCollectionAsync(Expression<Func<StudentTutor, bool>> expression, bool? isActive = true)
+        public IQueryable<StudentTutor> GetStudentTuturCollection(Expression<Func<StudentTutor, bool>> expression, bool? isActive = true, bool isEagerLoadingEnabled = false)
         {
             if (isActive.HasValue)
+            {
                 ExpressionMerger.MergeExpression(ref expression, st => st.IsActive.Equals(isActive.Value));
+            }
 
-            var result = await FindByCondition(expression)
-                .Include(st => st.Student)
-                .Include(st => st.Tutor)
-                .ToListAsync();
+            var result = isEagerLoadingEnabled
+                ? GetCollectionWithEagerLoading(expression)
+                : Find(expression);
 
             return result;
+        }
+
+        public bool IsStudentTutorExist(Expression<Func<StudentTutor, bool>> expression, bool? isActive = true)
+        {
+            if (isActive.HasValue)
+            {
+                ExpressionMerger.MergeExpression(ref expression, st => st.IsActive.Equals(isActive.Value));
+            }
+
+            var exist = Contains(expression);
+
+            return exist;
+        }
+
+        public async Task<bool> RemoveStudentTutorAsync(StudentTutor studentTutor)
+        {
+            studentTutor.IsActive = false;
+
+            return await SaveChangedAsync();
         }
 
         public async Task<bool> UpdateStudentTutorAsync(StudentTutor studentTutor)
@@ -54,6 +83,40 @@ namespace TutoringSystem.Infrastructure.Repositories
             Update(studentTutor);
 
             return await SaveChangedAsync();
+        }
+
+        public async Task<bool> UpdateStudentTutorsCollectionAsync(IEnumerable<StudentTutor> studentTutors)
+        {
+            UpdateRange(studentTutors);
+
+            return await SaveChangedAsync();
+        }
+
+        private async Task<StudentTutor> GetObjectWithEagerLoadingAsync(Expression<Func<StudentTutor, bool>> expression)
+        {
+            var studentTutor = await Find(expression)
+                .Include(st => st.Student)
+                .Include(st => st.Tutor)
+                .FirstOrDefaultAsync();
+
+            return studentTutor;
+        }
+
+        private async Task<StudentTutor> GetObjectWithoutEagerLoadingAsync(Expression<Func<StudentTutor, bool>> expression)
+        {
+            var studentTutor = await Find(expression)
+                .FirstOrDefaultAsync();
+
+            return studentTutor;
+        }
+
+        private IQueryable<StudentTutor> GetCollectionWithEagerLoading(Expression<Func<StudentTutor, bool>> expression)
+        {
+            var studentTutors = Find(expression)
+                .Include(st => st.Student)
+                .Include(st => st.Tutor);
+
+            return studentTutors;
         }
     }
 }

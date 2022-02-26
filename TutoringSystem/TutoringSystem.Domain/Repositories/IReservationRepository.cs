@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
@@ -8,9 +9,11 @@ namespace TutoringSystem.Domain.Repositories
 {
     public interface IReservationRepository
     {
+        Task<Reservation> GetReservationAsync(Expression<Func<Reservation, bool>> expression, bool? isActive = true, bool isEagerLoadingEnabled = false);
+        IQueryable<Reservation> GetReservationsCollection(Expression<Func<Reservation, bool>> expression, bool? isActive = true, bool isEagerLoadingEnabled = false);
+        bool IsReservationExist(Expression<Func<Reservation, bool>> expression, bool? isActive = true);
+        Task<bool> RemoveReservationAsync(Reservation reservation);
         Task<bool> UpdateReservationAsync(Reservation updatedReservation);
-        Task<bool> DeleteReservationAsync(Reservation reservation);
-        Task<Reservation> GetReservationAsync(Expression<Func<Reservation, bool>> expression);
-        IQueryable<Reservation> GetReservationsCollection(Expression<Func<Reservation, bool>> expression);
+        Task<bool> UpdateReservationsCollectionAsync(IEnumerable<Reservation> reservations);
     }
 }

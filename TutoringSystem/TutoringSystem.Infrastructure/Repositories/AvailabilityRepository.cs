@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
 using TutoringSystem.Domain.Entities;
@@ -22,38 +23,84 @@ namespace TutoringSystem.Infrastructure.Repositories
             return await SaveChangedAsync();
         }
 
-        public async Task<bool> DeleteAvailabilityAsync(Availability availability)
+        public async Task<bool> AddAvailabilitiesCollectionAsync(IEnumerable<Availability> availabilities)
+        {
+            CreateRange(availabilities);
+
+            return await SaveChangedAsync();
+        }
+
+        public async Task<Availability> GetAvailabilityAsync(Expression<Func<Availability, bool>> expression, bool isEagerLoadingEnabled = false)
+        {
+            var availability = isEagerLoadingEnabled
+                ? await GetAvailabilityWithEagerLoadingAsync(expression)
+                : await GetAvailabilityWithoutEagerLoadingAsync(expression);
+
+            return availability;
+        }
+
+        public IQueryable<Availability> GetAvailabilitiesCollection(Expression<Func<Availability, bool>> expression, bool isEagerLoadingEnabled = false)
+        {
+            var availabilities = isEagerLoadingEnabled
+                ? GetAvailabilitiesCollectionWithEagerLoading(expression)
+                : Find(expression);
+
+            return availabilities;
+        }
+
+        public bool IsAvailabilityExist(Expression<Func<Availability, bool>> expression)
+        {
+            bool exist = Contains(expression);
+
+            return exist;
+        }
+
+        public async Task<bool> RemoveAvailabilityAsync(Availability availability)
         {
             Delete(availability);
 
             return await SaveChangedAsync();
         }
 
-        public async Task<Availability> GetAvailabilityAsync(Expression<Func<Availability, bool>> expression)
+        public async Task<bool> UpdateAvailabilityAsync(Availability availability)
         {
-            var availability = await DbContext.Availabilities
-               .Include(a => a.Intervals)
-               .Include(a => a.Tutor)
-               .FirstOrDefaultAsync(expression);
+            Update(availability);
+
+            return await SaveChangedAsync();
+        }
+
+        public async Task<bool> UpdateAvailabilitiesCollectionAsync(IEnumerable<Availability> availabilities)
+        {
+            UpdateRange(availabilities);
+
+            return await SaveChangedAsync();
+        }
+
+        private async Task<Availability> GetAvailabilityWithEagerLoadingAsync(Expression<Func<Availability, bool>> expression)
+        {
+            var availability = await Find(expression)
+                .Include(a => a.Intervals)
+                .Include(a => a.Tutor)
+                .FirstOrDefaultAsync();
 
             return availability;
         }
 
-        public async Task<IEnumerable<Availability>> GetAvailabilitiesCollectionAsync(Expression<Func<Availability, bool>> expression)
+        private async Task<Availability> GetAvailabilityWithoutEagerLoadingAsync(Expression<Func<Availability, bool>> expression)
         {
-            var availabilities = await FindByCondition(expression)
-                .Include(a => a.Intervals)
-                .Include(a => a.Tutor)
-                .ToListAsync();
+            var availability = await Find(expression)
+                .FirstOrDefaultAsync();
 
-            return availabilities;
+            return availability;
         }
 
-        public async Task<bool> UpdateAvailabilityAsync(Availability updatedAvailability)
+        private IQueryable<Availability> GetAvailabilitiesCollectionWithEagerLoading(Expression<Func<Availability, bool>> expression)
         {
-            Update(updatedAvailability);
+            var availabilities = Find(expression)
+                .Include(a => a.Intervals)
+                .Include(a => a.Tutor);
 
-            return await SaveChangedAsync();
+            return availabilities;
         }
     }
 }

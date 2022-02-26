@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
 using TutoringSystem.Application.Helpers;
@@ -23,36 +24,84 @@ namespace TutoringSystem.Infrastructure.Repositories
             return await SaveChangedAsync();
         }
 
-        public async Task<bool> DeleteAddressAsync(Address address)
+        public async Task<bool> AddAddressesCollectionAsync(IEnumerable<Address> addresses)
+        {
+            CreateRange(addresses);
+
+            return await SaveChangedAsync();
+        }
+
+        public async Task<Address> GetAddressAsync(Expression<Func<Address, bool>> expression, bool isEagerLoadingEnabled = false)
+        {
+            var address = isEagerLoadingEnabled
+                ? await GetAddressWithEagerLoadingAsync(expression)
+                : await GetAddressWithoutEagerLoadingAsync(expression);
+
+            return address;
+        }
+
+        public IQueryable<Address> GetAddressesCollection(Expression<Func<Address, bool>> expression, bool isEagerLoadingEnabled = false)
+        {
+            ExpressionMerger.MergeExpression(ref expression, a => a.User.IsActive);
+
+            var addresses = isEagerLoadingEnabled
+                ? GetAddressesCollectionWithEagerLoading(expression)
+                : Find(expression);
+
+            return addresses;
+        }
+
+        public bool IsAddressExist(Expression<Func<Address, bool>> expression)
+        {
+            bool exist = Contains(expression);
+
+            return exist;
+        }
+
+        public async Task<bool> RemoveAddressAsync(Address address)
         {
             Delete(address);
 
             return await SaveChangedAsync();
         }
 
-        public async Task<Address> GetAddressAsync(Expression<Func<Address, bool>> expression)
+        public async Task<bool> UpdateAddressAsync(Address address)
         {
-            var address = await DbContext.Addresses
+            Update(address);
+
+            return await SaveChangedAsync();
+        }
+
+        public async Task<bool> UpdateAddressesCollectionAsync(IEnumerable<Address> addresses)
+        {
+            UpdateRange(addresses);
+
+            return await SaveChangedAsync();
+        }
+
+        private async Task<Address> GetAddressWithEagerLoadingAsync(Expression<Func<Address, bool>> expression)
+        {
+            var address = await Find(expression)
                 .Include(a => a.User)
-                .FirstOrDefaultAsync(expression);
+                .FirstOrDefaultAsync();
 
             return address;
         }
 
-        public async Task<IEnumerable<Address>> GetAddressesCollectionAsync(Expression<Func<Address, bool>> expression)
+        private async Task<Address> GetAddressWithoutEagerLoadingAsync(Expression<Func<Address, bool>> expression)
         {
-            ExpressionMerger.MergeExpression(ref expression, a => a.User.IsActive);
-            var addresses = FindByCondition(expression)
-                .Include(a => a.User);
+            var address = await Find(expression)
+                .FirstOrDefaultAsync();
 
-            return await addresses.ToListAsync();
+            return address;
         }
 
-        public async Task<bool> UpdateAddressAsync(Address updatedAddress)
+        private IQueryable<Address> GetAddressesCollectionWithEagerLoading(Expression<Func<Address, bool>> expression)
         {
-            Update(updatedAddress);
+            var addresses = Find(expression)
+                .Include(a => a.User);
 
-            return await SaveChangedAsync();
+            return addresses;
         }
     }
 }

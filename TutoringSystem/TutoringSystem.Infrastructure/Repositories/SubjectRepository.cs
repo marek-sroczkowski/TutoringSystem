@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
 using TutoringSystem.Application.Helpers;
@@ -23,42 +24,97 @@ namespace TutoringSystem.Infrastructure.Repositories
             return await SaveChangedAsync();
         }
 
-        public async Task<bool> DeleteSubjectAsync(Subject subject)
+        public async Task<bool> AddSubjectsCollection(IEnumerable<Subject> subjects)
+        {
+            CreateRange(subjects);
+
+            return await SaveChangedAsync();
+        }
+
+        public async Task<Subject> GetSubjectAsync(Expression<Func<Subject, bool>> expression, bool? isActive = true, bool isEagerLoadingEnabled = false)
+        {
+            if (isActive.HasValue)
+            {
+                ExpressionMerger.MergeExpression(ref expression, s => s.IsActive.Equals(isActive.Value));
+            }
+
+            var subject = isEagerLoadingEnabled
+                ? await GetSubjectWithEagerLoadingAsync(expression)
+                : await GetSubjectWithoutEagerLoadingAsync(expression);
+
+            return subject;
+        }
+
+        public IQueryable<Subject> GetSubjectsCollection(Expression<Func<Subject, bool>> expression, bool? isActive = true, bool isEagerLoadingEnabled = false)
+        {
+            if (isActive.HasValue)
+            {
+                ExpressionMerger.MergeExpression(ref expression, s => s.IsActive.Equals(isActive.Value));
+            }
+
+            var subjects = isEagerLoadingEnabled
+                ? GetSubjectsCollectionWithEagerLoading(expression)
+                : Find(expression);
+
+            return subjects;
+        }
+
+        public bool IsSubjectExist(Expression<Func<Subject, bool>> expression, bool? isActive = true)
+        {
+            if (isActive.HasValue)
+            {
+                ExpressionMerger.MergeExpression(ref expression, s => s.IsActive.Equals(isActive.Value));
+            }
+
+            var exist = Contains(expression);
+
+            return exist;
+        }
+
+        public async Task<bool> RemoveSubjectAsync(Subject subject)
         {
             subject.IsActive = false;
+
+            return await UpdateSubjectAsync(subject);
+        }
+
+        public async Task<bool> UpdateSubjectAsync(Subject subject)
+        {
             Update(subject);
 
             return await SaveChangedAsync();
         }
 
-        public async Task<Subject> GetSubjectAsync(Expression<Func<Subject, bool>> expression, bool? isActive = true)
+        public async Task<bool> UpdateSubjectsCollectionAsync(IEnumerable<Subject> subjects)
         {
-            if (isActive.HasValue)
-                ExpressionMerger.MergeExpression(ref expression, s => s.IsActive.Equals(isActive.Value));
+            UpdateRange(subjects);
 
-            var subject = await DbContext.Subjects
-                .Include(s => s.Tutor)
-                .FirstOrDefaultAsync(expression);
+            return await SaveChangedAsync();
+        }
+
+        private async Task<Subject> GetSubjectWithEagerLoadingAsync(Expression<Func<Subject, bool>> expression)
+        {
+            var subject = await Find(expression)
+                .Include(o => o.Tutor)
+                .FirstOrDefaultAsync();
 
             return subject;
         }
 
-        public async Task<IEnumerable<Subject>> GetSubjectsCollectionAsync(Expression<Func<Subject, bool>> expression, bool? isActive = true)
+        private async Task<Subject> GetSubjectWithoutEagerLoadingAsync(Expression<Func<Subject, bool>> expression)
         {
-            if (isActive.HasValue)
-                ExpressionMerger.MergeExpression(ref expression, s => s.IsActive.Equals(isActive.Value));
+            var subject = await Find(expression)
+                .FirstOrDefaultAsync();
 
-            var subjects = await FindByCondition(expression)
-                .ToListAsync();
-
-            return subjects;
+            return subject;
         }
 
-        public async Task<bool> UpdateSubjectAsync(Subject updatedSubject)
+        private IQueryable<Subject> GetSubjectsCollectionWithEagerLoading(Expression<Func<Subject, bool>> expression)
         {
-            Update(updatedSubject);
+            var subjects = Find(expression)
+                .Include(o => o.Tutor);
 
-            return await SaveChangedAsync();
+            return subjects;
         }
     }
 }

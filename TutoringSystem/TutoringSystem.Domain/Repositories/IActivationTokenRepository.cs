@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
 using TutoringSystem.Domain.Entities;
@@ -8,10 +9,13 @@ namespace TutoringSystem.Domain.Repositories
 {
     public interface IActivationTokenRepository
     {
-        Task<bool> AddActivationTokenAsync(ActivationToken token);
-        Task<bool> DeleteActivationTokenAsync(ActivationToken token);
-        Task<ActivationToken> GetActivationTokenAsync(Expression<Func<ActivationToken, bool>> expression);
-        Task<IEnumerable<ActivationToken>> GetActivationTokensCollectionAsync(Expression<Func<ActivationToken, bool>> expression);
+        Task<bool> AddTokenAsync(ActivationToken token);
+        Task<bool> AddTokensCollectionAsync(IEnumerable<ActivationToken> tokens);
+        Task<ActivationToken> GetTokenAsync(Expression<Func<ActivationToken, bool>> expression, bool? isActive = true, bool isEagerLoadingEnabled = false);
+        IQueryable<ActivationToken> GetTokensCollection(Expression<Func<ActivationToken, bool>> expression, bool? isActive = true, bool isEagerLoadingEnabled = false);
+        bool IsTokenExist(Expression<Func<ActivationToken, bool>> expression, bool? isActive = true);
+        Task<bool> RemoveActivationTokenAsync(ActivationToken token);
         Task<bool> UpdateActivationTokenAsync(ActivationToken token);
+        Task<bool> UpdateTokensCollectionAsync(IEnumerable<ActivationToken> tokens);
     }
 }
