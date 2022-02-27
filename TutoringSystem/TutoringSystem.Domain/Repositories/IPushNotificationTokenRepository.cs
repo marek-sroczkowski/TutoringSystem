@@ -13,6 +13,7 @@ namespace TutoringSystem.Domain.Repositories
         Task<bool> AddTokensCollection(IEnumerable<PushNotificationToken> tokens);
         Task<PushNotificationToken> GetTokenAsync(Expression<Func<PushNotificationToken, bool>> expression, bool isEagerLoadingEnabled = false);
         IQueryable<PushNotificationToken> GetTokensCollection(Expression<Func<PushNotificationToken, bool>> expression, bool isEagerLoadingEnabled = false);
+        Task<IEnumerable<PushNotificationToken>> GetTokensCollectionAsync(Expression<Func<PushNotificationToken, bool>> expression, bool isEagerLoadingEnabled = false);
         bool IsTokenExist(Expression<Func<PushNotificationToken, bool>> expression);
         Task<bool> RemoveTokenAsync(PushNotificationToken token);
         Task<bool> UpdateTokenAsync(PushNotificationToken pushNotificationToken);

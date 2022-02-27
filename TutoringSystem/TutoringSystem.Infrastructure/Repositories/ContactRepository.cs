@@ -51,6 +51,17 @@ namespace TutoringSystem.Infrastructure.Repositories
             return contacts;
         }
 
+        public async Task<IEnumerable<Contact>> GetContactsCollectionAsync(Expression<Func<Contact, bool>> expression, bool isEagerLoadingEnabled = false)
+        {
+            ExpressionMerger.MergeExpression(ref expression, c => c.User.IsActive);
+
+            var contacts = isEagerLoadingEnabled
+                ? GetContactsCollectionWithEagerLoading(expression)
+                : Find(expression);
+
+            return await contacts.ToListAsync();
+        }
+
         public bool IsContackExist(Expression<Func<Contact, bool>> expression)
         {
             bool exist = Contains(expression);

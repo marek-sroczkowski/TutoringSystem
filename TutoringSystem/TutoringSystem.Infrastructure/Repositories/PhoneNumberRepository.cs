@@ -59,6 +59,20 @@ namespace TutoringSystem.Infrastructure.Repositories
             return phones;
         }
 
+        public async Task<IEnumerable<PhoneNumber>> GetPhoneNumbersCollectionAsync(Expression<Func<PhoneNumber, bool>> expression, bool? isActive = true, bool isEagerLoadingEnabled = false)
+        {
+            if (isActive.HasValue)
+            {
+                ExpressionMerger.MergeExpression(ref expression, p => p.IsActive.Equals(isActive.Value));
+            }
+
+            var phones = isEagerLoadingEnabled
+                ? GetNumbersCollectionWithEagerLoading(expression)
+                : Find(expression);
+
+            return await phones.ToListAsync();
+        }
+
         public bool IsPhoneNumberExist(Expression<Func<PhoneNumber, bool>> expression, bool? isActive = true)
         {
             if (isActive.HasValue)

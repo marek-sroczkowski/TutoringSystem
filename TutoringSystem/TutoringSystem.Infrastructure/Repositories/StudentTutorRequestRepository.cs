@@ -59,6 +59,20 @@ namespace TutoringSystem.Infrastructure.Repositories
             return requests;
         }
 
+        public async Task<IEnumerable<StudentTutorRequest>> GetRequestsCollectionAsync(Expression<Func<StudentTutorRequest, bool>> expression, bool? isActive = true, bool isEagerLoadingEnabled = false)
+        {
+            if (isActive.HasValue)
+            {
+                ExpressionMerger.MergeExpression(ref expression, o => o.IsActive.Equals(isActive.Value));
+            }
+
+            var requests = isEagerLoadingEnabled
+                ? GetRequestsCollectionWithEagerLoading(expression)
+                : Find(expression);
+
+            return await requests.ToListAsync();
+        }
+
         public bool IsRequestExist(Expression<Func<StudentTutorRequest, bool>> expression, bool? isActive = true)
         {
             if (isActive.HasValue)

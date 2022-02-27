@@ -59,6 +59,20 @@ namespace TutoringSystem.Infrastructure.Repositories
             return orders;
         }
 
+        public async Task<IEnumerable<AdditionalOrder>> GetOrdersCollectionAsync(Expression<Func<AdditionalOrder, bool>> expression, bool? isActive = true, bool isEagerLoadingEnabled = false)
+        {
+            if (isActive.HasValue)
+            {
+                ExpressionMerger.MergeExpression(ref expression, o => o.IsActive.Equals(isActive.Value));
+            }
+
+            var orders = !isEagerLoadingEnabled
+                ? Find(expression)
+                : GetOrdersCollectionWithEagerLoading(expression);
+
+            return await orders.ToListAsync();
+        }
+
         public bool IsOrderExist(Expression<Func<AdditionalOrder, bool>> expression, bool? isActive = true)
         {
             if (isActive.HasValue)

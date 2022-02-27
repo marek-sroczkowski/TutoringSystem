@@ -48,6 +48,15 @@ namespace TutoringSystem.Infrastructure.Repositories
             return availabilities;
         }
 
+        public async Task<IEnumerable<Availability>> GetAvailabilitiesCollectionAsync(Expression<Func<Availability, bool>> expression, bool isEagerLoadingEnabled = false)
+        {
+            var availabilities = isEagerLoadingEnabled
+                ? GetAvailabilitiesCollectionWithEagerLoading(expression)
+                : Find(expression);
+
+            return await availabilities.ToListAsync();
+        }
+
         public bool IsAvailabilityExist(Expression<Func<Availability, bool>> expression)
         {
             bool exist = Contains(expression);

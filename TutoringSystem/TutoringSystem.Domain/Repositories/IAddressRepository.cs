@@ -13,6 +13,7 @@ namespace TutoringSystem.Domain.Repositories
         Task<bool> AddAddressesCollectionAsync(IEnumerable<Address> addresses);
         Task<Address> GetAddressAsync(Expression<Func<Address, bool>> expression, bool isEagerLoadingEnabled = false);
         IQueryable<Address> GetAddressesCollection(Expression<Func<Address, bool>> expression, bool isEagerLoadingEnabled = false);
+        Task<IEnumerable<Address>> GetAddressesCollectionAsync(Expression<Func<Address, bool>> expression, bool isEagerLoadingEnabled = false);
         bool IsAddressExist(Expression<Func<Address, bool>> expression);
         Task<bool> RemoveAddressAsync(Address address);
         Task<bool> UpdateAddressAsync(Address updatedAddress);

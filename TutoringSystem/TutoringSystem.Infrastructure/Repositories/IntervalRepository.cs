@@ -48,6 +48,15 @@ namespace TutoringSystem.Infrastructure.Repositories
             return intervals;
         }
 
+        public async Task<IEnumerable<Interval>> GetIntervalsCollectionAsync(Expression<Func<Interval, bool>> expression, bool isEagerLoadingEnabled = false)
+        {
+            var intervals = isEagerLoadingEnabled
+                ? GetIntervalsCollectionWithEagerLoading(expression)
+                : Find(expression);
+
+            return await intervals.ToListAsync();
+        }
+
         public bool IsIntervalExist(Expression<Func<Interval, bool>> expression)
         {
             bool exist = Contains(expression);

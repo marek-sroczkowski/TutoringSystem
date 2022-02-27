@@ -48,6 +48,15 @@ namespace TutoringSystem.Infrastructure.Repositories
             return contact;
         }
 
+        public async Task<IEnumerable<PushNotificationToken>> GetTokensCollectionAsync(Expression<Func<PushNotificationToken, bool>> expression, bool isEagerLoadingEnabled = false)
+        {
+            var contact = isEagerLoadingEnabled
+                ? GetTokensCollectionWithEagerLoading(expression)
+                : Find(expression);
+
+            return await contact.ToListAsync();
+        }
+
         public bool IsTokenExist(Expression<Func<PushNotificationToken, bool>> expression)
         {
             var exist = Contains(expression);

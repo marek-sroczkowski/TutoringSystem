@@ -59,6 +59,20 @@ namespace TutoringSystem.Infrastructure.Repositories
             return tokens;
         }
 
+        public async Task<IEnumerable<ActivationToken>> GetTokensCollectionAsync(Expression<Func<ActivationToken, bool>> expression, bool? isActive = true, bool isEagerLoadingEnabled = false)
+        {
+            if (isActive.HasValue)
+            {
+                ExpressionMerger.MergeExpression(ref expression, r => r.IsActive.Equals(isActive.Value));
+            }
+
+            var tokens = isEagerLoadingEnabled
+                ? GetTokensCollectionWithEagerLoading(expression)
+                : Find(expression);
+
+            return await tokens.ToListAsync();
+        }
+
         public bool IsTokenExist(Expression<Func<ActivationToken, bool>> expression, bool? isActive = true)
         {
             if (isActive.HasValue)

@@ -13,6 +13,7 @@ namespace TutoringSystem.Domain.Repositories
         Task<bool> AddPhoneNumbersCollectionAsync(IEnumerable<PhoneNumber> phoneNumbers);
         Task<PhoneNumber> GetPhoneNumberAsync(Expression<Func<PhoneNumber, bool>> expression, bool? isActive = true, bool isEagerLoadingEnabled = false);
         IQueryable<PhoneNumber> GetPhoneNumbersCollection(Expression<Func<PhoneNumber, bool>> expression, bool? isActive = true, bool isEagerLoadingEnabled = false);
+        Task<IEnumerable<PhoneNumber>> GetPhoneNumbersCollectionAsync(Expression<Func<PhoneNumber, bool>> expression, bool? isActive = true, bool isEagerLoadingEnabled = false);
         bool IsPhoneNumberExist(Expression<Func<PhoneNumber, bool>> expression, bool? isActive = true);
         Task<bool> RemovePhoneNumberAsync(PhoneNumber phoneNumber);
         Task<bool> UpdatePhoneNumberAsync(PhoneNumber phoneNumber);

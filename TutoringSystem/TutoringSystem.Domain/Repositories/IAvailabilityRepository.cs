@@ -17,5 +17,6 @@ namespace TutoringSystem.Domain.Repositories
         Task<bool> RemoveAvailabilityAsync(Availability availability);
         Task<bool> UpdateAvailabilityAsync(Availability updatedAvailability);
         Task<bool> UpdateAvailabilitiesCollectionAsync(IEnumerable<Availability> availabilities);
+        Task<IEnumerable<Availability>> GetAvailabilitiesCollectionAsync(Expression<Func<Availability, bool>> expression, bool isEagerLoadingEnabled = false);
     }
 }

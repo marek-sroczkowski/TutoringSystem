@@ -51,6 +51,17 @@ namespace TutoringSystem.Infrastructure.Repositories
             return addresses;
         }
 
+        public async Task<IEnumerable<Address>> GetAddressesCollectionAsync(Expression<Func<Address, bool>> expression, bool isEagerLoadingEnabled = false)
+        {
+            ExpressionMerger.MergeExpression(ref expression, a => a.User.IsActive);
+
+            var addresses = isEagerLoadingEnabled
+                ? GetAddressesCollectionWithEagerLoading(expression)
+                : Find(expression);
+
+            return await addresses.ToListAsync();
+        }
+
         public bool IsAddressExist(Expression<Func<Address, bool>> expression)
         {
             bool exist = Contains(expression);

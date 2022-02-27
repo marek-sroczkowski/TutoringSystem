@@ -59,6 +59,20 @@ namespace TutoringSystem.Infrastructure.Repositories
             return reservations;
         }
 
+        public async Task<IEnumerable<SingleReservation>> GetReservationsCollectionAsync(Expression<Func<SingleReservation, bool>> expression, bool? isActive = true, bool isEagerLoadingEnabled = false)
+        {
+            if (isActive.HasValue)
+            {
+                ExpressionMerger.MergeExpression(ref expression, o => o.IsActive.Equals(isActive.Value));
+            }
+
+            var reservations = isEagerLoadingEnabled
+                ? GetReservationsCollectionWithEagerLoading(expression)
+                : Find(expression);
+
+            return await reservations.ToListAsync();
+        }
+
         public bool IsReservationExist(Expression<Func<SingleReservation, bool>> expression, bool? isActive = true)
         {
             if (isActive.HasValue)
