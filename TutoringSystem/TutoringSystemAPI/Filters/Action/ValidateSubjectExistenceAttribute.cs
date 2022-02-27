@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 using TutoringSystem.Application.Dtos.SubjectDtos;
 using TutoringSystem.Domain.Repositories;
 
-namespace TutoringSystem.API.Filters.TypeFilters
+namespace TutoringSystem.API.Filters.Action
 {
     public class ValidateSubjectExistenceAttribute : TypeFilterAttribute
     {
@@ -28,7 +28,7 @@ namespace TutoringSystem.API.Filters.TypeFilters
                     var subjectId = context.ActionArguments["subjectId"] as long?;
                     if (subjectId.HasValue)
                     {
-                        if ((await subjectRepository.GetSubjectAsync(s => s.Id.Equals(subjectId.Value))) == null)
+                        if (!subjectRepository.IsSubjectExist(s => s.Id.Equals(subjectId.Value)))
                         {
                             context.Result = new NotFoundObjectResult(subjectId.Value);
                             return;
@@ -40,13 +40,14 @@ namespace TutoringSystem.API.Filters.TypeFilters
                     var subject = context.ActionArguments["model"] as UpdatedSubjectDto;
                     if (subject != null)
                     {
-                        if ((await subjectRepository.GetSubjectAsync(s => s.Id.Equals(subject.Id))) == null)
+                        if (!subjectRepository.IsSubjectExist(s => s.Id.Equals(subject.Id)))
                         {
                             context.Result = new NotFoundObjectResult(subject.Id);
                             return;
                         }
                     }
                 }
+
                 await next();
             }
         }

@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 using TutoringSystem.Application.Dtos.ContactDtos;
 using TutoringSystem.Domain.Repositories;
 
-namespace TutoringSystem.API.Filters.TypeFilters
+namespace TutoringSystem.API.Filters.Action
 {
     public class ValidateContactExistenceAttribute : TypeFilterAttribute
     {
@@ -28,7 +28,7 @@ namespace TutoringSystem.API.Filters.TypeFilters
                     var contact = context.ActionArguments["model"] as UpdatedContactDto;
                     if (contact != null)
                     {
-                        if ((await contactRepository.GetContactAsync(c => c.Id.Equals(contact.Id))) == null)
+                        if (!contactRepository.IsContackExist(c => c.Id.Equals(contact.Id)))
                         {
                             context.Result = new NotFoundObjectResult(contact.Id);
                             return;
@@ -40,7 +40,7 @@ namespace TutoringSystem.API.Filters.TypeFilters
                     var contactId = context.ActionArguments["contactId"] as long?;
                     if (contactId.HasValue)
                     {
-                        if ((await contactRepository.GetContactAsync(c => c.Id.Equals(contactId.Value))) == null)
+                        if (!contactRepository.IsContackExist(c => c.Id.Equals(contactId.Value)))
                         {
                             context.Result = new NotFoundObjectResult(contactId.Value);
                             return;

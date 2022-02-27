@@ -9,7 +9,7 @@ using TutoringSystem.Application.Services.Interfaces;
 using TutoringSystem.Application.Authorization;
 using TutoringSystem.Domain.Entities.Enums;
 using TutoringSystem.Application.Parameters;
-using TutoringSystem.API.Filters.TypeFilters;
+using TutoringSystem.API.Filters.Action;
 using TutoringSystem.Application.Extensions;
 
 namespace TutoringSystem.API.Controllers
@@ -45,7 +45,7 @@ namespace TutoringSystem.API.Controllers
         [ValidateOrderExistence]
         public async Task<ActionResult<OrderDetailsDto>> GetOrderById(long orderId)
         {
-            var order = await additionalOrderService.GetAdditionalOrderByIdAsync(orderId);
+            var order = await additionalOrderService.GetOrderByIdAsync(orderId);
 
             var authorizationResult = authorizationService.AuthorizeAsync(User, order, new ResourceOperationRequirement(OperationType.Read)).Result;
             if (!authorizationResult.Succeeded)
@@ -59,7 +59,7 @@ namespace TutoringSystem.API.Controllers
         [Authorize(Roles = "Tutor")]
         public async Task<ActionResult> AddOrder([FromBody] NewOrderDto model)
         {
-            var order = await additionalOrderService.AddAdditionalOrderAsync(User.GetUserId(), model);
+            var order = await additionalOrderService.AddOrderAsync(User.GetUserId(), model);
             if (order is null)
                 return BadRequest("New order could be not added");
 
@@ -71,7 +71,7 @@ namespace TutoringSystem.API.Controllers
         [ValidateOrderExistence]
         public async Task<ActionResult> UpdateOrder([FromBody] UpdatedOrderDto model)
         {
-            var order = await additionalOrderService.GetAdditionalOrderByIdAsync(model.Id);
+            var order = await additionalOrderService.GetOrderByIdAsync(model.Id);
             var authorizationResult = authorizationService.AuthorizeAsync(User, order, new ResourceOperationRequirement(OperationType.Update)).Result;
             if (!authorizationResult.Succeeded)
                 return Forbid();
@@ -88,12 +88,12 @@ namespace TutoringSystem.API.Controllers
         [ValidateOrderExistence]
         public async Task<ActionResult> DeleteOrder(int orderId)
         {
-            var order = await additionalOrderService.GetAdditionalOrderByIdAsync(orderId);
+            var order = await additionalOrderService.GetOrderByIdAsync(orderId);
             var authorizationResult = authorizationService.AuthorizeAsync(User, order, new ResourceOperationRequirement(OperationType.Delete)).Result;
             if (!authorizationResult.Succeeded)
                 return Forbid();
 
-            var deleted = await additionalOrderService.DeleteAdditionalOrderAsync(orderId);
+            var deleted = await additionalOrderService.RemoveOrderAsync(orderId);
             if (!deleted)
                 return BadRequest("Order could be not deleted");
 
@@ -105,7 +105,7 @@ namespace TutoringSystem.API.Controllers
         [ValidateOrderExistence]
         public async Task<ActionResult> ChangeStatus(int orderId, AdditionalOrderStatus status)
         {
-            var order = await additionalOrderService.GetAdditionalOrderByIdAsync(orderId);
+            var order = await additionalOrderService.GetOrderByIdAsync(orderId);
             var authorizationResult = authorizationService.AuthorizeAsync(User, order, new ResourceOperationRequirement(OperationType.Read)).Result;
             if (!authorizationResult.Succeeded)
                 return Forbid();
@@ -122,7 +122,7 @@ namespace TutoringSystem.API.Controllers
         [ValidateOrderExistence]
         public async Task<ActionResult> ChangePaymentStatus(int orderId, bool isPaid)
         {
-            var order = await additionalOrderService.GetAdditionalOrderByIdAsync(orderId);
+            var order = await additionalOrderService.GetOrderByIdAsync(orderId);
             var authorizationResult = authorizationService.AuthorizeAsync(User, order, new ResourceOperationRequirement(OperationType.Read)).Result;
             if (!authorizationResult.Succeeded)
                 return Forbid();

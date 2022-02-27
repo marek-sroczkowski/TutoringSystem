@@ -4,19 +4,19 @@ using System.Threading.Tasks;
 using TutoringSystem.Application.Dtos.ReservationDtos;
 using TutoringSystem.Domain.Repositories;
 
-namespace TutoringSystem.API.Filters.TypeFilters
+namespace TutoringSystem.API.Filters.Action
 {
-    public class ValidateSingleReservationExistenceAttribute : TypeFilterAttribute
+    public class ValidateRecurringReservationExistenceAttribute : TypeFilterAttribute
     {
-        public ValidateSingleReservationExistenceAttribute() : base(typeof(ValidateReservationExistenceFilterImpl))
+        public ValidateRecurringReservationExistenceAttribute() : base(typeof(ValidateReservationExistenceFilterImpl))
         {
         }
 
         private class ValidateReservationExistenceFilterImpl : IAsyncActionFilter
         {
-            private readonly ISingleReservationRepository reservationRepository;
+            private readonly IRecurringReservationRepository reservationRepository;
 
-            public ValidateReservationExistenceFilterImpl(ISingleReservationRepository reservationRepository)
+            public ValidateReservationExistenceFilterImpl(IRecurringReservationRepository reservationRepository)
             {
                 this.reservationRepository = reservationRepository;
             }
@@ -28,7 +28,7 @@ namespace TutoringSystem.API.Filters.TypeFilters
                     var reservationId = context.ActionArguments["reservationId"] as long?;
                     if (reservationId.HasValue)
                     {
-                        if ((await reservationRepository.GetReservationAsync(r => r.Id.Equals(reservationId.Value))) == null)
+                        if (!reservationRepository.IsReservationExist(r => r.Id.Equals(reservationId.Value)))
                         {
                             context.Result = new NotFoundObjectResult(reservationId.Value);
                             return;
@@ -40,13 +40,14 @@ namespace TutoringSystem.API.Filters.TypeFilters
                     var reservation = context.ActionArguments["model"] as UpdatedTutorReservationDto;
                     if (reservation != null)
                     {
-                        if ((await reservationRepository.GetReservationAsync(r => r.Id.Equals(reservation.Id))) == null)
+                        if (!reservationRepository.IsReservationExist(r => r.Id.Equals(reservation.Id)))
                         {
                             context.Result = new NotFoundObjectResult(reservation.Id);
                             return;
                         }
                     }
                 }
+
                 await next();
             }
         }

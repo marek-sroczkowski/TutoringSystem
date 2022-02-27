@@ -8,7 +8,7 @@ using TutoringSystem.Application.Authorization;
 using TutoringSystem.Application.Dtos.ReservationDtos;
 using TutoringSystem.Application.Services.Interfaces;
 using TutoringSystem.Application.Parameters;
-using TutoringSystem.API.Filters.TypeFilters;
+using TutoringSystem.API.Filters.Action;
 using TutoringSystem.Application.Extensions;
 
 namespace TutoringSystem.API.Controllers
@@ -135,7 +135,7 @@ namespace TutoringSystem.API.Controllers
             if (!authorizationResult.Succeeded)
                 return Forbid();
 
-            var deleted = await reservationService.DeleteReservationAsync(reservationId);
+            var deleted = await reservationService.RemoveReservationAsync(reservationId);
             if (!deleted)
                 return BadRequest("Reservation could be not deleted");
 

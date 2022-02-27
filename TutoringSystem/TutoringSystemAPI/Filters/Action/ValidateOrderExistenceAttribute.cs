@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 using TutoringSystem.Application.Dtos.AdditionalOrderDtos;
 using TutoringSystem.Domain.Repositories;
 
-namespace TutoringSystem.API.Filters.TypeFilters
+namespace TutoringSystem.API.Filters.Action
 {
     public class ValidateOrderExistenceAttribute : TypeFilterAttribute
     {
@@ -28,7 +28,7 @@ namespace TutoringSystem.API.Filters.TypeFilters
                     var orderId = context.ActionArguments["orderId"] as long?;
                     if (orderId.HasValue)
                     {
-                        if ((await additionalOrderRepository.GetAdditionalOrderAsync(o => o.Id.Equals(orderId.Value))) == null)
+                        if (!additionalOrderRepository.IsOrderExist(o => o.Id.Equals(orderId.Value)))
                         {
                             context.Result = new NotFoundObjectResult(orderId.Value);
                             return;
@@ -40,7 +40,7 @@ namespace TutoringSystem.API.Filters.TypeFilters
                     var order = context.ActionArguments["model"] as UpdatedOrderDto;
                     if(order != null)
                     {
-                        if ((await additionalOrderRepository.GetAdditionalOrderAsync(o => o.Id.Equals(order.Id))) == null)
+                        if (!additionalOrderRepository.IsOrderExist(o => o.Id.Equals(order.Id)))
                         {
                             context.Result = new NotFoundObjectResult(order.Id);
                             return;

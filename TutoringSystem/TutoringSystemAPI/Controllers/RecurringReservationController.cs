@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using TutoringSystem.API.Filters.TypeFilters;
+using TutoringSystem.API.Filters.Action;
 using TutoringSystem.Application.Authorization;
 using TutoringSystem.Application.Dtos.Enums;
 using TutoringSystem.Application.Dtos.ReservationDtos;
@@ -99,7 +99,7 @@ namespace TutoringSystem.API.Controllers
             if (!authorizationResult.Succeeded)
                 return Forbid();
 
-            var deleted = await reservationService.DeleteReservationAsync(reservationId, mode);
+            var deleted = await reservationService.RemoveReservationAsync(reservationId, mode);
             if (!deleted)
                 return BadRequest("Reservation could be not deleted");
 

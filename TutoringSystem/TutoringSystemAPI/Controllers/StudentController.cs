@@ -4,7 +4,7 @@ using Swashbuckle.AspNetCore.Annotations;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using TutoringSystem.Application.Extensions;
-using TutoringSystem.API.Filters.TypeFilters;
+using TutoringSystem.API.Filters.Action;
 using TutoringSystem.Application.Dtos.TutorDtos;
 using TutoringSystem.Application.Services.Interfaces;
 using TutoringSystem.Application.Dtos.StudentDtos;
@@ -78,18 +78,6 @@ namespace TutoringSystem.API.Controllers
             var removed = await studentService.RemoveStudentAsync(User.GetUserId(), studentId);
             if (!removed)
                 return BadRequest("Student could be not removed from tutor's student list");
-
-            return NoContent();
-        }
-
-        [SwaggerOperation(Summary = "Removes all students from the current logged in tutor's student list")]
-        [HttpDelete("all")]
-        [Authorize(Roles = "Tutor")]
-        public async Task<ActionResult> RemoveAllStudent()
-        {
-            var removed = await studentService.RemoveAllStudentsAsync(User.GetUserId());
-            if (!removed)
-                return BadRequest("Student list could be not cleared");
 
             return NoContent();
         }

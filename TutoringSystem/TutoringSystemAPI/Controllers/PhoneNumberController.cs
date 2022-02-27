@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using TutoringSystem.Application.Dtos.PhoneNumberDtos;
 using TutoringSystem.Application.Services.Interfaces;
-using TutoringSystem.API.Filters.TypeFilters;
+using TutoringSystem.API.Filters.Action;
 
 namespace TutoringSystem.API.Controllers
 {
@@ -75,7 +75,7 @@ namespace TutoringSystem.API.Controllers
         [ValidatePhoneNumberExistence]
         public async Task<ActionResult> RemovePhone(long phoneNumberId)
         {
-            var removed = await phoneNumberService.DeletePhoneNumberAsync(phoneNumberId);
+            var removed = await phoneNumberService.RemovePhoneNumberAsync(phoneNumberId);
             if (!removed)
                 return BadRequest("Phone number could be not removed");
 

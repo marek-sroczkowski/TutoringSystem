@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using TutoringSystem.API.Filters.TypeFilters;
+using TutoringSystem.API.Filters.Action;
 using TutoringSystem.Application.Dtos.Enums;
 using TutoringSystem.Application.Dtos.StudentRequestDtos;
 using TutoringSystem.Application.Extensions;

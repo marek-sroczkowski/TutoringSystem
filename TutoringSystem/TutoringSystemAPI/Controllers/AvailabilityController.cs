@@ -5,7 +5,7 @@ using Swashbuckle.AspNetCore.Annotations;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using TutoringSystem.Application.Extensions;
-using TutoringSystem.API.Filters.TypeFilters;
+using TutoringSystem.API.Filters.Action;
 using TutoringSystem.Application.Authorization;
 using TutoringSystem.Application.Dtos.AvailabilityDtos;
 using TutoringSystem.Application.Parameters;
@@ -113,7 +113,7 @@ namespace TutoringSystem.API.Controllers
             if (!authorizationResult.Succeeded)
                 return Forbid();
 
-            var deleted = await availabilityService.DeleteAvailabilityAsync(availabilityId);
+            var deleted = await availabilityService.RemoveAvailabilityAsync(availabilityId);
             if (!deleted)
                 return BadRequest("Availability could be not deleted");
 
