@@ -93,6 +93,7 @@ namespace TutoringSystem.Infrastructure.Repositories
         private async Task<Contact> GetContactWithEagerLoadingAsync(Expression<Func<Contact, bool>> expression)
         {
             var contact = await Find(expression)
+                .Include(c => c.User)
                 .Include(c => c.PhoneNumbers.Where(p => p.IsActive))
                 .FirstOrDefaultAsync();
 
@@ -110,7 +111,8 @@ namespace TutoringSystem.Infrastructure.Repositories
         private IQueryable<Contact> GetContactsCollectionWithEagerLoading(Expression<Func<Contact, bool>> expression)
         {
             var contacts = Find(expression)
-                 .Include(c => c.PhoneNumbers.Where(p => p.IsActive));
+                .Include(c => c.User)
+                .Include(c => c.PhoneNumbers.Where(p => p.IsActive));
 
             return contacts;
         }
