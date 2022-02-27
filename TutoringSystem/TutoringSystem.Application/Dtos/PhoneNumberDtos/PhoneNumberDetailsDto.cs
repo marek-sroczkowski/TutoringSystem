@@ -12,7 +12,8 @@ namespace TutoringSystem.Application.Dtos.PhoneNumberDtos
 
         public void Mapping(Profile profile)
         {
-            profile.CreateMap<PhoneNumber, PhoneNumberDetailsDto>().ReverseMap();
+            profile.CreateMap<PhoneNumber, PhoneNumberDetailsDto>()
+                .ReverseMap();
         }
     }
 }

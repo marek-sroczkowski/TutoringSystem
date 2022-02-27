@@ -42,7 +42,7 @@ namespace TutoringSystem.Application.Services
                 Credential = GoogleCredential.FromFile("firebase_private_key.json")
             });
 
-            var registrationToken = await tokenRepository.GetPushNotificationTokenAsync(t => t.UserId.Equals(tutorId));
+            var registrationToken = await tokenRepository.GetTokenAsync(t => t.UserId.Equals(tutorId));
             var message = new Message()
             {
                 Token = registrationToken.Token,

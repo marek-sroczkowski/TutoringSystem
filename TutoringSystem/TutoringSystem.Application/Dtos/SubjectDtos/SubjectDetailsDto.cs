@@ -1,5 +1,4 @@
 ﻿using AutoMapper;
-using TutoringSystem.Application.Dtos.TutorDtos;
 using TutoringSystem.Application.Mapping;
 using TutoringSystem.Domain.Entities;
 using TutoringSystem.Domain.Entities.Enums;
@@ -13,7 +12,7 @@ namespace TutoringSystem.Application.Dtos.SubjectDtos
         public string Description { get; set; }
         public SubjectPlace Place { get; set; }
         public SubjectCategory Category { get; set; }
-        public TutorDto Tutor { get; set; }
+        public long TutorId { get; set; }
 
         public void Mapping(Profile profile)
         {

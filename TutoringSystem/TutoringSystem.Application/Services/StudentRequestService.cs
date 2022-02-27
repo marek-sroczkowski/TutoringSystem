@@ -32,17 +32,25 @@ namespace TutoringSystem.Application.Services
         {
             var existingStudentTutor = await studentTutorRepository.GetStudentTutorAsync(st => st.StudentId.Equals(studentId) && st.TutorId.Equals(tutorId));
             if (existingStudentTutor != null && existingStudentTutor.IsActive)
+            {
                 return AddTutorToStudentStatus.TutorWasAlreadyAdded;
+            }
 
             var tutor = await tutorRepository.GetTutorAsync(s => s.Id.Equals(tutorId));
             if (tutor is null)
+            {
                 return AddTutorToStudentStatus.IncorrectTutor;
+            }
 
             var request = await requestRepository.GetRequestAsync(r => r.StudentId.Equals(studentId) && r.TutorId.Equals(tutorId));
             if (request != null && request.IsActive)
+            {
                 return AddTutorToStudentStatus.RequestWasAlreadyCreated;
+            }
             else if (request != null && !request.IsActive)
+            {
                 return await ActivateRequestAsync(request);
+            }
 
             return await TryCreateRequest(studentId, tutorId);
         }
@@ -51,7 +59,9 @@ namespace TutoringSystem.Application.Services
         {
             var request = await requestRepository.GetRequestAsync(r => r.Id.Equals(requestId));
             if (!request.IsActive)
+            {
                 return false;
+            }
 
             request.IsAccepted = false;
             request.IsActive = false;
@@ -61,14 +71,14 @@ namespace TutoringSystem.Application.Services
 
         public async Task<IEnumerable<StudentRequestDto>> GetRequestsByStudentId(long studentId)
         {
-            var requests = await requestRepository.GetRequestsCollectionAsync(r => r.StudentId.Equals(studentId) && r.IsActive && !r.IsAccepted);
+            var requests = await requestRepository.GetRequestsCollectionAsync(r => r.StudentId.Equals(studentId) && r.IsActive && !r.IsAccepted, isEagerLoadingEnabled: true);
 
             return mapper.Map<IEnumerable<StudentRequestDto>>(requests);
         }
 
         public async Task<IEnumerable<StudentRequestDto>> GetRequestsByTutorId(long tutorId)
         {
-            var requests = await requestRepository.GetRequestsCollectionAsync(r => r.TutorId.Equals(tutorId) && r.IsActive && !r.IsAccepted);
+            var requests = await requestRepository.GetRequestsCollectionAsync(r => r.TutorId.Equals(tutorId) && r.IsActive && !r.IsAccepted, isEagerLoadingEnabled: true);
 
             return mapper.Map<IEnumerable<StudentRequestDto>>(requests);
         }
@@ -78,16 +88,17 @@ namespace TutoringSystem.Application.Services
             request.IsActive = true;
             request.IsAccepted = false;
             request.CreatedDate = DateTime.Now;
-            return await requestRepository.UpdateRequestAsync(request) ?
-                AddTutorToStudentStatus.RequestCreated :
-                AddTutorToStudentStatus.InternalError;
+
+            return await requestRepository.UpdateRequestAsync(request)
+                ? AddTutorToStudentStatus.RequestCreated
+                : AddTutorToStudentStatus.InternalError;
         }
 
         private async Task<AddTutorToStudentStatus> TryCreateRequest(long studentId, long tutorId)
         {
-            return await requestRepository.AddRequestAsync(new StudentTutorRequest { StudentId = studentId, TutorId = tutorId }) ?
-                AddTutorToStudentStatus.RequestCreated :
-                AddTutorToStudentStatus.InternalError;
+            return await requestRepository.AddRequestAsync(new StudentTutorRequest { StudentId = studentId, TutorId = tutorId })
+                ? AddTutorToStudentStatus.RequestCreated
+                : AddTutorToStudentStatus.InternalError;
         }
     }
 }

@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
 using TutoringSystem.Application.Dtos.AvailabilityDtos;
@@ -26,23 +27,23 @@ namespace TutoringSystem.Application.Services
 
         public async Task<AvailabilityDto> AddAvailabilityAsync(long tutorId, NewAvailabilityDto newAvailability)
         {
-            if (!(await ValidateNewAvailabilityAsync(newAvailability, tutorId)))
+            if (!await ValidateNewAvailabilityAsync(newAvailability, tutorId))
+            {
                 return null;
+            }
 
             var availability = mapper.Map<Availability>(newAvailability);
             availability.TutorId = tutorId;
             var created = await availabilityRepository.AddAvailabilityAsync(availability);
-            if (!created)
-                return null;
 
-            return mapper.Map<AvailabilityDto>(availability);
+            return created ? mapper.Map<AvailabilityDto>(availability) : null;
         }
 
-        public async Task<bool> DeleteAvailabilityAsync(long availabilityId)
+        public async Task<bool> RemoveAvailabilityAsync(long availabilityId)
         {
             var availability = await availabilityRepository.GetAvailabilityAsync(a => a.Id.Equals(availabilityId));
 
-            return await availabilityRepository.DeleteAvailabilityAsync(availability);
+            return await availabilityRepository.RemoveAvailabilityAsync(availability);
         }
 
         public async Task<PagedList<AvailabilityDto>> GetAvailabilitiesByTutorAsync(long tutorId, AvailabilityParameters parameters)
@@ -68,14 +69,14 @@ namespace TutoringSystem.Application.Services
 
         public async Task<AvailabilityDetailsDto> GetAvailabilityByIdAsync(long availabilityId)
         {
-            var availability = await availabilityRepository.GetAvailabilityAsync(a => a.Id.Equals(availabilityId));
+            var availability = await availabilityRepository.GetAvailabilityAsync(a => a.Id.Equals(availabilityId), true);
 
             return mapper.Map<AvailabilityDetailsDto>(availability);
         }
 
         public async Task<AvailabilityDetailsDto> GetTodaysAvailabilityByTutorAsync(long tutorId)
         {
-            var availability = await availabilityRepository.GetAvailabilityAsync(a => a.TutorId.Equals(tutorId) && a.Date.Date.Equals(DateTime.Now.Date));
+            var availability = await availabilityRepository.GetAvailabilityAsync(a => a.TutorId.Equals(tutorId) && a.Date.Date.Equals(DateTime.Now.Date), true);
 
             return mapper.Map<AvailabilityDetailsDto>(availability);
         }
@@ -84,25 +85,31 @@ namespace TutoringSystem.Application.Services
         {
             var existingAvailability = await availabilityRepository.GetAvailabilityAsync(a => a.Id.Equals(updatedAvailability.Id));
             if (!ValidateUpdatedAvailability(updatedAvailability, existingAvailability.Date))
+            {
                 return false;
+            }
 
             var availability = mapper.Map(updatedAvailability, existingAvailability);
 
             return await availabilityRepository.UpdateAvailabilityAsync(availability);
         }
 
-        private void FilterByStartDate(ref Expression<Func<Availability, bool>> expression, DateTime? startDate)
+        private static void FilterByStartDate(ref Expression<Func<Availability, bool>> expression, DateTime? startDate)
         {
             if (!startDate.HasValue)
+            {
                 return;
+            }
 
             ExpressionMerger.MergeExpression(ref expression, a => a.Date >= startDate.Value);
         }
 
-        private void FilterByEndDate(ref Expression<Func<Availability, bool>> expression, DateTime? endDate)
+        private static void FilterByEndDate(ref Expression<Func<Availability, bool>> expression, DateTime? endDate)
         {
             if (!endDate.HasValue)
+            {
                 return;
+            }
 
             ExpressionMerger.MergeExpression(ref expression, a => a.Date <= endDate.Value);
         }
@@ -172,7 +179,7 @@ namespace TutoringSystem.Application.Services
             return true;
         }
 
-        private bool CheckForDuplicatesInNew(NewIntervalDto interval, ICollection<NewIntervalDto> intervals)
+        private static bool CheckForDuplicatesInNew(NewIntervalDto interval, ICollection<NewIntervalDto> intervals)
         {
             bool oneDuplicate = false;
 
@@ -191,7 +198,7 @@ namespace TutoringSystem.Application.Services
             return false;
         }
 
-        private bool CheckForDuplicatesInUpdated(UpdatedIntervalDto interval, ICollection<UpdatedIntervalDto> intervals)
+        private static bool CheckForDuplicatesInUpdated(UpdatedIntervalDto interval, ICollection<UpdatedIntervalDto> intervals)
         {
             bool oneDuplicate = false;
 

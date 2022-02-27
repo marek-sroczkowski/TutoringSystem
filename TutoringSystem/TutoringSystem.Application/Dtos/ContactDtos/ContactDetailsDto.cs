@@ -1,7 +1,5 @@
 ﻿using AutoMapper;
 using System.Collections.Generic;
-using System.Linq;
-using TutoringSystem.Application.Dtos.AccountDtos;
 using TutoringSystem.Application.Dtos.PhoneNumberDtos;
 using TutoringSystem.Application.Mapping;
 using TutoringSystem.Domain.Entities;
@@ -17,24 +15,10 @@ namespace TutoringSystem.Application.Dtos.ContactDtos
 
         public IEnumerable<PhoneNumberDto> PhoneNumbers { get; set; }
 
-        public virtual UserDto User { get; set; }
-
         public void Mapping(Profile profile)
         {
-            profile.CreateMap<Contact, ContactDetailsDto>();
-        }
-
-        public ContactDetailsDto()
-        {
-        }
-
-        public ContactDetailsDto(Contact contact)
-        {
-            Id = contact.Id;
-            Email = contact.Email;
-            DiscordName = contact.DiscordName;
-
-            PhoneNumbers = contact.PhoneNumbers?.Select(p => new PhoneNumberDto(p));
+            profile.CreateMap<Contact, ContactDetailsDto>()
+                .ForMember(dest => dest.Owner, map => map.MapFrom(src => $"{src.User.FirstName} {src.User.LastName}"));
         }
     }
 }

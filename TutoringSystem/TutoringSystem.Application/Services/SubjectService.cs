@@ -19,33 +19,20 @@ namespace TutoringSystem.Application.Services
             this.mapper = mapper;
         }
 
-        public async Task<bool> ActivateSubjectAsync(long subjectId)
-        {
-            var inactiveSubject = await subjectRepository.GetSubjectAsync(s => s.Id.Equals(subjectId));
-            if (inactiveSubject is null)
-                return false;
-            inactiveSubject.IsActive = true;
-
-            return await subjectRepository.UpdateSubjectAsync(inactiveSubject);
-        }
-
         public async Task<SubjectDto> AddSubjectAsync(long tutorId, NewSubjectDto newSubjectModel)
         {
             var subject = mapper.Map<Subject>(newSubjectModel);
             subject.TutorId = tutorId;
-
             var created = await subjectRepository.AddSubjectAsync(subject);
-            if (!created)
-                return null;
 
-            return mapper.Map<SubjectDto>(subject);
+            return created ? mapper.Map<SubjectDto>(subject) : null;
         }
 
         public async Task<bool> DeactivateSubjectAsync(long subjectId)
         {
             var subject = await subjectRepository.GetSubjectAsync(s => s.Id.Equals(subjectId));
 
-            return await subjectRepository.DeleteSubjectAsync(subject);
+            return await subjectRepository.RemoveSubjectAsync(subject);
         }
 
         public async Task<SubjectDetailsDto> GetSubjectByIdAsync(long subjectId)
@@ -55,11 +42,11 @@ namespace TutoringSystem.Application.Services
             return mapper.Map<SubjectDetailsDto>(subject);
         }
 
-        public async Task<ICollection<SubjectDto>> GetTutorSubjectsAsync(long tutorId)
+        public async Task<IEnumerable<SubjectDto>> GetTutorSubjectsAsync(long tutorId)
         {
             var subjects = await subjectRepository.GetSubjectsCollectionAsync(s => s.TutorId.Equals(tutorId));
 
-            return mapper.Map<ICollection<SubjectDto>>(subjects);
+            return mapper.Map<IEnumerable<SubjectDto>>(subjects);
         }
 
         public async Task<bool> UpdateSubjectAsync(UpdatedSubjectDto updatedSubject)

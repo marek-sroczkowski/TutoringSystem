@@ -11,7 +11,6 @@ namespace TutoringSystem.Application.Services.Interfaces
         Task<IEnumerable<TutorDto>> GetTutorsByStudentIdAsync(long studentId);
         Task<TutorDetailsDto> GetTutorAsync(long tutorId, long studentId);
         Task<bool> RemoveTutorAsync(long studentId, long tutorId);
-        Task<bool> RemoveAllTutorsAsync(long studentId);
         Task<PagedList<TutorSimpleDto>> GetTutors(SearchedUserParameters parameters);
     }
 }

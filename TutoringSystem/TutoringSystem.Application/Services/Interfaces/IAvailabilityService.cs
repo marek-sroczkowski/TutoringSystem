@@ -13,6 +13,6 @@ namespace TutoringSystem.Application.Services.Interfaces
         Task<PagedList<AvailabilityDto>> GetAvailabilitiesByTutorAsync(long tutorId, AvailabilityParameters parameters);
         Task<PagedList<AvailabilityDto>> GetFutureAvailabilitiesByTutorAsync(long tutorId, FutureAvailabilityParameters parameters);
         Task<bool> UpdateAvailabilityAsync(UpdatedAvailabilityDto updatedAvailability);
-        Task<bool> DeleteAvailabilityAsync(long availabilityId);
+        Task<bool> RemoveAvailabilityAsync(long availabilityId);
     }
 }

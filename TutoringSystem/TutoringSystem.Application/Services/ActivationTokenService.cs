@@ -23,20 +23,21 @@ namespace TutoringSystem.Application.Services
         public async Task<ActivationTokenDto> AddActivationTokenAsync(long userId)
         {
             await DeactivateTokenAsync(userId);
+
             var generatedToken = new NewActivationTokenDto(GenerateActivationToken(), userId);
             var token = mapper.Map<ActivationToken>(generatedToken);
-            var created = await activationTokenRepository.AddActivationTokenAsync(token);
-            if (!created)
-                return null;
+            var created = await activationTokenRepository.AddTokenAsync(token);
 
-            return mapper.Map<ActivationTokenDto>(token);
+            return created ? mapper.Map<ActivationTokenDto>(token) : null;
         }
 
         private async Task DeactivateTokenAsync(long userId)
         {
-            var token = await activationTokenRepository.GetActivationTokenAsync(t => t.UserId.Equals(userId) && t.ExpirationDate >= DateTime.Now);
+            var token = await activationTokenRepository.GetTokenAsync(t => t.UserId.Equals(userId) && t.ExpirationDate >= DateTime.Now);
             if (token is null)
+            {
                 return;
+            }
 
             token.ExpirationDate = DateTime.Now;
             await activationTokenRepository.UpdateActivationTokenAsync(token);

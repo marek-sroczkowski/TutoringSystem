@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
-using TutoringSystem.Application.Dtos.AccountDtos;
+using TutoringSystem.Application.Dtos.Image;
 
 namespace TutoringSystem.Application.Services.Interfaces
 {
@@ -10,6 +10,6 @@ namespace TutoringSystem.Application.Services.Interfaces
         Task<IEnumerable<ProfileImageDetailsDto>> GetStudentPhotos(long tutorId);
         Task<IEnumerable<ProfileImageDetailsDto>> GetTutorPhotos(long studentId);
         Task<bool> RemoveProfilePictureAsync(long userId);
-        Task<bool> SetProfileImageAsync(long userId, string imageBase64);
+        Task<bool> SetProfileImageAsync(long userId, string firebaseUrl);
     }
 }

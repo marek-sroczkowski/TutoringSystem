@@ -1,6 +1,5 @@
 ﻿using AutoMapper;
 using System;
-using TutoringSystem.Application.Dtos.TutorDtos;
 using TutoringSystem.Application.Mapping;
 using TutoringSystem.Domain.Entities;
 using TutoringSystem.Domain.Entities.Enums;
@@ -17,7 +16,7 @@ namespace TutoringSystem.Application.Dtos.AdditionalOrderDtos
         public double Cost { get; set; }
         public bool IsPaid { get; set; }
         public AdditionalOrderStatus Status { get; set; }
-        public TutorDto Tutor { get; set; }
+        public long TutorId { get; set; }
 
         public void Mapping(Profile profile)
         {

@@ -17,16 +17,19 @@ namespace TutoringSystem.Application.Services
 
         public async Task<bool> PutTokenAsync(long userId, string tokenContent)
         {
-            var token = await tokenRepository.GetPushNotificationTokenAsync(t => t.UserId.Equals(userId));
-            if(token is null)
+            var token = await tokenRepository.GetTokenAsync(t => t.UserId.Equals(userId));
+            if (token is null)
             {
-                token = new PushNotificationToken();
-                token.UserId = userId;
+                token = new PushNotificationToken
+                {
+                    UserId = userId
+                };
             }
+
             token.ModificationDate = DateTime.Now;
             token.Token = tokenContent;
 
-            return await tokenRepository.UpdatePushNotificationTokenAsync(token);
+            return await tokenRepository.UpdateTokenAsync(token);
         }
     }
 }
