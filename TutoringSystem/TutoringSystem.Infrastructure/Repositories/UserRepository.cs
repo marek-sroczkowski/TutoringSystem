@@ -146,6 +146,7 @@ namespace TutoringSystem.Infrastructure.Repositories
                 .Include(u => u.Contact)
                 .Include(u => u.Address)
                 .Include(u => u.ActivationTokens)
+                .Include(u => u.PushNotificationToken)
                 .FirstOrDefaultAsync();
 
             return user;
@@ -164,7 +165,8 @@ namespace TutoringSystem.Infrastructure.Repositories
             var users = Find(expression)
                 .Include(u => u.Contact)
                 .Include(u => u.Address)
-                .Include(u => u.ActivationTokens);
+                .Include(u => u.ActivationTokens)
+                .Include(u => u.PushNotificationToken);
 
             return users;
         }

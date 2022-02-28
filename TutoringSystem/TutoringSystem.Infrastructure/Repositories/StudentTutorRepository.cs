@@ -59,7 +59,7 @@ namespace TutoringSystem.Infrastructure.Repositories
             return result;
         }
 
-        public async Task<IEnumerable<StudentTutor>> GetStudentTuturCollectionAsync(Expression<Func<StudentTutor, bool>> expression, bool? isActive = true, bool isEagerLoadingEnabled = false)
+        public async Task<IEnumerable<StudentTutor>> GetStudentTutorCollectionAsync(Expression<Func<StudentTutor, bool>> expression, bool? isActive = true, bool isEagerLoadingEnabled = false)
         {
             if (isActive.HasValue)
             {
