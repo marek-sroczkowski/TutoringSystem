@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Newtonsoft.Json;
 using Swashbuckle.AspNetCore.Annotations;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -46,12 +45,9 @@ namespace TutoringSystem.API.Controllers
         public async Task<ActionResult<OrderDetailsDto>> GetOrderById(long orderId)
         {
             var order = await additionalOrderService.GetOrderByIdAsync(orderId);
-
             var authorizationResult = authorizationService.AuthorizeAsync(User, order, new ResourceOperationRequirement(OperationType.Read)).Result;
-            if (!authorizationResult.Succeeded)
-                return Forbid();
 
-            return Ok(order);
+            return authorizationResult.Succeeded ? Ok(order) : Forbid();
         }
 
         [SwaggerOperation(Summary = "Creates a new order")]
@@ -60,10 +56,10 @@ namespace TutoringSystem.API.Controllers
         public async Task<ActionResult> AddOrder([FromBody] NewOrderDto model)
         {
             var order = await additionalOrderService.AddOrderAsync(User.GetUserId(), model);
-            if (order is null)
-                return BadRequest("New order could be not added");
 
-            return Created("api/order/" + order.Id, null);
+            return order != null
+                ? Created("api/order/" + order.Id, null)
+                : BadRequest("New order could be not added");
         }
 
         [SwaggerOperation(Summary = "Updates a existing order")]
@@ -74,13 +70,13 @@ namespace TutoringSystem.API.Controllers
             var order = await additionalOrderService.GetOrderByIdAsync(model.Id);
             var authorizationResult = authorizationService.AuthorizeAsync(User, order, new ResourceOperationRequirement(OperationType.Update)).Result;
             if (!authorizationResult.Succeeded)
+            {
                 return Forbid();
+            }
 
             var updated = await additionalOrderService.UpdateAdditionalOrderAsync(model);
-            if (!updated)
-                return BadRequest("Order could be not updated");
 
-            return NoContent();
+            return updated ? NoContent() : BadRequest("Order could be not updated");
         }
 
         [SwaggerOperation(Summary = "Deletes a specific order")]
@@ -91,13 +87,13 @@ namespace TutoringSystem.API.Controllers
             var order = await additionalOrderService.GetOrderByIdAsync(orderId);
             var authorizationResult = authorizationService.AuthorizeAsync(User, order, new ResourceOperationRequirement(OperationType.Delete)).Result;
             if (!authorizationResult.Succeeded)
+            {
                 return Forbid();
+            }
 
             var deleted = await additionalOrderService.RemoveOrderAsync(orderId);
-            if (!deleted)
-                return BadRequest("Order could be not deleted");
 
-            return NoContent();
+            return deleted ? NoContent() : BadRequest("Order could be not deleted");
         }
 
         [SwaggerOperation(Summary = "Changes order status")]
@@ -108,13 +104,13 @@ namespace TutoringSystem.API.Controllers
             var order = await additionalOrderService.GetOrderByIdAsync(orderId);
             var authorizationResult = authorizationService.AuthorizeAsync(User, order, new ResourceOperationRequirement(OperationType.Read)).Result;
             if (!authorizationResult.Succeeded)
+            {
                 return Forbid();
+            }
 
             var changed = await additionalOrderService.ChangeOrderStatusAsync(orderId, status);
-            if (!changed)
-                return BadRequest("Order status could be not changed");
 
-            return NoContent();
+            return changed ? NoContent() : BadRequest("Order status could be not changed");
         }
 
         [SwaggerOperation(Summary = "Changes payment status")]
@@ -125,13 +121,13 @@ namespace TutoringSystem.API.Controllers
             var order = await additionalOrderService.GetOrderByIdAsync(orderId);
             var authorizationResult = authorizationService.AuthorizeAsync(User, order, new ResourceOperationRequirement(OperationType.Read)).Result;
             if (!authorizationResult.Succeeded)
+            {
                 return Forbid();
+            }
 
             var changed = await additionalOrderService.ChangePaymentStatusAsync(orderId, isPaid);
-            if (!changed)
-                return BadRequest("Payment status could be not changed");
 
-            return NoContent();
+            return changed ? NoContent() : BadRequest("Payment status could be not changed");
         }
     }
 }

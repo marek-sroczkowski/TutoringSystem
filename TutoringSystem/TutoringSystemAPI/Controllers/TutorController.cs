@@ -62,10 +62,8 @@ namespace TutoringSystem.API.Controllers
         public async Task<ActionResult> RemoveTutor(long tutorId)
         {
             var removed = await tutorService.RemoveTutorAsync(User.GetUserId(), tutorId);
-            if (!removed)
-                return BadRequest("Tutor could be not removed from student's tutor list");
 
-            return NoContent();
+            return removed ? NoContent() : BadRequest("Tutor could be not removed from student's tutor list");
         }
     }
 }

@@ -76,10 +76,8 @@ namespace TutoringSystem.API.Controllers
         public async Task<ActionResult> RemoveStudent(long studentId)
         {
             var removed = await studentService.RemoveStudentAsync(User.GetUserId(), studentId);
-            if (!removed)
-                return BadRequest("Student could be not removed from tutor's student list");
 
-            return NoContent();
+            return removed ? NoContent() : BadRequest("Student could be not removed from tutor's student list");
         }
 
         [SwaggerOperation(Summary = "Updates student data related to a specific tutor")]
@@ -88,10 +86,8 @@ namespace TutoringSystem.API.Controllers
         public async Task<ActionResult> UpdateStudent([FromBody] UpdatedStudentDto student)
         {
             var updated = await studentService.UpdateStudentAsync(User.GetUserId(), student);
-            if (!updated)
-                return BadRequest("Student could not be updated");
 
-            return NoContent();
+            return updated ? NoContent() : BadRequest("Student could not be updated");
         }
     }
 }

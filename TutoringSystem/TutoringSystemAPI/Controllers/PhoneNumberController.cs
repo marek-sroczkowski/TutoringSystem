@@ -28,10 +28,10 @@ namespace TutoringSystem.API.Controllers
         public async Task<ActionResult> AddPhones(long contactId, [FromBody] NewPhoneNumberDto model)
         {
             var createdPhone = await phoneNumberService.AddPhoneNumberAsync(contactId, model);
-            if (createdPhone is null)
-                return BadRequest("Phone could be not added");
 
-            return Created($"api/contact/{contactId}/phoneNumber/{createdPhone.Id}", null);
+            return createdPhone != null
+                ? Created($"api/contact/{contactId}/phoneNumber/{createdPhone.Id}", null)
+                : BadRequest("Phone could be not added");
         }
 
         [SwaggerOperation(Summary = "Retrieves phone numbers from a specific contact")]
@@ -63,10 +63,8 @@ namespace TutoringSystem.API.Controllers
         public async Task<ActionResult> UpdatePhone([FromBody] UpdatedPhoneNumberDto model)
         {
             var updated = await phoneNumberService.UpdatePhoneNumberAsync(model);
-            if (!updated)
-                return BadRequest("Phone could be not updated");
 
-            return NoContent();
+            return updated ? NoContent() : BadRequest("Phone could be not updated");
         }
 
         [SwaggerOperation(Summary = "Removes a specific phone number")]
@@ -76,10 +74,8 @@ namespace TutoringSystem.API.Controllers
         public async Task<ActionResult> RemovePhone(long phoneNumberId)
         {
             var removed = await phoneNumberService.RemovePhoneNumberAsync(phoneNumberId);
-            if (!removed)
-                return BadRequest("Phone number could be not removed");
 
-            return NoContent();
+            return removed ? NoContent() : BadRequest("Phone number could be not removed");
         }
     }
 }

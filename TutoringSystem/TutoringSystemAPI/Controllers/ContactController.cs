@@ -48,10 +48,8 @@ namespace TutoringSystem.API.Controllers
         public async Task<ActionResult> UpdateContact([FromBody] UpdatedContactDto model)
         {
             var updated = await contactService.UpdateContactAsync(model);
-            if (!updated)
-                return BadRequest("Contact could be not updated");
 
-            return NoContent();
+            return updated ? NoContent() : BadRequest("Contact could be not updated");
         }
     }
 }

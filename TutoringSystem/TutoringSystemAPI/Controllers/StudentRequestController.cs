@@ -48,10 +48,8 @@ namespace TutoringSystem.API.Controllers
         public async Task<ActionResult> DeclineRequest(long requestId)
         {
             var decline = await requestService.DeclineRequest(requestId);
-            if (!decline)
-                return BadRequest("Request could be not decline");
 
-            return Ok();
+            return decline ? Ok() : BadRequest("Request could be not decline");
         }
 
         [SwaggerOperation(Summary = "Retrieves all requests for the currently logged in student")]

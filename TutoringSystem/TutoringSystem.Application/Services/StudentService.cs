@@ -70,7 +70,7 @@ namespace TutoringSystem.Application.Services
 
         public async Task<IEnumerable<StudentDto>> GetStudentsByTutorIdAsync(long tutorId)
         {
-            var students = (await studentTutorRepository.GetStudentTuturCollectionAsync(st => st.TutorId.Equals(tutorId)))
+            var students = (await studentTutorRepository.GetStudentTutorCollectionAsync(st => st.TutorId.Equals(tutorId), isEagerLoadingEnabled: true))
                 .Select(st => st.Student);
 
             return students.Select(s => new StudentDto(s, tutorId)).ToList();
@@ -104,7 +104,7 @@ namespace TutoringSystem.Application.Services
 
         public async Task<bool> UpdateStudentAsync(long tutorId, UpdatedStudentDto student)
         {
-            var studentTutor = await studentTutorRepository.GetStudentTutorAsync(st => st.StudentId.Equals(student.StudentId) && st.TutorId.Equals(tutorId));
+            var studentTutor = await studentTutorRepository.GetStudentTutorAsync(st => st.StudentId.Equals(student.StudentId) && st.TutorId.Equals(tutorId), isEagerLoadingEnabled: true);
             if (studentTutor is null)
             {
                 return false;
@@ -118,7 +118,7 @@ namespace TutoringSystem.Application.Services
             return await studentTutorRepository.UpdateStudentTutorAsync(studentTutor);
         }
 
-        private Expression<Func<Student, bool>> GetExpressionToSearchedStudents(SearchedUserParameters parameters)
+        private static Expression<Func<Student, bool>> GetExpressionToSearchedStudents(SearchedUserParameters parameters)
         {
             Expression<Func<Student, bool>> expression = r => r.Username.ToLower().Contains(parameters.Params.Trim().ToLower()) ||
                 r.FirstName.ToLower().Contains(parameters.Params.Trim().ToLower()) ||

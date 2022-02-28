@@ -33,7 +33,7 @@ namespace TutoringSystem.Application.Services
 
         public async Task<IEnumerable<TutorDto>> GetTutorsByStudentIdAsync(long studentId)
         {
-            var tutors = (await studentTutorRepository.GetStudentTuturCollectionAsync(st => st.StudentId.Equals(studentId)))
+            var tutors = (await studentTutorRepository.GetStudentTutorCollectionAsync(st => st.StudentId.Equals(studentId)))
                 .Select(st => st.Tutor);
 
             return tutors.Select(t => new TutorDto(t, studentId));

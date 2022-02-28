@@ -56,12 +56,9 @@ namespace TutoringSystem.API.Controllers
         public async Task<ActionResult<ReservationDetailsDto>> GetReservation(long reservationId)
         {
             var reservation = await reservationService.GetReservationByIdAsync(reservationId);
-
             var authorizationResult = authorizationService.AuthorizeAsync(User, reservation, new ResourceOperationRequirement(OperationType.Read)).Result;
-            if (!authorizationResult.Succeeded)
-                return Forbid();
 
-            return Ok(reservation);
+            return authorizationResult.Succeeded ? Ok(reservation) : Forbid();
         }
 
         [SwaggerOperation(Summary = "Creates a new student's reservation")]
@@ -70,10 +67,10 @@ namespace TutoringSystem.API.Controllers
         public async Task<ActionResult> CreateStudentReservation([FromBody] NewStudentSingleReservationDto model)
         {
             var reservation = await reservationService.AddReservationByStudentAsync(User.GetUserId(), model);
-            if (reservation is null)
-                return BadRequest("New reservation could be not added");
 
-            return Created("api/reservation/single/" + reservation.Id, null);
+            return reservation != null
+                ? Created("api/reservation/single/" + reservation.Id, null)
+                : BadRequest("New reservation could be not added");
         }
 
         [SwaggerOperation(Summary = "Creates a new tutor's reservation")]
@@ -82,10 +79,10 @@ namespace TutoringSystem.API.Controllers
         public async Task<ActionResult> CreateTutorReservation([FromBody] NewTutorSingleReservationDto model)
         {
             var reservation = await reservationService.AddReservationByTutorAsync(User.GetUserId(), model);
-            if (reservation is null)
-                return BadRequest("New reservation could be not added");
 
-            return Created("api/reservation/single/" + reservation.Id, null);
+            return reservation != null
+                ? Created("api/reservation/single/" + reservation.Id, null)
+                : BadRequest("New reservation could be not added");
         }
 
         [SwaggerOperation(Summary = "Updates a existing reservation by tutor")]
@@ -97,13 +94,13 @@ namespace TutoringSystem.API.Controllers
             var reservation = await reservationService.GetReservationByIdAsync(model.Id);
             var authorizationResult = authorizationService.AuthorizeAsync(User, reservation, new ResourceOperationRequirement(OperationType.Update)).Result;
             if (!authorizationResult.Succeeded)
+            {
                 return Forbid();
+            }
 
             var updated = await reservationService.UpdateTutorReservationAsync(model);
-            if (!updated)
-                return BadRequest("Reservation could be not updated");
 
-            return NoContent();
+            return updated ? NoContent() : BadRequest("Reservation could be not updated");
         }
 
         [SwaggerOperation(Summary = "Updates a existing reservation by student")]
@@ -115,13 +112,13 @@ namespace TutoringSystem.API.Controllers
             var reservation = await reservationService.GetReservationByIdAsync(model.Id);
             var authorizationResult = authorizationService.AuthorizeAsync(User, reservation, new ResourceOperationRequirement(OperationType.Update)).Result;
             if (!authorizationResult.Succeeded)
+            {
                 return Forbid();
+            }
 
             var updated = await reservationService.UpdateStudentReservationAsync(model);
-            if (!updated)
-                return BadRequest("Reservation could be not updated");
 
-            return NoContent();
+            return updated ? NoContent() : BadRequest("Reservation could be not updated");
         }
 
         [SwaggerOperation(Summary = "Deletes a specific reservation")]
@@ -133,13 +130,13 @@ namespace TutoringSystem.API.Controllers
             var reservation = await reservationService.GetReservationByIdAsync(reservationId);
             var authorizationResult = authorizationService.AuthorizeAsync(User, reservation, new ResourceOperationRequirement(OperationType.Delete)).Result;
             if (!authorizationResult.Succeeded)
+            {
                 return Forbid();
+            }
 
             var deleted = await reservationService.RemoveReservationAsync(reservationId);
-            if (!deleted)
-                return BadRequest("Reservation could be not deleted");
 
-            return NoContent();
+            return deleted ? NoContent() : BadRequest("Reservation could be not deleted");
         }
     }
 }

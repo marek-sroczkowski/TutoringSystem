@@ -27,7 +27,7 @@ namespace TutoringSystem.Application.Services
 
         public async Task<ContactDto> GetContactByUserAsync(long userId)
         {
-            var contact = await contactRepository.GetContactAsync(c => c.UserId.Equals(userId));
+            var contact = await contactRepository.GetContactAsync(c => c.UserId.Equals(userId), true);
 
             return mapper.Map<ContactDto>(contact);
         }

@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using TutoringSystem.Application.Dtos.AccountDtos;
 using TutoringSystem.Application.Dtos.EmailDtos;
 using TutoringSystem.Application.Dtos.Enums;
+using TutoringSystem.Application.Dtos.TutorDtos;
 using TutoringSystem.Application.Services.Interfaces;
 using TutoringSystem.Domain.Entities;
 using TutoringSystem.Domain.Repositories;
@@ -44,7 +45,7 @@ namespace TutoringSystem.Application.Services
         {
             await DeactivateNotEnabledUsersAsync();
 
-            var user = await userRepository.GetUserAsync(u => u.Username.Equals(userModel.Username));
+            var user = await userRepository.GetUserAsync(u => u.Username.Equals(userModel.Username), isEagerLoadingEnabled: true);
             if (user is null || ValidatePassword(userModel, user) == PasswordVerificationResult.Failed)
             {
                 return new LoginResposneDto(LoginStatus.InvalidUsernameOrPassword, null);
@@ -73,19 +74,21 @@ namespace TutoringSystem.Application.Services
             return await studentRepository.UpdateStudentAsync(newStudent);
         }
 
-        public async Task<bool> RegisterTutorAsync(RegisterTutorDto newTutor)
+        public async Task<TutorDto> RegisterTutorAsync(RegisterTutorDto newTutor)
         {
             await DeactivateNotEnabledUsersAsync();
 
             var tutor = mapper.Map<Tutor>(newTutor);
             tutor.PasswordHash = passwordHasher.HashPassword(tutor, newTutor.Password);
 
-            return await tutorRepository.AddTutorAsync(tutor) && await SendNewActivationTokenAsync(tutor.Id);
+            var created = await tutorRepository.AddTutorAsync(tutor);
+
+            return created ? mapper.Map<TutorDto>(tutor) : null;
         }
 
         public async Task<bool> ActivateUserByTokenAsync(long userId, string token)
         {
-            var user = await userRepository.GetUserAsync(u => u.Id.Equals(userId) && !u.IsEnable);
+            var user = await userRepository.GetUserAsync(u => u.Id.Equals(userId) && !u.IsEnable, isEagerLoadingEnabled: true);
             if (user is null)
             {
                 return false;
@@ -105,7 +108,7 @@ namespace TutoringSystem.Application.Services
 
         public async Task<bool> SendNewActivationTokenAsync(long userId)
         {
-            var user = await userRepository.GetUserAsync(u => u.Id.Equals(userId) && !u.IsEnable);
+            var user = await userRepository.GetUserAsync(u => u.Id.Equals(userId) && !u.IsEnable, isEagerLoadingEnabled: true);
             if (user is null)
             {
                 return false;
@@ -124,14 +127,14 @@ namespace TutoringSystem.Application.Services
 
         public async Task<bool> DeactivateUserAsync(long userId)
         {
-            var user = await userRepository.GetUserAsync(u => u.Id.Equals(userId));
+            var user = await userRepository.GetUserAsync(u => u.Id.Equals(userId), isEagerLoadingEnabled: true);
 
             return await userRepository.RemoveUserAsync(user);
         }
 
         public async Task<ICollection<WrongPasswordStatus>> ChangePasswordAsync(long userId, PasswordDto passwordModel)
         {
-            var user = await userRepository.GetUserAsync(u => u.Id.Equals(userId));
+            var user = await userRepository.GetUserAsync(u => u.Id.Equals(userId), isEagerLoadingEnabled: true);
             var validationResult = ValidatePassword(user, passwordModel);
 
             if (validationResult.Count == 0)
@@ -153,7 +156,7 @@ namespace TutoringSystem.Application.Services
 
         public async Task<bool> UpdateGeneralUserInfoAsync(long userId, UpdatedUserDto updatedUser)
         {
-            var existingUser = await userRepository.GetUserAsync(u => u.Id.Equals(userId));
+            var existingUser = await userRepository.GetUserAsync(u => u.Id.Equals(userId), isEagerLoadingEnabled: true);
             var user = mapper.Map(updatedUser, existingUser);
 
             return await userRepository.UpdateUserAsync(user);
@@ -209,7 +212,7 @@ namespace TutoringSystem.Application.Services
 
         private async Task DeactivateNotEnabledUsersAsync()
         {
-            var tutors = await tutorRepository.GetTutorsCollectionAsync(u => !u.IsEnable && u.IsActive && u.RegistrationDate.AddDays(1) < DateTime.Now);
+            var tutors = await tutorRepository.GetTutorsCollectionAsync(u => !u.IsEnable && u.IsActive && u.RegistrationDate.AddDays(1) < DateTime.Now, isEagerLoadingEnabled: true);
             tutors.ToList().ForEach(u => u.IsActive = false);
 
             await tutorRepository.UpdateTutorsCollectionAsync(tutors);

@@ -82,7 +82,7 @@ namespace TutoringSystem.Application.Services
         public async Task<IEnumerable<StudentReportDto>> GetStudentsReportAsync(long tutorId, ReportParameters parameters)
         {
             var students = await GetStudents(tutorId);
-            var studentsSummary = students.Select(s => GetStudentSummary(s, tutorId, parameters));
+            var studentsSummary = students.Select(s => GetStudentSummaryAsync(s, tutorId, parameters).Result);
             studentsSummary = studentSortHelper.ApplySort(studentsSummary.AsQueryable(), parameters.OrderBy).AsEnumerable();
 
             return studentsSummary;
@@ -91,7 +91,7 @@ namespace TutoringSystem.Application.Services
         public async Task<IEnumerable<SubjectReportDto>> GetSubjectsReportAsync(long tutorId, ReportParameters parameters)
         {
             var subjects = await subjectRepository.GetSubjectsCollectionAsync(s => s.TutorId.Equals(tutorId), null);
-            var subjectsSummary = subjects.Select(s => GetSubjectReport(s, parameters));
+            var subjectsSummary = subjects.Select(s => GetSubjectReport(s, parameters).Result);
             subjectsSummary = subjectsSummary.Where(p => p != null);
             subjectsSummary = subjectSortHelper.ApplySort(subjectsSummary.AsQueryable(), parameters.OrderBy).AsEnumerable();
 
@@ -111,16 +111,16 @@ namespace TutoringSystem.Application.Services
         public IEnumerable<PlaceReportDto> GetPlacesReport(long tutorId, ReportParameters parameters)
         {
             var places = Enum.GetValues<ReservationPlace>();
-            var placesSummary = places.Select(p => GetPlaceSummary(tutorId, p, parameters));
+            var placesSummary = places.Select(p => GetPlaceSummary(tutorId, p, parameters).Result);
             placesSummary = placesSummary.Where(p => p != null);
             placesSummary = placeSortHelper.ApplySort(placesSummary.AsQueryable(), parameters.OrderBy).AsEnumerable();
 
             return placesSummary;
         }
 
-        private StudentReportDto GetStudentSummary(Student student, long tutorId, ReportParameters parameters)
+        private async Task<StudentReportDto> GetStudentSummaryAsync(Student student, long tutorId, ReportParameters parameters)
         {
-            var reservations = reservationRepository.GetReservationsCollection(GetExpressionToStudentReservations(student.Id, tutorId, parameters));
+            var reservations = await reservationRepository.GetReservationsCollectionAsync(GetExpressionToStudentReservations(student.Id, tutorId, parameters));
 
             return new StudentReportDto
             {
@@ -132,16 +132,18 @@ namespace TutoringSystem.Application.Services
             };
         }
 
-        private SubjectReportDto GetSubjectReport(Subject subject, ReportParameters parameters)
+        private async Task<SubjectReportDto> GetSubjectReport(Subject subject, ReportParameters parameters)
         {
-            var reservations = reservationRepository.GetReservationsCollection(GetExpressionToSubjectReservations(subject.Id, parameters));
-            if (!subject.IsActive && reservations.ToList().Count == 0)
+            var reservations = await reservationRepository.GetReservationsCollectionAsync(GetExpressionToSubjectReservations(subject.Id, parameters));
+            if (!subject.IsActive && !reservations.Any())
+            {
                 return null;
+            }
 
             return new SubjectReportDto
             {
                 SubjectName = subject.Name,
-                ReservationsCount = reservations.ToList().Count,
+                ReservationsCount = reservations.Count(),
                 TotalHours = reservations.Sum(r => r.Duration / 60.0),
                 TotalProfit = reservations.Sum(r => r.Cost)
             };
@@ -165,14 +167,14 @@ namespace TutoringSystem.Application.Services
             };
         }
 
-        private PlaceReportDto GetPlaceSummary(long tutorId, ReservationPlace place, ReportParameters parameters)
+        private async Task<PlaceReportDto> GetPlaceSummary(long tutorId, ReservationPlace place, ReportParameters parameters)
         {
             if (!reservationRepository.IsReservationExist(r => r.TutorId.Equals(tutorId) && r.Place.Equals(place)))
             {
                 return null;
             }
 
-            var reservations = reservationRepository.GetReservationsCollection(GetExpressionToPlaceReservations(tutorId, place, parameters));
+            var reservations = await reservationRepository.GetReservationsCollectionAsync(GetExpressionToPlaceReservations(tutorId, place, parameters));
 
             return new PlaceReportDto
             {
@@ -185,12 +187,12 @@ namespace TutoringSystem.Application.Services
 
         private async Task<IEnumerable<Student>> GetStudents(long tutorId)
         {
-            var studentTutors = await studentTutorRepository.GetStudentTuturCollectionAsync(st => st.TutorId.Equals(tutorId), null);
+            var studentTutors = await studentTutorRepository.GetStudentTutorCollectionAsync(st => st.TutorId.Equals(tutorId), null, true);
 
             return studentTutors is null ? new List<Student>() : studentTutors.Select(st => st.Student);
         }
 
-        private Expression<Func<Reservation, bool>> GetExpressionToTutorReservations(long tutorId, ReportParameters parameters)
+        private static Expression<Func<Reservation, bool>> GetExpressionToTutorReservations(long tutorId, ReportParameters parameters)
         {
             Expression<Func<Reservation, bool>> expression = r => r.TutorId.Equals(tutorId) &&
                     r.StartTime.Date >= parameters.StartDate.Date &&
@@ -199,7 +201,7 @@ namespace TutoringSystem.Application.Services
             return expression;
         }
 
-        private Expression<Func<Reservation, bool>> GetExpressionToStudentReservations(long studentId, long tutorId, ReportParameters parameters)
+        private static Expression<Func<Reservation, bool>> GetExpressionToStudentReservations(long studentId, long tutorId, ReportParameters parameters)
         {
             Expression<Func<Reservation, bool>> expression = r => r.StudentId.Equals(studentId) &&
                     r.TutorId.Equals(tutorId) &&
@@ -209,7 +211,7 @@ namespace TutoringSystem.Application.Services
             return expression;
         }
 
-        private Expression<Func<Reservation, bool>> GetExpressionToSubjectReservations(long subjectId, ReportParameters parameters)
+        private static Expression<Func<Reservation, bool>> GetExpressionToSubjectReservations(long subjectId, ReportParameters parameters)
         {
             Expression<Func<Reservation, bool>> expression = r => r.SubjectId.Equals(subjectId) &&
                     r.StartTime.Date >= parameters.StartDate.Date &&
@@ -218,7 +220,7 @@ namespace TutoringSystem.Application.Services
             return expression;
         }
 
-        private Expression<Func<Reservation, bool>> GetExpressionToSubjectCategoryReservations(long tutorId, SubjectCategory category, ReportParameters parameters)
+        private static Expression<Func<Reservation, bool>> GetExpressionToSubjectCategoryReservations(long tutorId, SubjectCategory category, ReportParameters parameters)
         {
             Expression<Func<Reservation, bool>> expression = r => r.TutorId.Equals(tutorId) &&
                     r.Subject.Category.Equals(category) &&
@@ -228,7 +230,7 @@ namespace TutoringSystem.Application.Services
             return expression;
         }
 
-        private Expression<Func<Reservation, bool>> GetExpressionToPlaceReservations(long tutorId, ReservationPlace place, ReportParameters parameters)
+        private static Expression<Func<Reservation, bool>> GetExpressionToPlaceReservations(long tutorId, ReservationPlace place, ReportParameters parameters)
         {
             Expression<Func<Reservation, bool>> expression = r => r.TutorId.Equals(tutorId) &&
                     r.Place.Equals(place) &&
@@ -238,7 +240,7 @@ namespace TutoringSystem.Application.Services
             return expression;
         }
 
-        private Expression<Func<AdditionalOrder, bool>> GetExpressionToOrders(long tutorId, ReportParameters parameters)
+        private static Expression<Func<AdditionalOrder, bool>> GetExpressionToOrders(long tutorId, ReportParameters parameters)
         {
             Expression<Func<AdditionalOrder, bool>> expression = r => r.TutorId.Equals(tutorId) &&
                     r.ReceiptDate.Date >= parameters.StartDate.Date &&
