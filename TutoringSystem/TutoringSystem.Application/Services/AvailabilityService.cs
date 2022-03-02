@@ -52,7 +52,7 @@ namespace TutoringSystem.Application.Services
             FilterByStartDate(ref expression, parameters.StartDate);
             FilterByEndDate(ref expression, parameters.EndDate);
             var availabilities = await availabilityRepository.GetAvailabilitiesCollectionAsync(expression);
-            var availabilityDtos = mapper.Map<ICollection<AvailabilityDto>>(availabilities);
+            var availabilityDtos = mapper.Map<IEnumerable<AvailabilityDto>>(availabilities);
 
             return PagedList<AvailabilityDto>.ToPagedList(availabilityDtos, parameters.PageNumber, parameters.PageSize);
         }
@@ -62,7 +62,7 @@ namespace TutoringSystem.Application.Services
             Expression<Func<Availability, bool>> expression = a => a.TutorId.Equals(tutorId) && a.Date >= DateTime.Now;
             FilterByEndDate(ref expression, parameters.EndDate);
             var availabilities = await availabilityRepository.GetAvailabilitiesCollectionAsync(expression);
-            var availabilityDtos = mapper.Map<ICollection<AvailabilityDto>>(availabilities);
+            var availabilityDtos = mapper.Map<IEnumerable<AvailabilityDto>>(availabilities);
 
             return PagedList<AvailabilityDto>.ToPagedList(availabilityDtos, parameters.PageNumber, parameters.PageSize);
         }

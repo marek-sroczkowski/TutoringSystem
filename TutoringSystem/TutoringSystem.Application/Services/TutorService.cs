@@ -45,7 +45,7 @@ namespace TutoringSystem.Application.Services
                 new List<Tutor>() :
                 await tutorRepository.GetTutorsCollectionAsync(GetExpressionToSearchedTutors(parameters));
 
-            var tutorDtos = mapper.Map<ICollection<TutorSimpleDto>>(tutors);
+            var tutorDtos = mapper.Map<IEnumerable<TutorSimpleDto>>(tutors);
 
             return PagedList<TutorSimpleDto>.ToPagedList(tutorDtos, parameters.PageNumber, parameters.PageSize);
         }

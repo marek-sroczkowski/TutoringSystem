@@ -96,7 +96,7 @@ namespace TutoringSystem.Application.Services
             FilterByDate(ref expression, parameters);
             FilterByPlace(ref expression, parameters);
             var resevations = await reservationRepository.GetReservationsCollectionAsync(expression, isEagerLoadingEnabled: true);
-            var reservationDtos = mapper.Map<ICollection<ReservationDto>>(resevations);
+            var reservationDtos = mapper.Map<IEnumerable<ReservationDto>>(resevations);
 
             return PagedList<ReservationDto>.ToPagedList(reservationDtos, parameters.PageNumber, parameters.PageSize);
         }
@@ -107,7 +107,7 @@ namespace TutoringSystem.Application.Services
             FilterByDate(ref expression, parameters);
             FilterByPlace(ref expression, parameters);
             var resevations = await reservationRepository.GetReservationsCollectionAsync(expression, isEagerLoadingEnabled: true);
-            var reservationDtos = mapper.Map<ICollection<ReservationDto>>(resevations);
+            var reservationDtos = mapper.Map<IEnumerable<ReservationDto>>(resevations);
 
             return PagedList<ReservationDto>.ToPagedList(reservationDtos, parameters.PageNumber, parameters.PageSize);
         }
@@ -140,7 +140,7 @@ namespace TutoringSystem.Application.Services
 
         private async Task<double> CalculateReservationCost(long tutorId, NewTutorSingleReservationDto newReservation)
         {
-            var student = await studentRepository.GetStudentAsync(s => s.Id.Equals(newReservation.StudentId));
+            var student = await studentRepository.GetStudentAsync(s => s.Id.Equals(newReservation.StudentId), isEagerLoadingEnabled: true);
             double cost = newReservation.Cost ?? student.GetHourRate(tutorId) * (newReservation.Duration / 60.0);
 
             return cost;
@@ -148,7 +148,7 @@ namespace TutoringSystem.Application.Services
 
         private async Task<double> CalculateReservationCost(long studentId, NewStudentSingleReservationDto newReservation)
         {
-            var student = await studentRepository.GetStudentAsync(s => s.Id.Equals(studentId));
+            var student = await studentRepository.GetStudentAsync(s => s.Id.Equals(studentId), isEagerLoadingEnabled: true);
             double cost = student.GetHourRate(newReservation.TutorId) * (newReservation.Duration / 60.0);
 
             return cost;

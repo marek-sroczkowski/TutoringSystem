@@ -34,7 +34,7 @@ namespace TutoringSystem.Application.Services
             FilterByDate(ref expression, parameters);
             FilterByPlace(ref expression, parameters);
             var resevations = sortHelper.ApplySort(reservationRepository.GetReservationsCollection(expression, isEagerLoadingEnabled: true), parameters.OrderBy);
-            var reservationDtos = mapper.Map<ICollection<ReservationDto>>(resevations);
+            var reservationDtos = mapper.Map<IEnumerable<ReservationDto>>(resevations);
 
             return PagedList<ReservationDto>.ToPagedList(reservationDtos, parameters.PageNumber, parameters.PageSize);
         }
@@ -45,7 +45,7 @@ namespace TutoringSystem.Application.Services
             FilterByDate(ref expression, parameters);
             FilterByPlace(ref expression, parameters);
             var resevations = sortHelper.ApplySort(reservationRepository.GetReservationsCollection(expression, isEagerLoadingEnabled: true), parameters.OrderBy);
-            var reservationDtos = mapper.Map<ICollection<ReservationDto>>(resevations);
+            var reservationDtos = mapper.Map<IEnumerable<ReservationDto>>(resevations);
 
             return PagedList<ReservationDto>.ToPagedList(reservationDtos, parameters.PageNumber, parameters.PageSize);
         }

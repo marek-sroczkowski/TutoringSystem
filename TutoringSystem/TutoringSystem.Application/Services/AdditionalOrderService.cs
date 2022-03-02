@@ -71,7 +71,7 @@ namespace TutoringSystem.Application.Services
         {
             var expression = GetExpression(tutorId, parameters);
             var orders = sortHelper.ApplySort(additionalOrderRepository.GetOrdersCollection(expression), parameters.OrderBy);
-            var orderDtos = mapper.Map<ICollection<OrderDto>>(orders);
+            var orderDtos = mapper.Map<IEnumerable<OrderDto>>(orders);
 
             return PagedList<OrderDto>.ToPagedList(orderDtos, parameters.PageNumber, parameters.PageSize);
         }

@@ -82,7 +82,7 @@ namespace TutoringSystem.Application.Services
                 new List<Student>() :
                 await studentRepository.GetStudentsCollectionAsync(GetExpressionToSearchedStudents(parameters));
 
-            var studentDtos = mapper.Map<ICollection<StudentSimpleDto>>(students);
+            var studentDtos = mapper.Map<IEnumerable<StudentSimpleDto>>(students);
 
             return PagedList<StudentSimpleDto>.ToPagedList(studentDtos, parameters.PageNumber, parameters.PageSize);
         }
