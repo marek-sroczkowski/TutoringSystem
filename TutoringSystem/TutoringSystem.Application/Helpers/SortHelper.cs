@@ -10,15 +10,15 @@ namespace TutoringSystem.Application.Helpers
     {
         public IQueryable<T> ApplySort(IQueryable<T> entities, string orderByQueryString)
         {
-            if (!entities.Any())
+            if (!entities.Any() || string.IsNullOrWhiteSpace(orderByQueryString))
+            {
                 return entities;
-
-            if (string.IsNullOrWhiteSpace(orderByQueryString))
-                return entities;
+            }
 
             var orderParams = orderByQueryString.Trim().Split(',');
             var propertyInfos = typeof(T).GetProperties(BindingFlags.Public | BindingFlags.Instance);
             var orderQueryBuilder = new StringBuilder();
+
             foreach (var param in orderParams)
             {
                 if (string.IsNullOrWhiteSpace(param))
@@ -30,7 +30,7 @@ namespace TutoringSystem.Application.Helpers
                     continue;
 
                 var sortingOrder = param.EndsWith(" desc") ? "descending" : "ascending";
-                orderQueryBuilder.Append($"{objectProperty.Name.ToString()} {sortingOrder}, ");
+                orderQueryBuilder.Append($"{objectProperty.Name} {sortingOrder}, ");
             }
             var orderQuery = orderQueryBuilder.ToString().TrimEnd(',', ' ');
 

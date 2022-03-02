@@ -4,7 +4,7 @@ using Swashbuckle.AspNetCore.Annotations;
 using System.Threading.Tasks;
 using TutoringSystem.Application.Dtos.AddressDtos;
 using TutoringSystem.Application.Services.Interfaces;
-using TutoringSystem.API.Filters.TypeFilters;
+using TutoringSystem.API.Filters.Action;
 using TutoringSystem.Application.Extensions;
 
 namespace TutoringSystem.API.Controllers

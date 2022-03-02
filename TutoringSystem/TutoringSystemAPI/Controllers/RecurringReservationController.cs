@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using TutoringSystem.API.Filters.TypeFilters;
+using TutoringSystem.API.Filters.Action;
 using TutoringSystem.Application.Authorization;
 using TutoringSystem.Application.Dtos.Enums;
 using TutoringSystem.Application.Dtos.ReservationDtos;
@@ -56,12 +56,9 @@ namespace TutoringSystem.API.Controllers
         public async Task<ActionResult<ReservationDetailsDto>> GetReservation(long reservationId)
         {
             var reservation = await reservationService.GetReservationByIdAsync(reservationId);
-
             var authorizationResult = authorizationService.AuthorizeAsync(User, reservation, new ResourceOperationRequirement(OperationType.Read)).Result;
-            if (!authorizationResult.Succeeded)
-                return Forbid();
 
-            return Ok(reservation);
+            return authorizationResult.Succeeded ? Ok(reservation) : Forbid();
         }
 
         [SwaggerOperation(Summary = "Creates a new student's recurring reservation")]
@@ -70,10 +67,10 @@ namespace TutoringSystem.API.Controllers
         public async Task<ActionResult> CreateStudentReservation([FromBody] NewStudentRecurringReservationDto model)
         {
             var reservation = await reservationService.AddReservationByStudentAsync(User.GetUserId(), model);
-            if (reservation is null)
-                return BadRequest("New reservation could be not added");
 
-            return Created("api/reservation/recurring/" + reservation.Id, null);
+            return reservation != null
+                ? Created("api/reservation/recurring/" + reservation.Id, null)
+                : BadRequest("New reservation could be not added");
         }
 
         [SwaggerOperation(Summary = "Creates a new tutor's recurring reservation")]
@@ -82,10 +79,10 @@ namespace TutoringSystem.API.Controllers
         public async Task<ActionResult> CreateTutorReservation([FromBody] NewTutorRecurringReservationDto model)
         {
             var reservation = await reservationService.AddReservationByTutorAsync(User.GetUserId(), model);
-            if (reservation is null)
-                return BadRequest("New reservation could be not added");
 
-            return Created("api/reservation/recurring/" + reservation.Id, null);
+            return reservation != null
+                ? Created("api/reservation/recurring/" + reservation.Id, null)
+                : BadRequest("New reservation could be not added");
         }
 
         [SwaggerOperation(Summary = "Deletes a specific reservation")]
@@ -97,13 +94,13 @@ namespace TutoringSystem.API.Controllers
             var reservation = await reservationService.GetReservationByIdAsync(reservationId);
             var authorizationResult = authorizationService.AuthorizeAsync(User, reservation, new ResourceOperationRequirement(OperationType.Delete)).Result;
             if (!authorizationResult.Succeeded)
+            {
                 return Forbid();
+            }
 
-            var deleted = await reservationService.DeleteReservationAsync(reservationId, mode);
-            if (!deleted)
-                return BadRequest("Reservation could be not deleted");
+            var deleted = await reservationService.RemoveReservationAsync(reservationId, mode);
 
-            return NoContent();
+            return deleted ? NoContent() : BadRequest("Reservation could be not deleted");
         }
     }
 }

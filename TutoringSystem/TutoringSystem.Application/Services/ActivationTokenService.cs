@@ -3,6 +3,7 @@ using System;
 using System.Linq;
 using System.Threading.Tasks;
 using TutoringSystem.Application.Dtos.ActivationTokenDtos;
+using TutoringSystem.Application.Extensions;
 using TutoringSystem.Application.Services.Interfaces;
 using TutoringSystem.Domain.Entities;
 using TutoringSystem.Domain.Repositories;
@@ -23,22 +24,24 @@ namespace TutoringSystem.Application.Services
         public async Task<ActivationTokenDto> AddActivationTokenAsync(long userId)
         {
             await DeactivateTokenAsync(userId);
+
             var generatedToken = new NewActivationTokenDto(GenerateActivationToken(), userId);
             var token = mapper.Map<ActivationToken>(generatedToken);
-            var created = await activationTokenRepository.AddActivationTokenAsync(token);
-            if (!created)
-                return null;
+            var created = await activationTokenRepository.AddTokenAsync(token);
 
-            return mapper.Map<ActivationTokenDto>(token);
+            return created ? mapper.Map<ActivationTokenDto>(token) : null;
         }
 
         private async Task DeactivateTokenAsync(long userId)
         {
-            var token = await activationTokenRepository.GetActivationTokenAsync(t => t.UserId.Equals(userId) && t.ExpirationDate >= DateTime.Now);
+            var now = DateTime.Now.ToLocal();
+            var token = await activationTokenRepository.GetTokenAsync(t => t.UserId.Equals(userId) && t.ExpirationDate >= now);
             if (token is null)
+            {
                 return;
+            }
 
-            token.ExpirationDate = DateTime.Now;
+            token.ExpirationDate = DateTime.Now.ToLocal();
             await activationTokenRepository.UpdateActivationTokenAsync(token);
         }
 

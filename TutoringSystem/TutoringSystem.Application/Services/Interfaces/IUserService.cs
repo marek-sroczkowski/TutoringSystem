@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using TutoringSystem.Application.Dtos.AccountDtos;
 using TutoringSystem.Application.Dtos.Enums;
+using TutoringSystem.Application.Dtos.TutorDtos;
 
 namespace TutoringSystem.Application.Services.Interfaces
 {
@@ -9,7 +10,7 @@ namespace TutoringSystem.Application.Services.Interfaces
     {
         Task<LoginResposneDto> TryLoginAsync(LoginUserDto userModel);
         Task<bool> RegisterStudentAsync(long tutorId, RegisterStudentDto student);
-        Task<bool> RegisterTutorAsync(RegisterTutorDto tutor);
+        Task<TutorDto> RegisterTutorAsync(RegisterTutorDto tutor);
         Task<bool> DeactivateUserAsync(long userId);
         Task<ICollection<WrongPasswordStatus>> ChangePasswordAsync(long userId, PasswordDto passwordModel);
         Task<bool> ActivateUserByTokenAsync(long userId, string token);

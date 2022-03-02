@@ -26,10 +26,8 @@ namespace TutoringSystem.API.Controllers
         public async Task<ActionResult> UpdatePushNotificationToken([FromBody] PushNotificationTokenDto token)
         {
             var updated = await tokenService.PutTokenAsync(User.GetUserId(), token.RegistrationToken);
-            if (!updated)
-                return BadRequest("Token could be not updated");
 
-            return NoContent();
+            return updated ? NoContent() : BadRequest("Token could be not updated");
         }
     }
 }

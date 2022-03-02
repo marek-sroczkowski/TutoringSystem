@@ -1,5 +1,6 @@
 ﻿using System;
 using TutoringSystem.Domain.Entities.Enums;
+using TutoringSystem.Domain.Extensions;
 
 namespace TutoringSystem.Domain.Entities
 {
@@ -20,7 +21,7 @@ namespace TutoringSystem.Domain.Entities
 
         public AdditionalOrder()
         {
-            ReceiptDate = DateTime.Now;
+            ReceiptDate = DateTime.Now.ToLocal();
             Status = AdditionalOrderStatus.Pending;
             IsPaid = false;
             IsActive = true;

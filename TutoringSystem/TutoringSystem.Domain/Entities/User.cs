@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using TutoringSystem.Domain.Entities.Enums;
+using TutoringSystem.Domain.Extensions;
 
 namespace TutoringSystem.Domain.Entities
 {
@@ -28,7 +29,7 @@ namespace TutoringSystem.Domain.Entities
         {
             IsActive = true;
             IsEnable = false;
-            RegistrationDate = DateTime.Now;
+            RegistrationDate = DateTime.Now.ToLocal();
             Contact = new Contact { PhoneNumbers = new List<PhoneNumber>() };
             Address = new Address();
             PushNotificationToken = new PushNotificationToken();

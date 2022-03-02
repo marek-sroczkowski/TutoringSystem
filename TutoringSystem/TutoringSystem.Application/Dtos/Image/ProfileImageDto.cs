@@ -1,4 +1,4 @@
-﻿namespace TutoringSystem.Application.Dtos.AccountDtos
+﻿namespace TutoringSystem.Application.Dtos.Image
 {
     public class ProfileImageDto
     {

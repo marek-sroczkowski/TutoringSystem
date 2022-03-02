@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Mvc.Filters;
 using System.Threading.Tasks;
 using TutoringSystem.Domain.Repositories;
 
-namespace TutoringSystem.API.Filters.TypeFilters
+namespace TutoringSystem.API.Filters.Action
 {
     public class ValidateTutorExistenceAttribute : TypeFilterAttribute
     {
@@ -27,13 +27,14 @@ namespace TutoringSystem.API.Filters.TypeFilters
                     var tutorId = context.ActionArguments["tutorId"] as long?;
                     if (tutorId.HasValue)
                     {
-                        if ((await tutorRepository.GetTutorAsync(t => t.Id.Equals(tutorId.Value))) == null)
+                        if (!tutorRepository.IsTutorExist(t => t.Id.Equals(tutorId.Value)))
                         {
                             context.Result = new NotFoundObjectResult(tutorId.Value);
                             return;
                         }
                     }
                 }
+
                 await next();
             }
         }

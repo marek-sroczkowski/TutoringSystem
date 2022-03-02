@@ -33,8 +33,7 @@ namespace TutoringSystem.Application.Services
             this.mapper = mapper;
         }
 
-        public async Task<ReservationDto> AddReservationByStudentAsync(long studentId, 
-            NewStudentRecurringReservationDto newReservation)
+        public async Task<ReservationDto> AddReservationByStudentAsync(long studentId, NewStudentRecurringReservationDto newReservation)
         {
             var reservation = mapper.Map<RecurringReservation>(newReservation);
             reservation.StudentId = studentId;
@@ -44,8 +43,7 @@ namespace TutoringSystem.Application.Services
             return mapper.Map<ReservationDto>(reservation);
         }
 
-        public async Task<ReservationDto> AddReservationByTutorAsync(long tutorId, 
-            NewTutorRecurringReservationDto newReservation)
+        public async Task<ReservationDto> AddReservationByTutorAsync(long tutorId, NewTutorRecurringReservationDto newReservation)
         {
             var reservation = mapper.Map<RecurringReservation>(newReservation);
             reservation.TutorId = tutorId;
@@ -55,20 +53,22 @@ namespace TutoringSystem.Application.Services
             return mapper.Map<ReservationDto>(reservation);
         }
 
-        public async Task<bool> DeleteReservationAsync(long reservationId, RecurringReservationRemovingMode mode)
+        public async Task<bool> RemoveReservationAsync(long reservationId, RecurringReservationRemovingMode mode)
         {
             var reservation = await reservationRepository.GetReservationAsync(r => r.Id.Equals(reservationId));
-            var deleted = await reservationRepository.DeleteReservationAsync(reservation);
+            var deleted = await reservationRepository.RemoveReservationAsync(reservation);
 
             if (deleted && mode == RecurringReservationRemovingMode.OneLessonAndFuture)
-                deleted = await repeatedReservationRepository.DeleteReservationAsync(reservation.Reservation);
+            {
+                deleted = await repeatedReservationRepository.RemoveReservationAsync(reservation.Reservation);
+            }
 
             return deleted;
         }
 
         public async Task<ReservationDetailsDto> GetReservationByIdAsync(long reservationId)
         {
-            var reservation = await reservationRepository.GetReservationAsync(r => r.Id.Equals(reservationId));
+            var reservation = await reservationRepository.GetReservationAsync(r => r.Id.Equals(reservationId), isEagerLoadingEnabled: true);
 
             return mapper.Map<ReservationDetailsDto>(reservation);
         }
@@ -78,8 +78,8 @@ namespace TutoringSystem.Application.Services
             Expression<Func<RecurringReservation, bool>> expression = r => r.StudentId.Equals(studentId);
             FilterByDate(ref expression, parameters);
             FilterByPlace(ref expression, parameters);
-            var resevations = await reservationRepository.GetReservationsCollectionAsync(expression);
-            var reservationDtos = mapper.Map<ICollection<ReservationDto>>(resevations);
+            var resevations = await reservationRepository.GetReservationsCollectionAsync(expression, isEagerLoadingEnabled: true);
+            var reservationDtos = mapper.Map<IEnumerable<ReservationDto>>(resevations);
 
             return PagedList<ReservationDto>.ToPagedList(reservationDtos, parameters.PageNumber, parameters.PageSize);
         }
@@ -89,13 +89,13 @@ namespace TutoringSystem.Application.Services
             Expression<Func<RecurringReservation, bool>> expression = r => r.TutorId.Equals(tutorId);
             FilterByDate(ref expression, parameters);
             FilterByPlace(ref expression, parameters);
-            var resevations = await reservationRepository.GetReservationsCollectionAsync(expression);
-            var reservationDtos = mapper.Map<ICollection<ReservationDto>>(resevations);
+            var resevations = await reservationRepository.GetReservationsCollectionAsync(expression, isEagerLoadingEnabled: true);
+            var reservationDtos = mapper.Map<IEnumerable<ReservationDto>>(resevations);
 
             return PagedList<ReservationDto>.ToPagedList(reservationDtos, parameters.PageNumber, parameters.PageSize);
         }
 
-        private void FilterByPlace(ref Expression<Func<RecurringReservation, bool>> expression, ReservationParameters parameters)
+        private static void FilterByPlace(ref Expression<Func<RecurringReservation, bool>> expression, ReservationParameters parameters)
         {
             if (parameters.IsAtTutor && parameters.IsAtStudent && parameters.IsOnline)
                 return;
@@ -114,7 +114,7 @@ namespace TutoringSystem.Application.Services
                 ExpressionMerger.MergeExpression(ref expression, r => r.Place.Equals(ReservationPlace.AtStudent) || r.Place.Equals(ReservationPlace.Online));
         }
 
-        private void FilterByDate(ref Expression<Func<RecurringReservation, bool>> expression, ReservationParameters parameters)
+        private static void FilterByDate(ref Expression<Func<RecurringReservation, bool>> expression, ReservationParameters parameters)
         {
             ExpressionMerger.MergeExpression(ref expression, r => r.StartTime.Date >= parameters.StartDate.Date &&
             r.StartTime.AddMinutes(r.Duration).Date <= parameters.EndDate.Date);
@@ -122,17 +122,15 @@ namespace TutoringSystem.Application.Services
 
         private async Task<double> CalculateReservationCost(long tutorId, NewTutorRecurringReservationDto newReservation)
         {
-            var student = await studentRepository.GetStudentAsync(s => s.Id.Equals(newReservation.StudentId));
-            double cost = newReservation.Cost.HasValue ?
-                newReservation.Cost.Value :
-                student.GetHourRate(tutorId) * (newReservation.Duration / 60.0);
+            var student = await studentRepository.GetStudentAsync(s => s.Id.Equals(newReservation.StudentId), isEagerLoadingEnabled: true);
+            double cost = newReservation.Cost ?? student.GetHourRate(tutorId) * (newReservation.Duration / 60.0);
 
             return cost;
         }
 
         private async Task<double> CalculateReservationCost(long studentId, NewStudentRecurringReservationDto newReservation)
         {
-            var student = await studentRepository.GetStudentAsync(s => s.Id.Equals(studentId));
+            var student = await studentRepository.GetStudentAsync(s => s.Id.Equals(studentId), isEagerLoadingEnabled: true);
             double cost = student.GetHourRate(newReservation.TutorId) * (newReservation.Duration / 60.0);
 
             return cost;

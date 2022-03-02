@@ -30,11 +30,10 @@ namespace TutoringSystem.API.Controllers
         [AllowAnonymous]
         public async Task<ActionResult> RegisterTutor([FromBody] RegisterTutorDto model)
         {
-            var created = await userService.RegisterTutorAsync(model);
-            if (!created)
-                return BadRequest("New tutor could not be added");
+            var createdTutor = await userService.RegisterTutorAsync(model);
+            bool created = createdTutor != null && await userService.SendNewActivationTokenAsync(createdTutor.Id);
 
-            return Ok();
+            return created ? Ok() : BadRequest("New tutor could not be added");
         }
 
         [SwaggerOperation(Summary = "Creates a new student")]
@@ -43,10 +42,8 @@ namespace TutoringSystem.API.Controllers
         public async Task<ActionResult> RegisterStudent([FromBody] RegisterStudentDto model)
         {
             var created = await userService.RegisterStudentAsync(User.GetUserId(), model);
-            if (!created)
-                return BadRequest("New student could not be added");
 
-            return Ok();
+            return created ? Ok() : BadRequest("New student could not be added");
         }
 
         [SwaggerOperation(Summary = "Generates a token when logging in successfully")]
@@ -56,7 +53,9 @@ namespace TutoringSystem.API.Controllers
         {
             var loginResult = await userService.TryLoginAsync(model);
             if (loginResult.LoginStatus.Equals(LoginStatus.InvalidUsernameOrPassword))
+            {
                 return Ok(loginResult);
+            }
 
             var token = jwtProvider.GenerateJwtToken(loginResult.User);
             Response.Headers.Add("Authorization", token);
@@ -80,10 +79,8 @@ namespace TutoringSystem.API.Controllers
         public async Task<ActionResult> ChangePassword([FromBody] PasswordDto passwordModel)
         {
             var changedErrors = await userService.ChangePasswordAsync(User.GetUserId(), passwordModel);
-            if (changedErrors != null)
-                return BadRequest(changedErrors);
 
-            return Ok();
+            return changedErrors is null ? Ok() : BadRequest(changedErrors);
         }
 
         [SwaggerOperation(Summary = "Activates the account of the currently logged in user by actiavtion token")]
@@ -92,10 +89,8 @@ namespace TutoringSystem.API.Controllers
         public async Task<ActionResult> ActivateAccountByToken(string token)
         {
             var activated = await userService.ActivateUserByTokenAsync(User.GetUserId(), token);
-            if (!activated)
-                return BadRequest("Account could be not activated");
 
-            return Ok();
+            return activated ? Ok() : BadRequest("Account could be not activated");
         }
 
         [SwaggerOperation(Summary = "Sends a new activation token for the currently logged in user")]
@@ -104,10 +99,8 @@ namespace TutoringSystem.API.Controllers
         public async Task<ActionResult> SendNewActivationToken()
         {
             var sent = await userService.SendNewActivationTokenAsync(User.GetUserId());
-            if (!sent)
-                return BadRequest("New activation code could not be sent");
 
-            return Ok();
+            return sent ? Ok() : BadRequest("New activation code could not be sent");
         }
 
         [SwaggerOperation(Summary = "Deactivates the account of the currently logged in user")]
@@ -116,10 +109,8 @@ namespace TutoringSystem.API.Controllers
         public async Task<ActionResult> DeactivateAccount()
         {
             var deleted = await userService.DeactivateUserAsync(User.GetUserId());
-            if (!deleted)
-                return BadRequest("Account could be not deleted");
 
-            return NoContent();
+            return deleted ? NoContent() : BadRequest("Account could be not deleted");
         }
 
         [SwaggerOperation(Summary = "Updates basic user information")]
@@ -128,10 +119,8 @@ namespace TutoringSystem.API.Controllers
         public async Task<ActionResult> UpdateGeneralInformation([FromBody] UpdatedUserDto model)
         {
             var updated = await userService.UpdateGeneralUserInfoAsync(User.GetUserId(), model);
-            if (!updated)
-                return BadRequest("User could be not updated");
 
-            return NoContent();
+            return updated ? NoContent() : BadRequest("User could be not updated");
         }
 
         [SwaggerOperation(Summary = "Retrieves basic information about the currently logged in user")]

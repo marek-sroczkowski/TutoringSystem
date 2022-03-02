@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Mvc.Filters;
 using System.Threading.Tasks;
 using TutoringSystem.Domain.Repositories;
 
-namespace TutoringSystem.API.Filters.TypeFilters
+namespace TutoringSystem.API.Filters.Action
 {
     public class ValidateReservationExistenceAttribute : TypeFilterAttribute
     {
@@ -27,7 +27,7 @@ namespace TutoringSystem.API.Filters.TypeFilters
                     var reservationId = context.ActionArguments["reservationId"] as long?;
                     if (reservationId.HasValue)
                     {
-                        if ((await reservationRepository.GetReservationAsync(r => r.Id.Equals(reservationId.Value))) == null)
+                        if (!reservationRepository.IsReservationExist(r => r.Id.Equals(reservationId.Value)))
                         {
                             context.Result = new NotFoundObjectResult(reservationId.Value);
                             return;

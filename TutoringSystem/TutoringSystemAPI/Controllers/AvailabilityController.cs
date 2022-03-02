@@ -1,11 +1,10 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Newtonsoft.Json;
 using Swashbuckle.AspNetCore.Annotations;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using TutoringSystem.Application.Extensions;
-using TutoringSystem.API.Filters.TypeFilters;
+using TutoringSystem.API.Filters.Action;
 using TutoringSystem.Application.Authorization;
 using TutoringSystem.Application.Dtos.AvailabilityDtos;
 using TutoringSystem.Application.Parameters;
@@ -55,10 +54,8 @@ namespace TutoringSystem.API.Controllers
         public async Task<ActionResult<AvailabilityDetailsDto>> GetTodayAvailability()
         {
             var availability = await availabilityService.GetTodaysAvailabilityByTutorAsync(User.GetUserId());
-            if (availability is null)
-                return NotFound();
 
-            return Ok(availability);
+            return availability != null ? Ok(availability) : NotFound();
         }
 
         [SwaggerOperation(Summary = "Retrieves a specific availability by unique id")]
@@ -78,10 +75,10 @@ namespace TutoringSystem.API.Controllers
         public async Task<ActionResult> AddAvailability([FromBody] NewAvailabilityDto model)
         {
             var reservation = await availabilityService.AddAvailabilityAsync(User.GetUserId(), model);
-            if (reservation is null)
-                return BadRequest("New availability could be not added");
 
-            return Created("api/availability/" + reservation.Id, null);
+            return reservation != null
+                ? Created("api/availability/" + reservation.Id, null)
+                : BadRequest("New availability could be not added");
         }
 
         [SwaggerOperation(Summary = "Updates a existing availability")]
@@ -93,13 +90,13 @@ namespace TutoringSystem.API.Controllers
             var availability = await availabilityService.GetAvailabilityByIdAsync(model.Id);
             var authorizationResult = authorizationService.AuthorizeAsync(User, availability, new ResourceOperationRequirement(OperationType.Update)).Result;
             if (!authorizationResult.Succeeded)
+            {
                 return Forbid();
+            }
 
             var updated = await availabilityService.UpdateAvailabilityAsync(model);
-            if (!updated)
-                return BadRequest("Availability could be not updated");
 
-            return NoContent();
+            return updated ? NoContent() : BadRequest("Availability could be not updated");
         }
 
         [SwaggerOperation(Summary = "Deletes a specific availability")]
@@ -111,13 +108,13 @@ namespace TutoringSystem.API.Controllers
             var reservation = await availabilityService.GetAvailabilityByIdAsync(availabilityId);
             var authorizationResult = authorizationService.AuthorizeAsync(User, reservation, new ResourceOperationRequirement(OperationType.Delete)).Result;
             if (!authorizationResult.Succeeded)
+            {
                 return Forbid();
+            }
 
-            var deleted = await availabilityService.DeleteAvailabilityAsync(availabilityId);
-            if (!deleted)
-                return BadRequest("Availability could be not deleted");
+            var deleted = await availabilityService.RemoveAvailabilityAsync(availabilityId);
 
-            return NoContent();
+            return deleted ? NoContent() : BadRequest("Availability could be not deleted");
         }
     }
 }

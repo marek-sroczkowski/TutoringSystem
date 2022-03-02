@@ -5,6 +5,7 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 using TutoringSystem.Application.Dtos.AccountDtos;
+using TutoringSystem.Application.Extensions;
 
 namespace TutoringSystem.Application.Identity
 {
@@ -29,7 +30,7 @@ namespace TutoringSystem.Application.Identity
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtOptions.JwtKey));
             var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
-            var expires = DateTime.Now.AddDays(jwtOptions.JwtExpireDays);
+            var expires = DateTime.Now.ToLocal().AddDays(jwtOptions.JwtExpireDays);
 
             var token = new JwtSecurityToken
             (

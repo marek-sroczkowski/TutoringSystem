@@ -7,6 +7,8 @@ using System.Threading.Tasks;
 using TutoringSystem.Application.Dtos.AccountDtos;
 using TutoringSystem.Application.Dtos.EmailDtos;
 using TutoringSystem.Application.Dtos.Enums;
+using TutoringSystem.Application.Dtos.TutorDtos;
+using TutoringSystem.Application.Extensions;
 using TutoringSystem.Application.Services.Interfaces;
 using TutoringSystem.Domain.Entities;
 using TutoringSystem.Domain.Repositories;
@@ -43,68 +45,82 @@ namespace TutoringSystem.Application.Services
         public async Task<LoginResposneDto> TryLoginAsync(LoginUserDto userModel)
         {
             await DeactivateNotEnabledUsersAsync();
-            var user = await userRepository.GetUserAsync(u => u.Username.Equals(userModel.Username));
+
+            var user = await userRepository.GetUserAsync(u => u.Username.Equals(userModel.Username), isEagerLoadingEnabled: true);
             if (user is null || ValidatePassword(userModel, user) == PasswordVerificationResult.Failed)
+            {
                 return new LoginResposneDto(LoginStatus.InvalidUsernameOrPassword, null);
+            }
 
             await SetLastLoginDateAsync(user);
 
-            if (!user.IsEnable)
-                return new LoginResposneDto(LoginStatus.InactiveAccount, mapper.Map<UserDto>(user));
-
-            return new LoginResposneDto(LoginStatus.LoggedInCorrectly, mapper.Map<UserDto>(user));
+            return !user.IsEnable
+                ? new LoginResposneDto(LoginStatus.InactiveAccount, mapper.Map<UserDto>(user))
+                : new LoginResposneDto(LoginStatus.LoggedInCorrectly, mapper.Map<UserDto>(user));
         }
 
         public async Task<bool> RegisterStudentAsync(long tutorId, RegisterStudentDto student)
         {
             await DeactivateNotEnabledUsersAsync();
+
             var newStudent = mapper.Map<Student>(student);
             newStudent.PasswordHash = passwordHasher.HashPassword(newStudent, student.Password);
-            var tutor = await tutorRepository.GetTutorAsync(t => t.Id.Equals(tutorId));
-            if(!(await studentRepository.AddStudentAsync(newStudent)))
+            if (!await studentRepository.AddStudentAsync(newStudent))
+            {
                 return false;
+            }
 
             newStudent.StudentTutors = new List<StudentTutor> { new StudentTutor(newStudent.Id, tutorId, student.HourlRate, student.Note) };
 
             return await studentRepository.UpdateStudentAsync(newStudent);
         }
 
-        public async Task<bool> RegisterTutorAsync(RegisterTutorDto newTutor)
+        public async Task<TutorDto> RegisterTutorAsync(RegisterTutorDto newTutor)
         {
             await DeactivateNotEnabledUsersAsync();
+
             var tutor = mapper.Map<Tutor>(newTutor);
             tutor.PasswordHash = passwordHasher.HashPassword(tutor, newTutor.Password);
-            if (!(await tutorRepository.AddTutorAsync(tutor)))
-                return false;
 
-            return await SendNewActivationTokenAsync(tutor.Id);
+            var created = await tutorRepository.AddTutorAsync(tutor);
+
+            return created ? mapper.Map<TutorDto>(tutor) : null;
         }
 
         public async Task<bool> ActivateUserByTokenAsync(long userId, string token)
         {
-            var user = await userRepository.GetUserAsync(u => u.Id.Equals(userId) && !u.IsEnable);
+            var user = await userRepository.GetUserAsync(u => u.Id.Equals(userId) && !u.IsEnable, isEagerLoadingEnabled: true);
             if (user is null)
+            {
                 return false;
+            }
 
-            var userToken = user.ActivationTokens.FirstOrDefault(t => t.ExpirationDate > DateTime.Now && t.TokenContent.Equals(token));
+            var now = DateTime.Now.ToLocal();
+            var userToken = user.ActivationTokens.FirstOrDefault(t => t.ExpirationDate > now && t.TokenContent.Equals(token));
             if (userToken is null)
+            {
                 return false;
+            }
 
             user.IsEnable = true;
-            userToken.ExpirationDate = DateTime.Now;
+            userToken.ExpirationDate = DateTime.Now.ToLocal();
 
-            return await userRepository.UpdateUser(user);
+            return await userRepository.UpdateUserAsync(user);
         }
 
         public async Task<bool> SendNewActivationTokenAsync(long userId)
         {
-            var user = await userRepository.GetUserAsync(u => u.Id.Equals(userId) && !u.IsEnable);
+            var user = await userRepository.GetUserAsync(u => u.Id.Equals(userId) && !u.IsEnable, isEagerLoadingEnabled: true);
             if (user is null)
+            {
                 return false;
+            }
 
             var generatedToken = await activationTokenService.AddActivationTokenAsync(userId);
             if (generatedToken is null || string.IsNullOrEmpty(generatedToken.TokenContent))
+            {
                 return false;
+            }
 
             emailService.SendEmail(new ActivationEmailDto(user.Contact.Email, user.FirstName, generatedToken.TokenContent));
 
@@ -113,20 +129,20 @@ namespace TutoringSystem.Application.Services
 
         public async Task<bool> DeactivateUserAsync(long userId)
         {
-            var user = await userRepository.GetUserAsync(u => u.Id.Equals(userId));
+            var user = await userRepository.GetUserAsync(u => u.Id.Equals(userId), isEagerLoadingEnabled: true);
 
-            return await userRepository.DeleteUserAsync(user);
+            return await userRepository.RemoveUserAsync(user);
         }
 
         public async Task<ICollection<WrongPasswordStatus>> ChangePasswordAsync(long userId, PasswordDto passwordModel)
         {
-            var user = await userRepository.GetUserAsync(u => u.Id.Equals(userId));
+            var user = await userRepository.GetUserAsync(u => u.Id.Equals(userId), isEagerLoadingEnabled: true);
             var validationResult = ValidatePassword(user, passwordModel);
 
             if (validationResult.Count == 0)
             {
                 user.PasswordHash = passwordHasher.HashPassword(user, passwordModel.NewPassword);
-                var changed = await userRepository.UpdateUser(user);
+                var changed = await userRepository.UpdateUserAsync(user);
 
                 if (!changed)
                 {
@@ -142,10 +158,10 @@ namespace TutoringSystem.Application.Services
 
         public async Task<bool> UpdateGeneralUserInfoAsync(long userId, UpdatedUserDto updatedUser)
         {
-            var existingUser = await userRepository.GetUserAsync(u => u.Id.Equals(userId));
+            var existingUser = await userRepository.GetUserAsync(u => u.Id.Equals(userId), isEagerLoadingEnabled: true);
             var user = mapper.Map(updatedUser, existingUser);
 
-            return await userRepository.UpdateUser(user);
+            return await userRepository.UpdateUserAsync(user);
         }
 
         public async Task<ShortUserDto> GetGeneralUserInfoAsync(long userId)
@@ -167,14 +183,20 @@ namespace TutoringSystem.Application.Services
             }
 
             if (!passwordModel.NewPassword.Equals(passwordModel.ConfirmPassword))
+            {
                 result.Add(WrongPasswordStatus.PasswordsVary);
+            }
 
             if (passwordModel.NewPassword.Length < 4)
+            {
                 result.Add(WrongPasswordStatus.TooShort);
+            }
 
             passwordVerificationResult = passwordHasher.VerifyHashedPassword(user, user.PasswordHash, passwordModel.NewPassword);
             if (passwordVerificationResult.Equals(PasswordVerificationResult.Success))
+            {
                 result.Add(WrongPasswordStatus.DuplicateOfOld);
+            }
 
             return result;
         }
@@ -186,17 +208,17 @@ namespace TutoringSystem.Application.Services
 
         private async Task SetLastLoginDateAsync(User user)
         {
-            user.LastLoginDate = DateTime.Now;
-            await userRepository.UpdateUser(user);
+            user.LastLoginDate = DateTime.Now.ToLocal();
+            await userRepository.UpdateUserAsync(user);
         }
 
         private async Task DeactivateNotEnabledUsersAsync()
         {
-            var tutors = await tutorRepository.GetTutorsCollectionAsync(u => !u.IsEnable && u.IsActive && u.RegistrationDate.AddDays(1) < DateTime.Now);
+            var now = DateTime.Now.ToLocal();
+            var tutors = await tutorRepository.GetTutorsCollectionAsync(u => !u.IsEnable && u.IsActive && u.RegistrationDate.AddDays(1) < now, isEagerLoadingEnabled: true);
             tutors.ToList().ForEach(u => u.IsActive = false);
 
-            await tutorRepository.UpdateTutorsCollection(tutors);
+            await tutorRepository.UpdateTutorsCollectionAsync(tutors);
         }
     }
 }
- 

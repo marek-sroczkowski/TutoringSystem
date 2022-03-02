@@ -11,6 +11,7 @@ using System.Text;
 using TutoringSystem.Application.Authorization;
 using TutoringSystem.Application.Dtos.AccountDtos;
 using TutoringSystem.Application.Dtos.ReportDtos;
+using TutoringSystem.Application.Dtos.SubjectDtos;
 using TutoringSystem.Application.Helpers;
 using TutoringSystem.Application.Identity;
 using TutoringSystem.Application.ScheduleTasks;
@@ -123,8 +124,11 @@ namespace TutoringSystem.Application.DependencyInjection
                     o.JsonSerializerOptions.Converters.Add(new System.Text.Json.Serialization.JsonStringEnumConverter());
                 })
                 .AddFluentValidation();
+
             services.AddScoped<IValidator<RegisterStudentDto>, RegisterStudentValidation>();
             services.AddScoped<IValidator<RegisterTutorDto>, RegisterTutorValidation>();
+            services.AddScoped<IValidator<NewSubjectDto>, SubjectCreationValidation>();
+            services.AddScoped<IValidator<UpdatedSubjectDto>, SubjectEditionValidation>();
 
             return services;
         }

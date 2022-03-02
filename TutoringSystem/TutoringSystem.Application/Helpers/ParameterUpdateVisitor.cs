@@ -4,21 +4,18 @@ namespace TutoringSystem.Application.Helpers
 {
     public class ParameterUpdateVisitor : ExpressionVisitor
     {
-        private ParameterExpression _oldParameter;
-        private ParameterExpression _newParameter;
+        private readonly ParameterExpression oldParameter;
+        private readonly ParameterExpression newParameter;
 
         public ParameterUpdateVisitor(ParameterExpression oldParameter, ParameterExpression newParameter)
         {
-            _oldParameter = oldParameter;
-            _newParameter = newParameter;
+            this.oldParameter = oldParameter;
+            this.newParameter = newParameter;
         }
 
         protected override Expression VisitParameter(ParameterExpression node)
         {
-            if (object.ReferenceEquals(node, _oldParameter))
-                return _newParameter;
-
-            return base.VisitParameter(node);
+            return ReferenceEquals(node, oldParameter) ? newParameter : base.VisitParameter(node);
         }
     }
 }

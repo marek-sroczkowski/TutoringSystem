@@ -24,36 +24,97 @@ namespace TutoringSystem.Infrastructure.Repositories
             return await SaveChangedAsync();
         }
 
-        public async Task<bool> DeleteContactAsync(Contact contact)
+        public async Task<bool> AddContactsCollection(IEnumerable<Contact> contacts)
+        {
+            CreateRange(contacts);
+
+            return await SaveChangedAsync();
+        }
+
+        public async Task<Contact> GetContactAsync(Expression<Func<Contact, bool>> expression, bool isEagerLoadingEnabled = false)
+        {
+            var contact = isEagerLoadingEnabled
+                ? await GetContactWithEagerLoadingAsync(expression)
+                : await GetContactWithoutEagerLoadingAsync(expression);
+
+            return contact;
+        }
+
+        public IQueryable<Contact> GetContactsCollection(Expression<Func<Contact, bool>> expression, bool isEagerLoadingEnabled = false)
+        {
+            ExpressionMerger.MergeExpression(ref expression, c => c.User.IsActive);
+
+            var contacts = isEagerLoadingEnabled
+                ? GetContactsCollectionWithEagerLoading(expression)
+                : Find(expression);
+
+            return contacts;
+        }
+
+        public async Task<IEnumerable<Contact>> GetContactsCollectionAsync(Expression<Func<Contact, bool>> expression, bool isEagerLoadingEnabled = false)
+        {
+            ExpressionMerger.MergeExpression(ref expression, c => c.User.IsActive);
+
+            var contacts = isEagerLoadingEnabled
+                ? GetContactsCollectionWithEagerLoading(expression)
+                : Find(expression);
+
+            return await contacts.ToListAsync();
+        }
+
+        public bool IsContackExist(Expression<Func<Contact, bool>> expression)
+        {
+            bool exist = Contains(expression);
+
+            return exist;
+        }
+
+        public async Task<bool> RemoveContactAsync(Contact contact)
         {
             Delete(contact);
 
             return await SaveChangedAsync();
         }
 
-        public async Task<Contact> GetContactAsync(Expression<Func<Contact, bool>> expression)
+        public async Task<bool> UpdateContactAsync(Contact contact)
         {
-            var contact = await DbContext.Contacts
+            Update(contact);
+
+            return await SaveChangedAsync();
+        }
+
+        public async Task<bool> UpdateContactsCollectionAsync(IEnumerable<Contact> contacts)
+        {
+            UpdateRange(contacts);
+
+            return await SaveChangedAsync();
+        }
+
+        private async Task<Contact> GetContactWithEagerLoadingAsync(Expression<Func<Contact, bool>> expression)
+        {
+            var contact = await Find(expression)
+                .Include(c => c.User)
                 .Include(c => c.PhoneNumbers.Where(p => p.IsActive))
-                .FirstOrDefaultAsync(expression);
+                .FirstOrDefaultAsync();
 
             return contact;
         }
 
-        public async Task<IEnumerable<Contact>> GetContactsCollectionAsync(Expression<Func<Contact, bool>> expression)
+        private async Task<Contact> GetContactWithoutEagerLoadingAsync(Expression<Func<Contact, bool>> expression)
         {
-            ExpressionMerger.MergeExpression(ref expression, c => c.User.IsActive);
-            var contacts = FindByCondition(expression)
-                .Include(c => c.User);
+            var contact = await Find(expression)
+                .FirstOrDefaultAsync();
 
-            return await contacts.ToListAsync();
+            return contact;
         }
 
-        public async Task<bool> UpdateContactAsync(Contact updatedContact)
+        private IQueryable<Contact> GetContactsCollectionWithEagerLoading(Expression<Func<Contact, bool>> expression)
         {
-            Update(updatedContact);
+            var contacts = Find(expression)
+                .Include(c => c.User)
+                .Include(c => c.PhoneNumbers.Where(p => p.IsActive));
 
-            return await SaveChangedAsync();
+            return contacts;
         }
     }
 }

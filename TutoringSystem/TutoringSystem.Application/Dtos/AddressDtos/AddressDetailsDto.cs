@@ -16,7 +16,8 @@ namespace TutoringSystem.Application.Dtos.AddressDtos
 
         public void Mapping(Profile profile)
         {
-            profile.CreateMap<Address, AddressDetailsDto>();
+            profile.CreateMap<Address, AddressDetailsDto>()
+                .ForMember(dest => dest.Owner, map => map.MapFrom(src => $"{src.User.FirstName} {src.User.LastName}"));
         }
     }
 }

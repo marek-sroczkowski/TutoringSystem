@@ -1,4 +1,5 @@
 ﻿using System;
+using TutoringSystem.Domain.Extensions;
 
 namespace TutoringSystem.Domain.Entities
 {
@@ -15,7 +16,7 @@ namespace TutoringSystem.Domain.Entities
         public ActivationToken()
         {
             IsActive = true;
-            ExpirationDate = DateTime.Now.AddDays(1);
+            ExpirationDate = DateTime.Now.ToLocal().AddDays(1);
         }
     }
 }

@@ -16,56 +16,53 @@ namespace TutoringSystem.Application.Services
     public class AdditionalOrderService : IAdditionalOrderService
     {
         private readonly IAdditionalOrderRepository additionalOrderRepository;
-        private readonly IMapper mapper;
         private readonly ISortHelper<AdditionalOrder> sortHelper;
+        private readonly IMapper mapper;
 
         public AdditionalOrderService(IAdditionalOrderRepository additionalOrderRepository,
-            IMapper mapper,
-            ISortHelper<AdditionalOrder> sortHelper)
+            ISortHelper<AdditionalOrder> sortHelper,
+            IMapper mapper)
         {
             this.additionalOrderRepository = additionalOrderRepository;
-            this.mapper = mapper;
             this.sortHelper = sortHelper;
+            this.mapper = mapper;
         }
 
-        public async Task<OrderDto> AddAdditionalOrderAsync(long tutorId, NewOrderDto newOrder)
+        public async Task<OrderDto> AddOrderAsync(long tutorId, NewOrderDto newOrder)
         {
             var order = mapper.Map<AdditionalOrder>(newOrder);
             order.TutorId = tutorId;
-            var created = await additionalOrderRepository.AddAdditionalOrderAsync(order);
+            var created = await additionalOrderRepository.AddOrderAsync(order);
 
-            if (!created)
-                return null;
-
-            return mapper.Map<OrderDto>(order);
+            return created ? mapper.Map<OrderDto>(order) : null;
         }
 
         public async Task<bool> ChangeOrderStatusAsync(long orderId, AdditionalOrderStatus orderStatus)
         {
-            var order = await additionalOrderRepository.GetAdditionalOrderAsync(o => o.Id.Equals(orderId));
+            var order = await additionalOrderRepository.GetOrderAsync(o => o.Id.Equals(orderId));
             order.Status = orderStatus;
 
-            return await additionalOrderRepository.UpdateAdditionalOrderAsync(order);
+            return await additionalOrderRepository.UpdateOrderAsync(order);
         }
 
         public async Task<bool> ChangePaymentStatusAsync(long orderId, bool isPaid)
         {
-            var order = await additionalOrderRepository.GetAdditionalOrderAsync(o => o.Id.Equals(orderId));
+            var order = await additionalOrderRepository.GetOrderAsync(o => o.Id.Equals(orderId));
             order.IsPaid = isPaid;
 
-            return await additionalOrderRepository.UpdateAdditionalOrderAsync(order);
+            return await additionalOrderRepository.UpdateOrderAsync(order);
         }
 
-        public async Task<bool> DeleteAdditionalOrderAsync(long orderId)
+        public async Task<bool> RemoveOrderAsync(long orderId)
         {
-            var order = await additionalOrderRepository.GetAdditionalOrderAsync(o => o.Id.Equals(orderId));
+            var order = await additionalOrderRepository.GetOrderAsync(o => o.Id.Equals(orderId));
 
-            return await additionalOrderRepository.DeleteAdditionalOrderAsync(order);
+            return await additionalOrderRepository.RemoveOrderAsync(order);
         }
 
-        public async Task<OrderDetailsDto> GetAdditionalOrderByIdAsync(long orderId)
+        public async Task<OrderDetailsDto> GetOrderByIdAsync(long orderId)
         {
-            var order = await additionalOrderRepository.GetAdditionalOrderAsync(o => o.Id.Equals(orderId));
+            var order = await additionalOrderRepository.GetOrderAsync(o => o.Id.Equals(orderId));
 
             return mapper.Map<OrderDetailsDto>(order);
         }
@@ -73,13 +70,21 @@ namespace TutoringSystem.Application.Services
         public PagedList<OrderDto> GetAdditionalOrders(long tutorId, AdditionalOrderParameters parameters)
         {
             var expression = GetExpression(tutorId, parameters);
-            var orders = sortHelper.ApplySort(additionalOrderRepository.GetAdditionalOrdersCollection(expression), parameters.OrderBy);
-            var orderDtos = mapper.Map<ICollection<OrderDto>>(orders);
+            var orders = sortHelper.ApplySort(additionalOrderRepository.GetOrdersCollection(expression), parameters.OrderBy);
+            var orderDtos = mapper.Map<IEnumerable<OrderDto>>(orders);
 
             return PagedList<OrderDto>.ToPagedList(orderDtos, parameters.PageNumber, parameters.PageSize);
         }
 
-        private Expression<Func<AdditionalOrder, bool>> GetExpression(long tutorId, AdditionalOrderParameters parameters)
+        public async Task<bool> UpdateAdditionalOrderAsync(UpdatedOrderDto updatedOrder)
+        {
+            var existingOrder = await additionalOrderRepository.GetOrderAsync(o => o.Id.Equals(updatedOrder.Id));
+            var order = mapper.Map(updatedOrder, existingOrder);
+
+            return await additionalOrderRepository.UpdateOrderAsync(order);
+        }
+
+        private static Expression<Func<AdditionalOrder, bool>> GetExpression(long tutorId, AdditionalOrderParameters parameters)
         {
             Expression<Func<AdditionalOrder, bool>> expression = o => o.TutorId.Equals(tutorId);
             FilterByDate(ref expression, parameters);
@@ -89,45 +94,57 @@ namespace TutoringSystem.Application.Services
             return expression;
         }
 
-        public async Task<bool> UpdateAdditionalOrderAsync(UpdatedOrderDto updatedOrder)
-        {
-            var existingOrder = await additionalOrderRepository.GetAdditionalOrderAsync(o => o.Id.Equals(updatedOrder.Id));
-            var order = mapper.Map(updatedOrder, existingOrder);
-
-            return await additionalOrderRepository.UpdateAdditionalOrderAsync(order);
-        }
-
-        private void FilterByStatus(ref Expression<Func<AdditionalOrder, bool>> expression, AdditionalOrderParameters parameters)
+        private static void FilterByStatus(ref Expression<Func<AdditionalOrder, bool>> expression, AdditionalOrderParameters parameters)
         {
             if (parameters.IsInProgress && parameters.IsPending && parameters.IsRealized)
+            {
                 return;
+            }
 
             if (parameters.IsPending && !parameters.IsInProgress && !parameters.IsRealized)
+            {
                 ExpressionMerger.MergeExpression(ref expression, o => o.Status.Equals(AdditionalOrderStatus.Pending));
+            }
             else if (!parameters.IsPending && parameters.IsInProgress && !parameters.IsRealized)
+            {
                 ExpressionMerger.MergeExpression(ref expression, o => o.Status.Equals(AdditionalOrderStatus.InProgress));
+            }
             else if (!parameters.IsPending && !parameters.IsInProgress && parameters.IsRealized)
+            {
                 ExpressionMerger.MergeExpression(ref expression, o => o.Status.Equals(AdditionalOrderStatus.Realized));
+            }
             else if (parameters.IsPending && parameters.IsInProgress && !parameters.IsRealized)
+            {
                 ExpressionMerger.MergeExpression(ref expression, o => o.Status.Equals(AdditionalOrderStatus.Pending) || o.Status.Equals(AdditionalOrderStatus.InProgress));
+            }
             else if (parameters.IsPending && !parameters.IsInProgress && parameters.IsRealized)
+            {
                 ExpressionMerger.MergeExpression(ref expression, o => o.Status.Equals(AdditionalOrderStatus.Pending) || o.Status.Equals(AdditionalOrderStatus.Realized));
+            }
             else if (!parameters.IsPending && parameters.IsInProgress && parameters.IsRealized)
+            {
                 ExpressionMerger.MergeExpression(ref expression, o => o.Status.Equals(AdditionalOrderStatus.InProgress) || o.Status.Equals(AdditionalOrderStatus.Realized));
+            }
         }
 
-        private void FilterByPayment(ref Expression<Func<AdditionalOrder, bool>> expression, AdditionalOrderParameters parameters)
+        private static void FilterByPayment(ref Expression<Func<AdditionalOrder, bool>> expression, AdditionalOrderParameters parameters)
         {
             if (parameters.IsPaid && parameters.IsNotPaid)
+            {
                 return;
+            }
 
             if (parameters.IsPaid && !parameters.IsNotPaid)
+            {
                 ExpressionMerger.MergeExpression(ref expression, o => o.IsPaid.Equals(true));
-            else if(!parameters.IsPaid && parameters.IsNotPaid)
+            }
+            else if (!parameters.IsPaid && parameters.IsNotPaid)
+            {
                 ExpressionMerger.MergeExpression(ref expression, o => o.IsPaid.Equals(false));
+            }
         }
 
-        private void FilterByDate(ref Expression<Func<AdditionalOrder, bool>> expression, AdditionalOrderParameters parameters)
+        private static void FilterByDate(ref Expression<Func<AdditionalOrder, bool>> expression, AdditionalOrderParameters parameters)
         {
             ExpressionMerger.MergeExpression(ref expression, o => o.ReceiptDate.Date >= parameters.ReceiptStartDate.Date
                 && o.ReceiptDate.Date <= parameters.ReceiptEndDate.Date

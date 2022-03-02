@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 using TutoringSystem.Application.Dtos.PhoneNumberDtos;
 using TutoringSystem.Domain.Repositories;
 
-namespace TutoringSystem.API.Filters.TypeFilters
+namespace TutoringSystem.API.Filters.Action
 {
     public class ValidatePhoneNumberExistenceAttribute : TypeFilterAttribute
     {
@@ -28,7 +28,7 @@ namespace TutoringSystem.API.Filters.TypeFilters
                     var phone = context.ActionArguments["model"] as UpdatedPhoneNumberDto;
                     if (phone != null)
                     {
-                        if ((await phoneNumberRepository.GetPhoneNumberAsync(p => p.Id.Equals(phone.Id))) == null)
+                        if (!phoneNumberRepository.IsPhoneNumberExist(p => p.Id.Equals(phone.Id)))
                         {
                             context.Result = new NotFoundObjectResult(phone.Id);
                             return;
@@ -40,13 +40,14 @@ namespace TutoringSystem.API.Filters.TypeFilters
                     var phoneId = context.ActionArguments["phoneNumberId"] as long?;
                     if (phoneId.HasValue)
                     {
-                        if ((await phoneNumberRepository.GetPhoneNumberAsync(p => p.Id.Equals(phoneId.Value))) == null)
+                        if (!phoneNumberRepository.IsPhoneNumberExist(p => p.Id.Equals(phoneId.Value)))
                         {
                             context.Result = new NotFoundObjectResult(phoneId.Value);
                             return;
                         }
                     }
                 }
+
                 await next();
             }
         }

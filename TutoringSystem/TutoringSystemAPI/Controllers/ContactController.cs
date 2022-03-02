@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
 using System.Threading.Tasks;
 using TutoringSystem.Application.Extensions;
-using TutoringSystem.API.Filters.TypeFilters;
+using TutoringSystem.API.Filters.Action;
 using TutoringSystem.Application.Dtos.ContactDtos;
 using TutoringSystem.Application.Services.Interfaces;
 
@@ -48,10 +48,8 @@ namespace TutoringSystem.API.Controllers
         public async Task<ActionResult> UpdateContact([FromBody] UpdatedContactDto model)
         {
             var updated = await contactService.UpdateContactAsync(model);
-            if (!updated)
-                return BadRequest("Contact could be not updated");
 
-            return NoContent();
+            return updated ? NoContent() : BadRequest("Contact could be not updated");
         }
     }
 }

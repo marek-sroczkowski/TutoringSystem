@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
 using TutoringSystem.Application.Helpers;
@@ -23,43 +24,115 @@ namespace TutoringSystem.Infrastructure.Repositories
             return await SaveChangedAsync();
         }
 
-        public async Task<bool> DeleteReservationAsync(SingleReservation reservation)
+        public async Task<bool> AddReservationsCollectionAsync(IEnumerable<SingleReservation> reserservations)
         {
-            Delete(reservation);
+            CreateRange(reserservations);
 
             return await SaveChangedAsync();
         }
 
-        public async Task<SingleReservation> GetReservationAsync(Expression<Func<SingleReservation, bool>> expression)
+        public async Task<SingleReservation> GetReservationAsync(Expression<Func<SingleReservation, bool>> expression, bool? isActive = true, bool isEagerLoadingEnabled = false)
         {
-            var reservation = await DbContext.SingleReservations
-                .Include(r => r.Student)
-                .Include(r => r.Subject)
-                .Include(r => r.Tutor)
-                .FirstOrDefaultAsync(expression);
+            if (isActive.HasValue)
+            {
+                ExpressionMerger.MergeExpression(ref expression, o => o.IsActive.Equals(isActive.Value));
+            }
+
+            var reservation = isEagerLoadingEnabled
+                ? await GetReservationWithEagerLoadingAsync(expression)
+                : await GetReservationWithoutEagerLoadingAsync(expression);
 
             return reservation;
         }
 
-        public async Task<IEnumerable<SingleReservation>> GetReservationsCollectionAsync(Expression<Func<SingleReservation, bool>> expression, bool? isActive = true)
+        public IQueryable<SingleReservation> GetReservationsCollection(Expression<Func<SingleReservation, bool>> expression, bool? isActive = true, bool isEagerLoadingEnabled = false)
         {
             if (isActive.HasValue)
+            {
                 ExpressionMerger.MergeExpression(ref expression, o => o.IsActive.Equals(isActive.Value));
+            }
 
-            var reservations = await FindByCondition(expression)
-                .Include(r => r.Student)
-                .Include(r => r.Subject)
-                .Include(r => r.Tutor)
-                .ToListAsync();
+            var reservations = isEagerLoadingEnabled
+                ? GetReservationsCollectionWithEagerLoading(expression)
+                : Find(expression);
 
             return reservations;
         }
 
-        public async Task<bool> UpdateReservationAsync(SingleReservation updatedReservation)
+        public async Task<IEnumerable<SingleReservation>> GetReservationsCollectionAsync(Expression<Func<SingleReservation, bool>> expression, bool? isActive = true, bool isEagerLoadingEnabled = false)
         {
-            Update(updatedReservation);
+            if (isActive.HasValue)
+            {
+                ExpressionMerger.MergeExpression(ref expression, o => o.IsActive.Equals(isActive.Value));
+            }
+
+            var reservations = isEagerLoadingEnabled
+                ? GetReservationsCollectionWithEagerLoading(expression)
+                : Find(expression);
+
+            return await reservations.ToListAsync();
+        }
+
+        public bool IsReservationExist(Expression<Func<SingleReservation, bool>> expression, bool? isActive = true)
+        {
+            if (isActive.HasValue)
+            {
+                ExpressionMerger.MergeExpression(ref expression, r => r.IsActive.Equals(isActive.Value));
+            }
+
+            var exist = Contains(expression);
+
+            return exist;
+        }
+
+        public async Task<bool> RemoveReservationAsync(SingleReservation reservation)
+        {
+            reservation.IsActive = false;
+
+            return await UpdateReservationAsync(reservation);
+        }
+
+        public async Task<bool> UpdateReservationAsync(SingleReservation reservation)
+        {
+            Update(reservation);
 
             return await SaveChangedAsync();
+        }
+
+        public async Task<bool> UpdateReservationsCollectionAsync(IEnumerable<SingleReservation> reservations)
+        {
+            UpdateRange(reservations);
+
+            return await SaveChangedAsync();
+        }
+
+        private async Task<SingleReservation> GetReservationWithEagerLoadingAsync(Expression<Func<SingleReservation, bool>> expression)
+        {
+            var reservation = await Find(expression)
+                .Include(r => r.Student)
+                .Include(r => r.Subject)
+                .Include(r => r.Tutor)
+                .FirstOrDefaultAsync();
+
+            return reservation;
+        }
+
+        private async Task<SingleReservation> GetReservationWithoutEagerLoadingAsync(Expression<Func<SingleReservation, bool>> expression)
+        {
+            var reservation = await Find(expression)
+                .FirstOrDefaultAsync();
+
+            return reservation;
+        }
+
+        private IQueryable<SingleReservation> GetReservationsCollectionWithEagerLoading(Expression<Func<SingleReservation, bool>> expression)
+        {
+            var reservations = Find(expression)
+                .Include(r => r.Student)
+                .Include(r => r.Subject)
+                .Include(r => r.Tutor);
+
+            return reservations;
         }
     }
 }

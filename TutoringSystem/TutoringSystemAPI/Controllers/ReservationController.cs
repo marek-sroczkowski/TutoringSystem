@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using TutoringSystem.API.Filters.TypeFilters;
+using TutoringSystem.API.Filters.Action;
 using TutoringSystem.Application.Authorization;
 using TutoringSystem.Application.Dtos.ReservationDtos;
 using TutoringSystem.Application.Extensions;
@@ -56,12 +56,9 @@ namespace TutoringSystem.API.Controllers
         public async Task<ActionResult<ReservationDetailsDto>> GetReservation(long reservationId)
         {
             var reservation = await reservationService.GetReservationByIdAsync(reservationId);
-
             var authorizationResult = authorizationService.AuthorizeAsync(User, reservation, new ResourceOperationRequirement(OperationType.Read)).Result;
-            if (!authorizationResult.Succeeded)
-                return Forbid();
 
-            return Ok(reservation);
+            return authorizationResult.Succeeded ? Ok(reservation) : Forbid();
         }
     }
 }

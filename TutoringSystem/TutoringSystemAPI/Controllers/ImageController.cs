@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using TutoringSystem.Application.Dtos.AccountDtos;
+using TutoringSystem.Application.Dtos.Image;
 using TutoringSystem.Application.Extensions;
 using TutoringSystem.Application.Services.Interfaces;
 
@@ -57,10 +57,8 @@ namespace TutoringSystem.API.Controllers
         public async Task<ActionResult> SetProfileImage([FromBody] ProfileImageDto image)
         {
             var set = await imageService.SetProfileImageAsync(User.GetUserId(), image.ProfilePictureFirebaseUrl);
-            if (!set)
-                return BadRequest("Picture could be not set");
 
-            return NoContent();
+            return set ? NoContent() : BadRequest("Picture could be not set");
         }
 
         [SwaggerOperation(Summary = "Removes profile picture for the currently logged in user")]
@@ -69,10 +67,8 @@ namespace TutoringSystem.API.Controllers
         public async Task<ActionResult> RemoveProfileImage()
         {
             var deleted = await imageService.RemoveProfilePictureAsync(User.GetUserId());
-            if (!deleted)
-                return BadRequest("Picture could be not deleted");
 
-            return NoContent();
+            return deleted ? NoContent() : BadRequest("Picture could be not deleted");
         }
     }
 }

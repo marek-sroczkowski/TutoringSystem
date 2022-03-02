@@ -26,24 +26,21 @@ namespace TutoringSystem.Application.Services
             var phone = mapper.Map<PhoneNumber>(phoneNumber);
             phone.ContactId = contactId;
 
-            if (!(await phoneNumberRepository.AddPhoneNumberAsync(phone)))
-                return null;
-
-            return mapper.Map<PhoneNumberDto>(phone);
+            return await phoneNumberRepository.AddPhoneNumberAsync(phone) ? mapper.Map<PhoneNumberDto>(phone) : null;
         }
 
-        public async Task<ICollection<PhoneNumberDto>> GetPhoneNumbersByUserAsync(long userId)
+        public async Task<IEnumerable<PhoneNumberDto>> GetPhoneNumbersByUserAsync(long userId)
         {
             var contact = await contactRepository.GetContactAsync(c => c.UserId.Equals(userId));
 
-            return mapper.Map<ICollection<PhoneNumberDto>>(contact.PhoneNumbers);
+            return mapper.Map<IEnumerable<PhoneNumberDto>>(contact.PhoneNumbers);
         }
 
-        public async Task<ICollection<PhoneNumberDto>> GetPhoneNumbersByContactIdAsync(long contactId)
+        public async Task<IEnumerable<PhoneNumberDto>> GetPhoneNumbersByContactIdAsync(long contactId)
         {
             var contact = await contactRepository.GetContactAsync(c => c.Id.Equals(contactId));
 
-            return mapper.Map<ICollection<PhoneNumberDto>>(contact.PhoneNumbers);
+            return mapper.Map<IEnumerable<PhoneNumberDto>>(contact.PhoneNumbers);
         }
 
         public async Task<PhoneNumberDetailsDto> GetPhoneNumberById(long phoneNumberId)
@@ -61,11 +58,11 @@ namespace TutoringSystem.Application.Services
             return await phoneNumberRepository.UpdatePhoneNumberAsync(phone);
         }
 
-        public async Task<bool> DeletePhoneNumberAsync(long phoneNumberId)
+        public async Task<bool> RemovePhoneNumberAsync(long phoneNumberId)
         {
             var phone = await phoneNumberRepository.GetPhoneNumberAsync(p => p.Id.Equals(phoneNumberId));
 
-            return await phoneNumberRepository.DeletePhoneNumberAsync(phone);
+            return await phoneNumberRepository.RemovePhoneNumberAsync(phone);
         }
     }
 }

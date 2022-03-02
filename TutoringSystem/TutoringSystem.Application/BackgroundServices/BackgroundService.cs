@@ -6,15 +6,16 @@ namespace TutoringSystem.Application.BackgroundServices
 {
     public abstract class BackgroundService : IHostedService
     {
-        private Task _executingTask;
-        private readonly CancellationTokenSource _stoppingCts = new CancellationTokenSource();
+        private Task executingTask;
+        private readonly CancellationTokenSource stoppingCts = new CancellationTokenSource();
+
         public virtual Task StartAsync(CancellationToken cancellationToken)
         {
-            _executingTask = ExecuteAsync(_stoppingCts.Token);
+            executingTask = ExecuteAsync(stoppingCts.Token);
 
-            if (_executingTask.IsCompleted)
+            if (executingTask.IsCompleted)
             {
-                return _executingTask;
+                return executingTask;
             }
 
             return Task.CompletedTask;
@@ -22,18 +23,18 @@ namespace TutoringSystem.Application.BackgroundServices
 
         public virtual async Task StopAsync(CancellationToken cancellationToken)
         {
-            if (_executingTask == null)
+            if (executingTask == null)
             {
                 return;
             }
 
             try
             {
-                _stoppingCts.Cancel();
+                stoppingCts.Cancel();
             }
             finally
             {
-                await Task.WhenAny(_executingTask, Task.Delay(Timeout.Infinite, cancellationToken));
+                await Task.WhenAny(executingTask, Task.Delay(Timeout.Infinite, cancellationToken));
             }
         }
 
@@ -42,13 +43,11 @@ namespace TutoringSystem.Application.BackgroundServices
             do
             {
                 await Process();
-
                 await Task.Delay(5000, stoppingToken);
 
             } while (!stoppingToken.IsCancellationRequested);
         }
 
         protected abstract Task Process();
-
     }
 }

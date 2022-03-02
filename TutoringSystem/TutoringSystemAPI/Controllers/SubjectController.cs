@@ -4,7 +4,7 @@ using Swashbuckle.AspNetCore.Annotations;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using TutoringSystem.Application.Extensions;
-using TutoringSystem.API.Filters.TypeFilters;
+using TutoringSystem.API.Filters.Action;
 using TutoringSystem.Application.Authorization;
 using TutoringSystem.Application.Dtos.SubjectDtos;
 using TutoringSystem.Application.Services.Interfaces;
@@ -53,12 +53,9 @@ namespace TutoringSystem.API.Controllers
         public async Task<ActionResult<SubjectDetailsDto>> GetSubject(long subjectId)
         {
             var subject = await subjectService.GetSubjectByIdAsync(subjectId);
-
             var authorizationResult = authorizationService.AuthorizeAsync(User, subject, new ResourceOperationRequirement(OperationType.Read)).Result;
-            if (!authorizationResult.Succeeded)
-                return Forbid();
 
-            return Ok(subject);
+            return authorizationResult.Succeeded ? Ok(subject) : Forbid();
         }
 
         [SwaggerOperation(Summary = "Creates a new subject")]
@@ -66,14 +63,11 @@ namespace TutoringSystem.API.Controllers
         [Authorize(Roles = "Tutor")]
         public async Task<ActionResult> CreateSubject([FromBody] NewSubjectDto model)
         {
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
-
             var subject = await subjectService.AddSubjectAsync(User.GetUserId(), model);
-            if (subject is null)
-                return BadRequest("New subject could be not added");
 
-            return Created("api/subject/" + subject.Id, null);
+            return subject != null
+                ? Created("api/subject/" + subject.Id, null)
+                : BadRequest("New subject could be not added");
         }
 
         [SwaggerOperation(Summary = "Updates a existing subject")]
@@ -85,13 +79,13 @@ namespace TutoringSystem.API.Controllers
             var subject = await subjectService.GetSubjectByIdAsync(model.Id);
             var authorizationResult = authorizationService.AuthorizeAsync(User, subject, new ResourceOperationRequirement(OperationType.Update)).Result;
             if (!authorizationResult.Succeeded)
+            {
                 return Forbid();
+            }
 
             var updated = await subjectService.UpdateSubjectAsync(model);
-            if (!updated)
-                return BadRequest("Subject could be not updated");
 
-            return NoContent();
+            return updated ? NoContent() : BadRequest("Subject could be not updated");
         }
 
         [SwaggerOperation(Summary = "Deletes a specific subject")]
@@ -103,13 +97,13 @@ namespace TutoringSystem.API.Controllers
             var subject = await subjectService.GetSubjectByIdAsync(subjectId);
             var authorizationResult = authorizationService.AuthorizeAsync(User, subject, new ResourceOperationRequirement(OperationType.Delete)).Result;
             if (!authorizationResult.Succeeded)
+            {
                 return Forbid();
+            }
 
             var deleted = await subjectService.DeactivateSubjectAsync(subjectId);
-            if (!deleted)
-                return BadRequest("Subject could be not deleted");
 
-            return NoContent();
+            return deleted ? NoContent() : BadRequest("Subject could be not deleted");
         }
     }
 }

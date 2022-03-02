@@ -9,10 +9,10 @@ namespace TutoringSystem.Application.Services.Interfaces
     public interface IAdditionalOrderService
     {
         PagedList<OrderDto> GetAdditionalOrders(long tutorId, AdditionalOrderParameters parameters);
-        Task<OrderDetailsDto> GetAdditionalOrderByIdAsync(long orderId);
-        Task<OrderDto> AddAdditionalOrderAsync(long tutorId, NewOrderDto newOrder);
+        Task<OrderDetailsDto> GetOrderByIdAsync(long orderId);
+        Task<OrderDto> AddOrderAsync(long tutorId, NewOrderDto newOrder);
         Task<bool> UpdateAdditionalOrderAsync(UpdatedOrderDto updatedOrder);
-        Task<bool> DeleteAdditionalOrderAsync(long orderId);
+        Task<bool> RemoveOrderAsync(long orderId);
         Task<bool> ChangeOrderStatusAsync(long orderId, AdditionalOrderStatus orderStatus);
         Task<bool> ChangePaymentStatusAsync(long orderId, bool isPaid);
     }

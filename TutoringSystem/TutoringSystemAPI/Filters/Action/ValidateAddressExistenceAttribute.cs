@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 using TutoringSystem.Application.Dtos.AddressDtos;
 using TutoringSystem.Domain.Repositories;
 
-namespace TutoringSystem.API.Filters.TypeFilters
+namespace TutoringSystem.API.Filters.Action
 {
     public class ValidateAddressExistenceAttribute : TypeFilterAttribute
     {
@@ -28,7 +28,7 @@ namespace TutoringSystem.API.Filters.TypeFilters
                     var address = context.ActionArguments["model"] as UpdatedAddressDto;
                     if (address != null)
                     {
-                        if ((await addressRepository.GetAddressAsync(a => a.Id.Equals(address.Id))) == null)
+                        if (!addressRepository.IsAddressExist(a => a.Id.Equals(address.Id)))
                         {
                             context.Result = new NotFoundObjectResult(address.Id);
                             return;

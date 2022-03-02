@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using TutoringSystem.API.Filters.TypeFilters;
+using TutoringSystem.API.Filters.Action;
 using TutoringSystem.Application.Dtos.Enums;
 using TutoringSystem.Application.Dtos.StudentRequestDtos;
 using TutoringSystem.Application.Extensions;
@@ -48,10 +48,8 @@ namespace TutoringSystem.API.Controllers
         public async Task<ActionResult> DeclineRequest(long requestId)
         {
             var decline = await requestService.DeclineRequest(requestId);
-            if (!decline)
-                return BadRequest("Request could be not decline");
 
-            return Ok();
+            return decline ? Ok() : BadRequest("Request could be not decline");
         }
 
         [SwaggerOperation(Summary = "Retrieves all requests for the currently logged in student")]

@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 using TutoringSystem.Application.Dtos.AvailabilityDtos;
 using TutoringSystem.Domain.Repositories;
 
-namespace TutoringSystem.API.Filters.TypeFilters
+namespace TutoringSystem.API.Filters.Action
 {
     public class ValidateAvailabilityExistenceAttribute : TypeFilterAttribute
     {
@@ -28,7 +28,7 @@ namespace TutoringSystem.API.Filters.TypeFilters
                     var availabilityId = context.ActionArguments["availabilityId"] as long?;
                     if (availabilityId.HasValue)
                     {
-                        if ((await availabilityRepository.GetAvailabilityAsync(a => a.Id.Equals(availabilityId.Value))) == null)
+                        if (!availabilityRepository.IsAvailabilityExist(a => a.Id.Equals(availabilityId.Value)))
                         {
                             context.Result = new NotFoundObjectResult(availabilityId.Value);
                             return;
@@ -40,13 +40,14 @@ namespace TutoringSystem.API.Filters.TypeFilters
                     var availability = context.ActionArguments["model"] as UpdatedAvailabilityDto;
                     if (availability != null)
                     {
-                        if ((await availabilityRepository.GetAvailabilityAsync(a => a.Id.Equals(availability.Id))) == null)
+                        if (!availabilityRepository.IsAvailabilityExist(a => a.Id.Equals(availability.Id)))
                         {
                             context.Result = new NotFoundObjectResult(availability.Id);
                             return;
                         }
                     }
                 }
+
                 await next();
             }
         }

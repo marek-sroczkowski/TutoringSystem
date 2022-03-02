@@ -1,4 +1,5 @@
 ﻿using System;
+using TutoringSystem.Domain.Extensions;
 
 namespace TutoringSystem.Domain.Entities
 {
@@ -17,7 +18,7 @@ namespace TutoringSystem.Domain.Entities
 
         public StudentTutorRequest()
         {
-            CreatedDate = DateTime.Now;
+            CreatedDate = DateTime.Now.ToLocal();
             IsAccepted = false;
             IsActive = true;
         }

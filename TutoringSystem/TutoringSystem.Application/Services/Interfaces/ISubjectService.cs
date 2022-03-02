@@ -8,9 +8,8 @@ namespace TutoringSystem.Application.Services.Interfaces
     {
         Task<SubjectDto> AddSubjectAsync(long tutorId, NewSubjectDto newSubjectModel);
         Task<bool> DeactivateSubjectAsync(long subjectId);
-        Task<bool> ActivateSubjectAsync(long subjectId);
         Task<SubjectDetailsDto> GetSubjectByIdAsync(long subjectId);
-        Task<ICollection<SubjectDto>> GetTutorSubjectsAsync(long tutorId);
+        Task<IEnumerable<SubjectDto>> GetTutorSubjectsAsync(long tutorId);
         Task<bool> UpdateSubjectAsync(UpdatedSubjectDto updatedSubject);
     }
 }
