@@ -3,6 +3,7 @@ using System;
 using System.Linq;
 using System.Threading.Tasks;
 using TutoringSystem.Application.Dtos.ActivationTokenDtos;
+using TutoringSystem.Application.Extensions;
 using TutoringSystem.Application.Services.Interfaces;
 using TutoringSystem.Domain.Entities;
 using TutoringSystem.Domain.Repositories;
@@ -33,13 +34,13 @@ namespace TutoringSystem.Application.Services
 
         private async Task DeactivateTokenAsync(long userId)
         {
-            var token = await activationTokenRepository.GetTokenAsync(t => t.UserId.Equals(userId) && t.ExpirationDate >= DateTime.Now);
+            var token = await activationTokenRepository.GetTokenAsync(t => t.UserId.Equals(userId) && t.ExpirationDate >= DateTime.Now.ToLocal());
             if (token is null)
             {
                 return;
             }
 
-            token.ExpirationDate = DateTime.Now;
+            token.ExpirationDate = DateTime.Now.ToLocal();
             await activationTokenRepository.UpdateActivationTokenAsync(token);
         }
 

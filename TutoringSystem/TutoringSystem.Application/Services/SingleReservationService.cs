@@ -181,7 +181,7 @@ namespace TutoringSystem.Application.Services
 
         private async Task<bool> ValidateNewStudentReservationAsync(NewStudentSingleReservationDto reservation)
         {
-            if (reservation.StartTime.AddMinutes(30) < DateTime.Now)
+            if (reservation.StartTime.AddMinutes(30) < DateTime.Now.ToLocal())
                 return false;
 
             var interval = await intervalRepository.GetIntervalAsync(i => i.Id.Equals(reservation.IntervalId));

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
+using TutoringSystem.Application.Extensions;
 using TutoringSystem.Application.Services.Interfaces;
 using TutoringSystem.Domain.Entities;
 using TutoringSystem.Domain.Repositories;
@@ -26,7 +27,7 @@ namespace TutoringSystem.Application.Services
                 };
             }
 
-            token.ModificationDate = DateTime.Now;
+            token.ModificationDate = DateTime.Now.ToLocal();
             token.Token = tokenContent;
 
             return await tokenRepository.UpdateTokenAsync(token);

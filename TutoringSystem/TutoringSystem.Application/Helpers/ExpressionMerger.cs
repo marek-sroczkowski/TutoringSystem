@@ -8,8 +8,10 @@ namespace TutoringSystem.Application.Helpers
     {
         public static void MergeExpression<T>(ref Expression<Func<T, bool>> expression, Expression<Func<T, bool>> newExpression) where T : class
         {
-            if(expression is null)
+            if (expression is null)
+            {
                 expression = newExpression;
+            }
 
             var visitor = new ParameterUpdateVisitor(newExpression.Parameters.First(), expression.Parameters.First());
             newExpression = visitor.Visit(newExpression) as Expression<Func<T, bool>>;

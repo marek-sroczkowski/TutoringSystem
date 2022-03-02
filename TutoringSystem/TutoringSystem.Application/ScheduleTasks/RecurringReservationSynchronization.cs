@@ -3,6 +3,7 @@ using System;
 using System.Linq;
 using System.Threading.Tasks;
 using TutoringSystem.Application.BackgroundServices;
+using TutoringSystem.Application.Extensions;
 using TutoringSystem.Domain.Entities;
 using TutoringSystem.Domain.Entities.Enums;
 using TutoringSystem.Domain.Repositories;
@@ -20,7 +21,7 @@ namespace TutoringSystem.Application.ScheduleTasks
         public override async Task ProcessInScope(IServiceProvider scopeServiceProvider)
         {
             IRepeatedReservationRepository reservationRepository = scopeServiceProvider.GetRequiredService<IRepeatedReservationRepository>();
-            var reservations = reservationRepository.GetReservationsCollection(r => r.NextAddedDate.Date.Equals(DateTime.Now.AddDays(1).Date) || r.NextAddedDate.Date <= DateTime.Now.Date).ToList();
+            var reservations = reservationRepository.GetReservationsCollection(r => r.NextAddedDate.Date.Equals(DateTime.Now.ToLocal().AddDays(1).Date) || r.NextAddedDate.Date <= DateTime.Now.ToLocal().Date).ToList();
             for (int i = 0; i < reservations.Count; i++)
             {
                 switch (reservations[i].Frequency)
@@ -45,10 +46,10 @@ namespace TutoringSystem.Application.ScheduleTasks
 
         private async Task SynchronizeWeeklyReservationAsync(RepeatedReservation reservation, IRepeatedReservationRepository reservationRepository)
         {
-            if (reservation.LastAddedDate.Date > DateTime.Now.AddDays(-6).Date)
+            if (reservation.LastAddedDate.Date > DateTime.Now.ToLocal().AddDays(-6).Date)
                 return;
 
-            while (reservation.LastAddedDate.Date <= DateTime.Now.AddDays(-6).Date)
+            while (reservation.LastAddedDate.Date <= DateTime.Now.ToLocal().AddDays(-6).Date)
             {
                 var recurringReservation = reservation.Reservations.Last();
                 reservation.Reservations.Add(new RecurringReservation(recurringReservation)
@@ -64,10 +65,10 @@ namespace TutoringSystem.Application.ScheduleTasks
 
         private async Task SynchronizeOnceTwoWeeksReservationAsync(RepeatedReservation reservation, IRepeatedReservationRepository reservationRepository)
         {
-            if (reservation.LastAddedDate.Date > DateTime.Now.AddDays(-13).Date)
+            if (reservation.LastAddedDate.Date > DateTime.Now.ToLocal().AddDays(-13).Date)
                 return;
 
-            while (reservation.LastAddedDate.Date <= DateTime.Now.AddDays(-13).Date)
+            while (reservation.LastAddedDate.Date <= DateTime.Now.ToLocal().AddDays(-13).Date)
             {
                 var recurringReservation = reservation.Reservations.Last();
                 reservation.Reservations.Add(new RecurringReservation(recurringReservation)
@@ -83,10 +84,10 @@ namespace TutoringSystem.Application.ScheduleTasks
 
         private async Task SynchronizeMonthlyReservationAsync(RepeatedReservation reservation, IRepeatedReservationRepository reservationRepository)
         {
-            if (reservation.LastAddedDate.Date > DateTime.Now.AddDays(-27).Date)
+            if (reservation.LastAddedDate.Date > DateTime.Now.ToLocal().AddDays(-27).Date)
                 return;
 
-            while (reservation.LastAddedDate.Date <= DateTime.Now.AddDays(-27).Date)
+            while (reservation.LastAddedDate.Date <= DateTime.Now.ToLocal().AddDays(-27).Date)
             {
                 var recurringReservation = reservation.Reservations.Last();
                 reservation.Reservations.Add(new RecurringReservation(recurringReservation)

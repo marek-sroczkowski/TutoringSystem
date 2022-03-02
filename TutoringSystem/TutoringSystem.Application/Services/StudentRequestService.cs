@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using TutoringSystem.Application.Dtos.Enums;
 using TutoringSystem.Application.Dtos.StudentRequestDtos;
+using TutoringSystem.Application.Extensions;
 using TutoringSystem.Application.Services.Interfaces;
 using TutoringSystem.Domain.Entities;
 using TutoringSystem.Domain.Repositories;
@@ -87,7 +88,7 @@ namespace TutoringSystem.Application.Services
         {
             request.IsActive = true;
             request.IsAccepted = false;
-            request.CreatedDate = DateTime.Now;
+            request.CreatedDate = DateTime.Now.ToLocal();
 
             return await requestRepository.UpdateRequestAsync(request)
                 ? AddTutorToStudentStatus.RequestCreated

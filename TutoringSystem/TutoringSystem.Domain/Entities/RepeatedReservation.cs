@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using TutoringSystem.Domain.Entities.Enums;
+using TutoringSystem.Domain.Extensions;
 
 namespace TutoringSystem.Domain.Entities
 {
@@ -24,13 +25,13 @@ namespace TutoringSystem.Domain.Entities
 
         public RepeatedReservation()
         {
-            CreationDate = DateTime.Now;
+            CreationDate = DateTime.Now.ToLocal();
             IsActive = true;
         }
 
         public RepeatedReservation(RecurringReservation reservation) : this()
         {
-            LastAddedDate = DateTime.Now;
+            LastAddedDate = DateTime.Now.ToLocal();
             StartTime = reservation.StartTime;
             Duration = reservation.Duration;
             Place = reservation.Place;
@@ -48,7 +49,7 @@ namespace TutoringSystem.Domain.Entities
         {
             var reservationDate = reservation.StartTime.Date;
             int i = 1;
-            while (reservationDate.AddDays((int)Frequency * i) <= DateTime.Now.Date)
+            while (reservationDate.AddDays((int)Frequency * i) <= DateTime.Now.ToLocal().Date)
             {
                 Reservations.Add(new RecurringReservation(reservation)
                 {

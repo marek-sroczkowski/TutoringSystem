@@ -8,6 +8,7 @@ using TutoringSystem.Application.Dtos.AccountDtos;
 using TutoringSystem.Application.Dtos.EmailDtos;
 using TutoringSystem.Application.Dtos.Enums;
 using TutoringSystem.Application.Dtos.TutorDtos;
+using TutoringSystem.Application.Extensions;
 using TutoringSystem.Application.Services.Interfaces;
 using TutoringSystem.Domain.Entities;
 using TutoringSystem.Domain.Repositories;
@@ -94,14 +95,14 @@ namespace TutoringSystem.Application.Services
                 return false;
             }
 
-            var userToken = user.ActivationTokens.FirstOrDefault(t => t.ExpirationDate > DateTime.Now && t.TokenContent.Equals(token));
+            var userToken = user.ActivationTokens.FirstOrDefault(t => t.ExpirationDate > DateTime.Now.ToLocal() && t.TokenContent.Equals(token));
             if (userToken is null)
             {
                 return false;
             }
 
             user.IsEnable = true;
-            userToken.ExpirationDate = DateTime.Now;
+            userToken.ExpirationDate = DateTime.Now.ToLocal();
 
             return await userRepository.UpdateUserAsync(user);
         }
@@ -206,13 +207,13 @@ namespace TutoringSystem.Application.Services
 
         private async Task SetLastLoginDateAsync(User user)
         {
-            user.LastLoginDate = DateTime.Now;
+            user.LastLoginDate = DateTime.Now.ToLocal();
             await userRepository.UpdateUserAsync(user);
         }
 
         private async Task DeactivateNotEnabledUsersAsync()
         {
-            var tutors = await tutorRepository.GetTutorsCollectionAsync(u => !u.IsEnable && u.IsActive && u.RegistrationDate.AddDays(1) < DateTime.Now, isEagerLoadingEnabled: true);
+            var tutors = await tutorRepository.GetTutorsCollectionAsync(u => !u.IsEnable && u.IsActive && u.RegistrationDate.AddDays(1) < DateTime.Now.ToLocal(), isEagerLoadingEnabled: true);
             tutors.ToList().ForEach(u => u.IsActive = false);
 
             await tutorRepository.UpdateTutorsCollectionAsync(tutors);

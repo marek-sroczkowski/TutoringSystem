@@ -6,6 +6,7 @@ using System.Linq.Expressions;
 using System.Threading.Tasks;
 using TutoringSystem.Application.Dtos.AvailabilityDtos;
 using TutoringSystem.Application.Dtos.IntervalDtos;
+using TutoringSystem.Application.Extensions;
 using TutoringSystem.Application.Helpers;
 using TutoringSystem.Application.Parameters;
 using TutoringSystem.Application.Services.Interfaces;
@@ -59,7 +60,7 @@ namespace TutoringSystem.Application.Services
 
         public async Task<PagedList<AvailabilityDto>> GetFutureAvailabilitiesByTutorAsync(long tutorId, FutureAvailabilityParameters parameters)
         {
-            Expression<Func<Availability, bool>> expression = a => a.TutorId.Equals(tutorId) && a.Date >= DateTime.Now;
+            Expression<Func<Availability, bool>> expression = a => a.TutorId.Equals(tutorId) && a.Date >= DateTime.Now.ToLocal();
             FilterByEndDate(ref expression, parameters.EndDate);
             var availabilities = await availabilityRepository.GetAvailabilitiesCollectionAsync(expression);
             var availabilityDtos = mapper.Map<IEnumerable<AvailabilityDto>>(availabilities);
@@ -76,7 +77,7 @@ namespace TutoringSystem.Application.Services
 
         public async Task<AvailabilityDetailsDto> GetTodaysAvailabilityByTutorAsync(long tutorId)
         {
-            var availability = await availabilityRepository.GetAvailabilityAsync(a => a.TutorId.Equals(tutorId) && a.Date.Date.Equals(DateTime.Now.Date), true);
+            var availability = await availabilityRepository.GetAvailabilityAsync(a => a.TutorId.Equals(tutorId) && a.Date.Date.Equals(DateTime.Now.ToLocal().Date), true);
 
             return mapper.Map<AvailabilityDetailsDto>(availability);
         }
@@ -116,7 +117,7 @@ namespace TutoringSystem.Application.Services
 
         private async Task<bool> ValidateNewAvailabilityAsync(NewAvailabilityDto newAvailability, long tutorId)
         {
-            if (newAvailability.Date.Date < DateTime.Now.Date)
+            if (newAvailability.Date.Date < DateTime.Now.ToLocal().Date)
                 return false;
 
             if (newAvailability.Intervals is null)
