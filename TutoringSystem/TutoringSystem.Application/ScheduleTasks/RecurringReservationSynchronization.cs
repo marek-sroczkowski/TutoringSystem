@@ -21,7 +21,10 @@ namespace TutoringSystem.Application.ScheduleTasks
         public override async Task ProcessInScope(IServiceProvider scopeServiceProvider)
         {
             IRepeatedReservationRepository reservationRepository = scopeServiceProvider.GetRequiredService<IRepeatedReservationRepository>();
-            var reservations = reservationRepository.GetReservationsCollection(r => r.NextAddedDate.Date.Equals(DateTime.Now.ToLocal().AddDays(1).Date) || r.NextAddedDate.Date <= DateTime.Now.ToLocal().Date).ToList();
+            var tomorrowDate = DateTime.Now.ToLocal().AddDays(1).Date;
+            var now = DateTime.Now.ToLocal().Date;
+            var reservations = reservationRepository.GetReservationsCollection(r => r.NextAddedDate.Date.Equals(tomorrowDate) || r.NextAddedDate.Date <= now).ToList();
+            
             for (int i = 0; i < reservations.Count; i++)
             {
                 switch (reservations[i].Frequency)
@@ -44,7 +47,7 @@ namespace TutoringSystem.Application.ScheduleTasks
             });
         }
 
-        private async Task SynchronizeWeeklyReservationAsync(RepeatedReservation reservation, IRepeatedReservationRepository reservationRepository)
+        private static async Task SynchronizeWeeklyReservationAsync(RepeatedReservation reservation, IRepeatedReservationRepository reservationRepository)
         {
             if (reservation.LastAddedDate.Date > DateTime.Now.ToLocal().AddDays(-6).Date)
                 return;

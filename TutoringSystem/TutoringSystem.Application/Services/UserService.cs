@@ -95,7 +95,8 @@ namespace TutoringSystem.Application.Services
                 return false;
             }
 
-            var userToken = user.ActivationTokens.FirstOrDefault(t => t.ExpirationDate > DateTime.Now.ToLocal() && t.TokenContent.Equals(token));
+            var now = DateTime.Now.ToLocal();
+            var userToken = user.ActivationTokens.FirstOrDefault(t => t.ExpirationDate > now && t.TokenContent.Equals(token));
             if (userToken is null)
             {
                 return false;
@@ -213,7 +214,8 @@ namespace TutoringSystem.Application.Services
 
         private async Task DeactivateNotEnabledUsersAsync()
         {
-            var tutors = await tutorRepository.GetTutorsCollectionAsync(u => !u.IsEnable && u.IsActive && u.RegistrationDate.AddDays(1) < DateTime.Now.ToLocal(), isEagerLoadingEnabled: true);
+            var now = DateTime.Now.ToLocal();
+            var tutors = await tutorRepository.GetTutorsCollectionAsync(u => !u.IsEnable && u.IsActive && u.RegistrationDate.AddDays(1) < now, isEagerLoadingEnabled: true);
             tutors.ToList().ForEach(u => u.IsActive = false);
 
             await tutorRepository.UpdateTutorsCollectionAsync(tutors);

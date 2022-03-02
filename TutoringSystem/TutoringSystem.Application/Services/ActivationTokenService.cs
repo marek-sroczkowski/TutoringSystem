@@ -34,7 +34,8 @@ namespace TutoringSystem.Application.Services
 
         private async Task DeactivateTokenAsync(long userId)
         {
-            var token = await activationTokenRepository.GetTokenAsync(t => t.UserId.Equals(userId) && t.ExpirationDate >= DateTime.Now.ToLocal());
+            var now = DateTime.Now.ToLocal();
+            var token = await activationTokenRepository.GetTokenAsync(t => t.UserId.Equals(userId) && t.ExpirationDate >= now);
             if (token is null)
             {
                 return;

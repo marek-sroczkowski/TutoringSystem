@@ -60,7 +60,8 @@ namespace TutoringSystem.Application.Services
 
         public async Task<PagedList<AvailabilityDto>> GetFutureAvailabilitiesByTutorAsync(long tutorId, FutureAvailabilityParameters parameters)
         {
-            Expression<Func<Availability, bool>> expression = a => a.TutorId.Equals(tutorId) && a.Date >= DateTime.Now.ToLocal();
+            var now = DateTime.Now.ToLocal();
+            Expression<Func<Availability, bool>> expression = a => a.TutorId.Equals(tutorId) && a.Date >= now;
             FilterByEndDate(ref expression, parameters.EndDate);
             var availabilities = await availabilityRepository.GetAvailabilitiesCollectionAsync(expression);
             var availabilityDtos = mapper.Map<IEnumerable<AvailabilityDto>>(availabilities);
@@ -77,7 +78,8 @@ namespace TutoringSystem.Application.Services
 
         public async Task<AvailabilityDetailsDto> GetTodaysAvailabilityByTutorAsync(long tutorId)
         {
-            var availability = await availabilityRepository.GetAvailabilityAsync(a => a.TutorId.Equals(tutorId) && a.Date.Date.Equals(DateTime.Now.ToLocal().Date), true);
+            var now = DateTime.Now.ToLocal().Date;
+            var availability = await availabilityRepository.GetAvailabilityAsync(a => a.TutorId.Equals(tutorId) && a.Date.Date.Equals(now), true);
 
             return mapper.Map<AvailabilityDetailsDto>(availability);
         }
