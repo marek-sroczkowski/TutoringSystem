@@ -10,10 +10,10 @@ namespace TutoringSystem.Application.Validators
     {
         public SubjectEditionValidation(ISubjectRepository subjectRepository, IHttpContextAccessor httpContext)
         {
-            RuleFor(s => s.Name).Custom((value, context) =>
+            RuleFor(subject => subject).Custom((value, context) =>
             {
                 var userId = httpContext.HttpContext.User.GetUserId();
-                if (subjectRepository.IsSubjectExist(s => s.TutorId.Equals(userId) && s.Name.Equals(value)))
+                if (subjectRepository.IsSubjectExist(s => s.TutorId.Equals(userId) && s.Name.Equals(value.Name) && !s.Id.Equals(value.Id)))
                 {
                     context.AddFailure("name", "That subject name is taken");
                 }
