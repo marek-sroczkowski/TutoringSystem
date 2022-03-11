@@ -7,10 +7,12 @@ using System.Threading.Tasks;
 using TutoringSystem.Application.Dtos.AccountDtos;
 using TutoringSystem.Application.Dtos.EmailDtos;
 using TutoringSystem.Application.Dtos.Enums;
+using TutoringSystem.Application.Dtos.StudentDtos;
 using TutoringSystem.Application.Dtos.TutorDtos;
 using TutoringSystem.Application.Extensions;
 using TutoringSystem.Application.Services.Interfaces;
 using TutoringSystem.Domain.Entities;
+using TutoringSystem.Domain.Entities.Enums;
 using TutoringSystem.Domain.Repositories;
 
 namespace TutoringSystem.Application.Services
@@ -47,7 +49,12 @@ namespace TutoringSystem.Application.Services
             await DeactivateNotEnabledUsersAsync();
 
             var user = await userRepository.GetUserAsync(u => u.Username.Equals(userModel.Username), isEagerLoadingEnabled: true);
-            if (user is null || ValidatePassword(userModel, user) == PasswordVerificationResult.Failed)
+            if(user.IsActive && !user.IsEnable && user.Role.Equals(Role.Student) && user.PasswordHash is null)
+            {
+                await SetLastLoginDateAsync(user);
+                return new LoginResposneDto(LoginStatus.InactiveAccount, mapper.Map<UserDto>(user));
+            }
+            else if (user is null || ValidatePassword(userModel, user) == PasswordVerificationResult.Failed)
             {
                 return new LoginResposneDto(LoginStatus.InvalidUsernameOrPassword, null);
             }
@@ -59,12 +66,11 @@ namespace TutoringSystem.Application.Services
                 : new LoginResposneDto(LoginStatus.LoggedInCorrectly, mapper.Map<UserDto>(user));
         }
 
-        public async Task<bool> RegisterStudentAsync(long tutorId, RegisterStudentDto student)
+        public async Task<bool> CreateNewStudentAsync(long tutorId, NewStudentDto student)
         {
             await DeactivateNotEnabledUsersAsync();
 
             var newStudent = mapper.Map<Student>(student);
-            newStudent.PasswordHash = passwordHasher.HashPassword(newStudent, student.Password);
             if (!await studentRepository.AddStudentAsync(newStudent))
             {
                 return false;
@@ -75,7 +81,19 @@ namespace TutoringSystem.Application.Services
             return await studentRepository.UpdateStudentAsync(newStudent);
         }
 
-        public async Task<TutorDto> RegisterTutorAsync(RegisterTutorDto newTutor)
+        public async Task<StudentDto> RegisterStudentAsync(long userId, RegisteredStudentDto student)
+        {
+            await DeactivateNotEnabledUsersAsync();
+
+            var existingStudent = await studentRepository.GetStudentAsync(s => s.Id.Equals(userId), isEagerLoadingEnabled: true);
+            existingStudent.PasswordHash = passwordHasher.HashPassword(existingStudent, student.Password);
+            existingStudent.Contact.Email = student.Email;
+            var updated = await studentRepository.UpdateStudentAsync(existingStudent);
+
+            return updated ? mapper.Map<StudentDto>(existingStudent) : null;
+        }
+
+        public async Task<TutorDto> RegisterTutorAsync(RegisteredTutorDto newTutor)
         {
             await DeactivateNotEnabledUsersAsync();
 

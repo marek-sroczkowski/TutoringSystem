@@ -25,25 +25,36 @@ namespace TutoringSystem.API.Controllers
             this.jwtProvider = jwtProvider;
         }
 
-        [SwaggerOperation(Summary = "Creates a new tutor")]
+        [SwaggerOperation(Summary = "Registers a new tutor")]
         [HttpPost("register/tutor")]
         [AllowAnonymous]
-        public async Task<ActionResult> RegisterTutor([FromBody] RegisterTutorDto model)
+        public async Task<ActionResult> RegisterTutor([FromBody] RegisteredTutorDto model)
         {
             var createdTutor = await userService.RegisterTutorAsync(model);
             bool created = createdTutor != null && await userService.SendNewActivationTokenAsync(createdTutor.Id);
 
-            return created ? Ok() : BadRequest("New tutor could not be added");
+            return created ? Ok() : BadRequest("New tutor could not be registered");
         }
 
         [SwaggerOperation(Summary = "Creates a new student")]
-        [HttpPost("register/student")]
+        [HttpPost("create/student")]
         [Authorize(Roles = "Tutor")]
-        public async Task<ActionResult> RegisterStudent([FromBody] RegisterStudentDto model)
+        public async Task<ActionResult> CreateStudent([FromBody] NewStudentDto model)
         {
-            var created = await userService.RegisterStudentAsync(User.GetUserId(), model);
+            var created = await userService.CreateNewStudentAsync(User.GetUserId(), model);
 
             return created ? Ok() : BadRequest("New student could not be added");
+        }
+
+        [SwaggerOperation(Summary = "Registers a new student")]
+        [HttpPost("register/student")]
+        [Authorize(Roles = "Student")]
+        public async Task<ActionResult> RegisterStudent([FromBody] RegisteredStudentDto model)
+        {
+            var createdStudent = await userService.RegisterStudentAsync(User.GetUserId(), model);
+            bool created = createdStudent != null && await userService.SendNewActivationTokenAsync(createdStudent.Id);
+
+            return created ? Ok() : BadRequest("New student could not be registered");
         }
 
         [SwaggerOperation(Summary = "Generates a token when logging in successfully")]
@@ -85,7 +96,7 @@ namespace TutoringSystem.API.Controllers
 
         [SwaggerOperation(Summary = "Activates the account of the currently logged in user by actiavtion token")]
         [HttpPost("activate")]
-        [Authorize(Roles = "Tutor")]
+        [Authorize(Roles = "Tutor,Student")]
         public async Task<ActionResult> ActivateAccountByToken(string token)
         {
             var activated = await userService.ActivateUserByTokenAsync(User.GetUserId(), token);
@@ -95,7 +106,7 @@ namespace TutoringSystem.API.Controllers
 
         [SwaggerOperation(Summary = "Sends a new activation token for the currently logged in user")]
         [HttpPost("newCode")]
-        [Authorize(Roles = "Tutor")]
+        [Authorize(Roles = "Tutor,Student")]
         public async Task<ActionResult> SendNewActivationToken()
         {
             var sent = await userService.SendNewActivationTokenAsync(User.GetUserId());
