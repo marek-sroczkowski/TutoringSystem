@@ -49,10 +49,15 @@ namespace TutoringSystem.Application.Services
             await DeactivateNotEnabledUsersAsync();
 
             var user = await userRepository.GetUserAsync(u => u.Username.Equals(userModel.Username), isEagerLoadingEnabled: true);
-            if(user.IsActive && !user.IsEnable && user.Role.Equals(Role.Student) && user.PasswordHash is null)
+            if(user.IsActive && !user.IsEnable && user.Role.Equals(Role.Student) && user.PasswordHash != null)
             {
                 await SetLastLoginDateAsync(user);
                 return new LoginResposneDto(LoginStatus.InactiveAccount, mapper.Map<UserDto>(user));
+            }
+            else if (user.IsActive && !user.IsEnable && user.Role.Equals(Role.Student) && user.PasswordHash is null)
+            {
+                await SetLastLoginDateAsync(user);
+                return new LoginResposneDto(LoginStatus.UnregisteredStudent, mapper.Map<UserDto>(user));
             }
             else if (user is null || ValidatePassword(userModel, user) == PasswordVerificationResult.Failed)
             {

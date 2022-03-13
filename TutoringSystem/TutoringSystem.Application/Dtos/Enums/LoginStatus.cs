@@ -4,6 +4,7 @@
     {
         LoggedInCorrectly,
         InactiveAccount,
-        InvalidUsernameOrPassword
+        InvalidUsernameOrPassword,
+        UnregisteredStudent
     }
 }
