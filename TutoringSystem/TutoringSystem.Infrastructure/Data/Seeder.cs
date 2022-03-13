@@ -122,6 +122,7 @@ namespace TutoringSystem.Infrastructure.Data
                         }
                     }
                 },
+                Address = new Address()
             };
             janKowalski.PasswordHash = passwordHasher.HashPassword(janKowalski, "1234");
             janKowalski.IsEnable = true;
@@ -136,6 +137,7 @@ namespace TutoringSystem.Infrastructure.Data
                 {
                     DiscordName = "jacek#1234"
                 },
+                Address = new Address()
             };
             jacekNowak.PasswordHash = passwordHasher.HashPassword(jacekNowak, "1234");
             jacekNowak.IsEnable = true;
