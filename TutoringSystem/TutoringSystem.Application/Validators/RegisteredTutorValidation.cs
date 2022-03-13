@@ -10,6 +10,7 @@ namespace TutoringSystem.Application.Validators
         {
             RuleFor(u => u.Username).NotEmpty();
             RuleFor(u => u.FirstName).NotEmpty();
+            RuleFor(u => u.LastName).NotEmpty();
 
             RuleFor(u => u.Username).Custom((value, context) =>
             {
