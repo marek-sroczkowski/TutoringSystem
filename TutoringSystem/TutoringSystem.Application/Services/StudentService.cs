@@ -89,7 +89,7 @@ namespace TutoringSystem.Application.Services
 
         public async Task<StudentDetailsDto> GetStudentAsync(long tutorId, long studentId)
         {
-            var student = await studentRepository.GetStudentAsync(s => s.Id.Equals(studentId), true);
+            var student = await studentRepository.GetStudentAsync(s => s.Id.Equals(studentId), isEagerLoadingEnabled: true);
 
             return new StudentDetailsDto(student, tutorId);
         }

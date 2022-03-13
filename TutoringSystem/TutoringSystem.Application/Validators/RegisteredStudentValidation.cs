@@ -8,9 +8,9 @@ namespace TutoringSystem.Application.Validators
     {
         public RegisteredStudentValidation(IUserRepository userRepository)
         {
-            RuleFor(u => u.Email).Custom(async (value, context) =>
+            RuleFor(u => u.Email).Custom((value, context) =>
             {
-                var user = await userRepository.GetUserAsync(user => user.Contact.Email.Equals(value), isEagerLoadingEnabled: true);
+                var user = userRepository.GetUserAsync(user => user.Contact.Email.Equals(value), isEagerLoadingEnabled: true).Result;
                 if (user != null)
                 {
                     context.AddFailure("email", "That email is taken");

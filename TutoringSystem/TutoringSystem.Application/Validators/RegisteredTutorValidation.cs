@@ -10,6 +10,7 @@ namespace TutoringSystem.Application.Validators
         {
             RuleFor(u => u.Username).NotEmpty();
             RuleFor(u => u.FirstName).NotEmpty();
+            RuleFor(u => u.LastName).NotEmpty();
 
             RuleFor(u => u.Username).Custom((value, context) =>
             {
@@ -19,9 +20,9 @@ namespace TutoringSystem.Application.Validators
                 }
             });
 
-            RuleFor(u => u.Email).Custom(async (value, context) =>
+            RuleFor(u => u.Email).Custom((value, context) =>
             {
-                var user = await userRepository.GetUserAsync(user => user.Contact.Email.Equals(value), isEagerLoadingEnabled: true);
+                var user = userRepository.GetUserAsync(user => user.Contact.Email.Equals(value), isEagerLoadingEnabled: true).Result;
                 if (user != null)
                 {
                     context.AddFailure("email", "That email is taken");
