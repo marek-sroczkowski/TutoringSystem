@@ -112,6 +112,7 @@ namespace TutoringSystem.Infrastructure.Repositories
                 .Include(t => t.Contact)
                 .Include(t => t.Address)
                 .Include(t => t.PushNotificationToken)
+                .Include(t => t.StudentTutors)
                 .FirstOrDefaultAsync();
 
             return tutor;
