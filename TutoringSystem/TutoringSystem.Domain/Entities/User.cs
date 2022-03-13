@@ -30,9 +30,6 @@ namespace TutoringSystem.Domain.Entities
             IsActive = true;
             IsEnable = false;
             RegistrationDate = DateTime.Now.ToLocal();
-            Contact = new Contact { PhoneNumbers = new List<PhoneNumber>() };
-            Address = new Address();
-            PushNotificationToken = new PushNotificationToken();
         }
     }
 }

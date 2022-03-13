@@ -21,7 +21,9 @@ namespace TutoringSystem.Infrastructure.Data
         public void Seed()
         {
             if (!dbContext.Users.Any())
+            {
                 InsertSampleData();
+            }
         }
 
         private void InsertSampleData()
@@ -101,6 +103,7 @@ namespace TutoringSystem.Infrastructure.Data
                 Username = "Admin"
             };
             tutor1.PasswordHash = passwordHasher.HashPassword(tutor1, "1234");
+            tutor1.IsEnable = true;
 
             var janKowalski = new Student
             {
@@ -121,6 +124,7 @@ namespace TutoringSystem.Infrastructure.Data
                 },
             };
             janKowalski.PasswordHash = passwordHasher.HashPassword(janKowalski, "1234");
+            janKowalski.IsEnable = true;
 
             var jacekNowak = new Student
             {
@@ -134,6 +138,7 @@ namespace TutoringSystem.Infrastructure.Data
                 },
             };
             jacekNowak.PasswordHash = passwordHasher.HashPassword(jacekNowak, "1234");
+            jacekNowak.IsEnable = true;
 
             var r1 = new SingleReservation
             {

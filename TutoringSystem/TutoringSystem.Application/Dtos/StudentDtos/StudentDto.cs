@@ -1,9 +1,11 @@
-﻿using System.Linq;
+﻿using AutoMapper;
+using System.Linq;
+using TutoringSystem.Application.Mapping;
 using TutoringSystem.Domain.Entities;
 
 namespace TutoringSystem.Application.Dtos.StudentDtos
 {
-    public class StudentDto
+    public class StudentDto : IMap
     {
         public long Id { get; set; }
         public string Username { get; set; }
@@ -31,6 +33,11 @@ namespace TutoringSystem.Application.Dtos.StudentDtos
             var studentTutor = student.StudentTutors.FirstOrDefault(st => st.StudentId.Equals(student.Id) && st.TutorId.Equals(tutorId));
             HourlRate = studentTutor.HourlRate;
             Note = studentTutor.Note;
+        }
+
+        public void Mapping(Profile profile)
+        {
+            profile.CreateMap<User, StudentDto>();
         }
     }
 }
