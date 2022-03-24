@@ -4,7 +4,7 @@
     {
         InternalError = -1,
         PasswordsVary,
-        TooShort,
+        NotMeetRequirements,
         DuplicateOfOld,
         InvalidOldPassword
     }
