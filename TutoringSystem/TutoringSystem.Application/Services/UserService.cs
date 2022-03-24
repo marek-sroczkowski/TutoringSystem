@@ -49,7 +49,7 @@ namespace TutoringSystem.Application.Services
             await DeactivateNotEnabledUsersAsync();
 
             var user = await userRepository.GetUserAsync(u => u.Username.Equals(userModel.Username), isEagerLoadingEnabled: true);
-            if(user.IsActive && !user.IsEnable && user.Role.Equals(Role.Student) && user.PasswordHash != null)
+            if (user.IsActive && !user.IsEnable && user.Role.Equals(Role.Student) && user.PasswordHash != null)
             {
                 await SetLastLoginDateAsync(user);
                 return new LoginResposneDto(LoginStatus.InactiveAccount, mapper.Map<UserDto>(user));
@@ -157,26 +157,12 @@ namespace TutoringSystem.Application.Services
             return await userRepository.RemoveUserAsync(user);
         }
 
-        public async Task<ICollection<WrongPasswordStatus>> ChangePasswordAsync(long userId, PasswordDto passwordModel)
+        public async Task<bool> ChangePasswordAsync(long userId, PasswordDto passwordModel)
         {
             var user = await userRepository.GetUserAsync(u => u.Id.Equals(userId), isEagerLoadingEnabled: true);
-            var validationResult = ValidatePassword(user, passwordModel);
+            user.PasswordHash = passwordHasher.HashPassword(user, passwordModel.NewPassword);
 
-            if (validationResult.Count == 0)
-            {
-                user.PasswordHash = passwordHasher.HashPassword(user, passwordModel.NewPassword);
-                var changed = await userRepository.UpdateUserAsync(user);
-
-                if (!changed)
-                {
-                    validationResult.Add(WrongPasswordStatus.InternalError);
-                    return validationResult;
-                }
-
-                return null;
-            }
-
-            return validationResult;
+            return await userRepository.UpdateUserAsync(user);
         }
 
         public async Task<bool> UpdateGeneralUserInfoAsync(long userId, UpdatedUserDto updatedUser)
@@ -192,36 +178,6 @@ namespace TutoringSystem.Application.Services
             var user = await userRepository.GetUserAsync(u => u.Id.Equals(userId));
 
             return mapper.Map<ShortUserDto>(user);
-        }
-
-        private ICollection<WrongPasswordStatus> ValidatePassword(User user, PasswordDto passwordModel)
-        {
-            var result = new List<WrongPasswordStatus>();
-            var passwordVerificationResult = passwordHasher.VerifyHashedPassword(user, user.PasswordHash, passwordModel.OldPassword);
-
-            if (!passwordVerificationResult.Equals(PasswordVerificationResult.Success))
-            {
-                result.Add(WrongPasswordStatus.InvalidOldPassword);
-                return result;
-            }
-
-            if (!passwordModel.NewPassword.Equals(passwordModel.ConfirmPassword))
-            {
-                result.Add(WrongPasswordStatus.PasswordsVary);
-            }
-
-            if (passwordModel.NewPassword.Length < 4)
-            {
-                result.Add(WrongPasswordStatus.TooShort);
-            }
-
-            passwordVerificationResult = passwordHasher.VerifyHashedPassword(user, user.PasswordHash, passwordModel.NewPassword);
-            if (passwordVerificationResult.Equals(PasswordVerificationResult.Success))
-            {
-                result.Add(WrongPasswordStatus.DuplicateOfOld);
-            }
-
-            return result;
         }
 
         private PasswordVerificationResult ValidatePassword(LoginUserDto loginModel, User user)

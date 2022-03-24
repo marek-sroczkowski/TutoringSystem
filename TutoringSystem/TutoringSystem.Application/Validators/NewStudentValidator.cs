@@ -4,9 +4,9 @@ using TutoringSystem.Domain.Repositories;
 
 namespace TutoringSystem.Application.Validators
 {
-    public class NewStudentValidation : AbstractValidator<NewStudentDto>
+    public class NewStudentValidator : AbstractValidator<NewStudentDto>
     {
-        public NewStudentValidation(IUserRepository userRepository)
+        public NewStudentValidator(IUserRepository userRepository)
         {
             RuleFor(u => u.FirstName).NotEmpty();
             RuleFor(s => s.HourlRate).GreaterThan(0).LessThan(10000);

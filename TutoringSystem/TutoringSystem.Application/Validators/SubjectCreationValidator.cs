@@ -6,14 +6,14 @@ using TutoringSystem.Domain.Repositories;
 
 namespace TutoringSystem.Application.Validators
 {
-    public class SubjectEditionValidation : AbstractValidator<UpdatedSubjectDto>
+    public class SubjectCreationValidator : AbstractValidator<NewSubjectDto>
     {
-        public SubjectEditionValidation(ISubjectRepository subjectRepository, IHttpContextAccessor httpContext)
+        public SubjectCreationValidator(ISubjectRepository subjectRepository, IHttpContextAccessor httpContext)
         {
-            RuleFor(subject => subject).Custom((value, context) =>
+            RuleFor(s => s.Name).Custom((value, context) =>
             {
                 var userId = httpContext.HttpContext.User.GetUserId();
-                if (subjectRepository.IsSubjectExist(s => s.TutorId.Equals(userId) && s.Name.Equals(value.Name) && !s.Id.Equals(value.Id)))
+                if (subjectRepository.IsSubjectExist(s => s.TutorId.Equals(userId) && s.Name.Equals(value)))
                 {
                     context.AddFailure("name", "That subject name is taken");
                 }

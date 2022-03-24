@@ -4,9 +4,9 @@ using TutoringSystem.Domain.Repositories;
 
 namespace TutoringSystem.Application.Validators
 {
-    public class RegisteredTutorValidation : AbstractValidator<RegisteredTutorDto>
+    public class RegisteredTutorValidator : AbstractValidator<RegisteredTutorDto>
     {
-        public RegisteredTutorValidation(IUserRepository userRepository)
+        public RegisteredTutorValidator(IUserRepository userRepository)
         {
             RuleFor(u => u.Username).NotEmpty();
             RuleFor(u => u.FirstName).NotEmpty();

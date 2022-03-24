@@ -125,11 +125,12 @@ namespace TutoringSystem.Application.DependencyInjection
                 })
                 .AddFluentValidation();
 
-            services.AddScoped<IValidator<NewStudentDto>, NewStudentValidation>();
-            services.AddScoped<IValidator<RegisteredTutorDto>, RegisteredTutorValidation>();
-            services.AddScoped<IValidator<NewSubjectDto>, SubjectCreationValidation>();
-            services.AddScoped<IValidator<UpdatedSubjectDto>, SubjectEditionValidation>();
-            services.AddScoped<IValidator<RegisteredStudentDto>, RegisteredStudentValidation>();
+            services.AddScoped<IValidator<NewStudentDto>, NewStudentValidator>();
+            services.AddScoped<IValidator<RegisteredTutorDto>, RegisteredTutorValidator>();
+            services.AddScoped<IValidator<NewSubjectDto>, SubjectCreationValidator>();
+            services.AddScoped<IValidator<UpdatedSubjectDto>, SubjectEditionValidator>();
+            services.AddScoped<IValidator<RegisteredStudentDto>, RegisteredStudentValidator>();
+            services.AddScoped<IValidator<PasswordDto>, PasswordChangeValidator>();
 
             return services;
         }

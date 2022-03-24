@@ -89,9 +89,9 @@ namespace TutoringSystem.API.Controllers
         [Authorize(Roles = "Tutor,Student")]
         public async Task<ActionResult> ChangePassword([FromBody] PasswordDto passwordModel)
         {
-            var changedErrors = await userService.ChangePasswordAsync(User.GetUserId(), passwordModel);
+            var changed = await userService.ChangePasswordAsync(User.GetUserId(), passwordModel);
 
-            return changedErrors is null ? Ok() : BadRequest(changedErrors);
+            return changed ? Ok() : BadRequest("Password could be not changed");
         }
 
         [SwaggerOperation(Summary = "Activates the account of the currently logged in user by actiavtion token")]
