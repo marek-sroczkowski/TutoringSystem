@@ -4,9 +4,9 @@ using TutoringSystem.Domain.Repositories;
 
 namespace TutoringSystem.Application.Validators
 {
-    public class RegisteredStudentValidation : AbstractValidator<RegisteredStudentDto>
+    public class RegisteredStudentValidator : AbstractValidator<RegisteredStudentDto>
     {
-        public RegisteredStudentValidation(IUserRepository userRepository)
+        public RegisteredStudentValidator(IUserRepository userRepository)
         {
             RuleFor(u => u.Email).Custom((value, context) =>
             {
