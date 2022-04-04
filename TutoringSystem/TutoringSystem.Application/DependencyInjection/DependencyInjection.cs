@@ -40,6 +40,7 @@ namespace TutoringSystem.Application.DependencyInjection
         public static IServiceCollection AddApplicationServices(this IServiceCollection services)
         {
             services.AddScoped<IUserService, UserService>();
+            services.AddScoped<IAuthenticationService, AuthenticationService>();
             services.AddScoped<IAdditionalOrderService, AdditionalOrderService>();
             services.AddScoped<IReservationService, ReservationService>();
             services.AddScoped<ISingleReservationService, SingleReservationService>();
@@ -111,6 +112,7 @@ namespace TutoringSystem.Application.DependencyInjection
         public static IServiceCollection AddScheduleTasks(this IServiceCollection services)
         {
             services.AddSingleton<IHostedService, RecurringReservationSynchronization>();
+            services.AddSingleton<IHostedService, InactivedAccountsDeletion>();
 
             return services;
         }

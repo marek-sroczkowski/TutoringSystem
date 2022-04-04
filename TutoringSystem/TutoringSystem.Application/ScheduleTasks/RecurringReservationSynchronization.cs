@@ -18,7 +18,7 @@ namespace TutoringSystem.Application.ScheduleTasks
 
         protected override string Schedule => "55 23 * * *";
 
-        public override async Task ProcessInScope(IServiceProvider scopeServiceProvider)
+        public override async Task ProcessInScopeAsync(IServiceProvider scopeServiceProvider)
         {
             IRepeatedReservationRepository reservationRepository = scopeServiceProvider.GetRequiredService<IRepeatedReservationRepository>();
             var tomorrowDate = DateTime.Now.ToLocal().AddDays(1).Date;
