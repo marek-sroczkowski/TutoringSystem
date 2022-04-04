@@ -2,7 +2,7 @@
 using TutoringSystem.Application.Mapping;
 using TutoringSystem.Domain.Entities;
 
-namespace TutoringSystem.Application.Dtos.AccountDtos
+namespace TutoringSystem.Application.Dtos.Authentication
 {
     public class AuthenticationDto : IMap
     {

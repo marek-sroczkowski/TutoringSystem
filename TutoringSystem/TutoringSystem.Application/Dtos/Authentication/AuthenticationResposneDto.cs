@@ -1,14 +1,13 @@
-﻿using System;
+﻿using TutoringSystem.Application.Dtos.AccountDtos;
 using TutoringSystem.Application.Dtos.Enums;
-using TutoringSystem.Application.Dtos.IdentityDtos;
 
-namespace TutoringSystem.Application.Dtos.AccountDtos
+namespace TutoringSystem.Application.Dtos.Authentication
 {
     public class AuthenticationResposneDto
     {
         public AuthenticationStatus Status { get; set; }
         public UserDto User { get; set; }
-        public JwtToken Token { get; set; }
+        public JwtTokenDto Token { get; set; }
 
         public AuthenticationResposneDto()
         {
@@ -19,7 +18,7 @@ namespace TutoringSystem.Application.Dtos.AccountDtos
             Status = status;
         }
 
-        public AuthenticationResposneDto(AuthenticationStatus status, UserDto user, JwtToken token)
+        public AuthenticationResposneDto(AuthenticationStatus status, UserDto user, JwtTokenDto token)
         {
             Status = status;
             User = user;

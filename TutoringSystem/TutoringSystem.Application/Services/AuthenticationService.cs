@@ -1,9 +1,9 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Identity;
 using System;
-using System.Linq;
 using System.Threading.Tasks;
 using TutoringSystem.Application.Dtos.AccountDtos;
+using TutoringSystem.Application.Dtos.Authentication;
 using TutoringSystem.Application.Dtos.Enums;
 using TutoringSystem.Application.Extensions;
 using TutoringSystem.Application.Identity;
@@ -17,19 +17,16 @@ namespace TutoringSystem.Application.Services
     public class AuthenticationService : IAuthenticationService
     {
         private readonly IUserRepository userRepository;
-        private readonly ITutorRepository tutorRepository;
         private readonly IJwtProvider jwtProvider;
         private readonly IPasswordHasher<User> passwordHasher;
         private readonly IMapper mapper;
 
         public AuthenticationService(IUserRepository userRepository,
-            ITutorRepository tutorRepository,
             IJwtProvider jwtProvider,
             IPasswordHasher<User> passwordHasher,
             IMapper mapper)
         {
             this.userRepository = userRepository;
-            this.tutorRepository = tutorRepository;
             this.jwtProvider = jwtProvider;
             this.passwordHasher = passwordHasher;
             this.mapper = mapper;

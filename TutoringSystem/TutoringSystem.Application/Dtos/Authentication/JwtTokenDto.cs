@@ -1,8 +1,8 @@
 ﻿using System;
 
-namespace TutoringSystem.Application.Dtos.IdentityDtos
+namespace TutoringSystem.Application.Dtos.Authentication
 {
-    public class JwtToken
+    public class JwtTokenDto
     {
         public string Token { get; set; }
         public DateTime ExpirationDate { get; set; }

@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
 using System.Threading.Tasks;
-using TutoringSystem.Application.Dtos.AccountDtos;
+using TutoringSystem.Application.Dtos.Authentication;
 using TutoringSystem.Application.Dtos.Enums;
 using TutoringSystem.Application.Services.Interfaces;
 
