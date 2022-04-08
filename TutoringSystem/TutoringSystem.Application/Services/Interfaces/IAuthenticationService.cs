@@ -5,6 +5,6 @@ namespace TutoringSystem.Application.Services.Interfaces
 {
     public interface IAuthenticationService
     {
-        Task<AuthenticationResposneDto> AuthenticateAsync(AuthenticationDto authentication);
+        Task<AuthenticationResposneDto> AuthenticateAsync(AuthenticationDto authentication, string clientIp);
     }
 }

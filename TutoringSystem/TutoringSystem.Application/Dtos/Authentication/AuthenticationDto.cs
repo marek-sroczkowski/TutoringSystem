@@ -8,6 +8,7 @@ namespace TutoringSystem.Application.Dtos.Authentication
     {
         public string Username { get; set; }
         public string Password { get; set; }
+        public string DeviceIdentificator { get; set; }
 
         public void Mapping(Profile profile)
         {

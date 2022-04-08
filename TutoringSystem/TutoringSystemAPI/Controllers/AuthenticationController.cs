@@ -25,7 +25,8 @@ namespace TutoringSystem.API.Controllers
         [AllowAnonymous]
         public async Task<ActionResult<AuthenticationResposneDto>> Authenticate([FromBody] AuthenticationDto authenticationModel)
         {
-            var loginResult = await authenticationService.AuthenticateAsync(authenticationModel);
+            string ip = Request.Headers.ContainsKey("X-Forwarded-For") ? Request.Headers["X-Forwarded-For"] : HttpContext.Connection.RemoteIpAddress.MapToIPv4().ToString();
+            var loginResult = await authenticationService.AuthenticateAsync(authenticationModel, ip);
 
             return loginResult.Status == AuthenticationStatus.InvalidUsernameOrPassword
                 ? BadRequest(loginResult)

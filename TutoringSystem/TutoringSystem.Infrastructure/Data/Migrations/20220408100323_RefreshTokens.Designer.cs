@@ -10,8 +10,8 @@ using TutoringSystem.Infrastructure.Data;
 namespace TutoringSystem.Infrastructure.Data.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20220405180241_AddedDeviceEntity")]
-    partial class AddedDeviceEntity
+    [Migration("20220408100323_RefreshTokens")]
+    partial class RefreshTokens
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -168,26 +168,6 @@ namespace TutoringSystem.Infrastructure.Data.Migrations
                     b.ToTable("Contacts");
                 });
 
-            modelBuilder.Entity("TutoringSystem.Domain.Entities.Device", b =>
-                {
-                    b.Property<long>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<string>("Identificator")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<long>("UserId")
-                        .HasColumnType("bigint");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("Device");
-                });
-
             modelBuilder.Entity("TutoringSystem.Domain.Entities.Interval", b =>
                 {
                     b.Property<long>("Id")
@@ -259,6 +239,50 @@ namespace TutoringSystem.Infrastructure.Data.Migrations
                         .IsUnique();
 
                     b.ToTable("PushNotificationTokens");
+                });
+
+            modelBuilder.Entity("TutoringSystem.Domain.Entities.RefreshToken", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<string>("CreatedByIp")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("DeviceIdentificator")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("ReplacedByToken")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("RevokedByDeviceId")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("RevokedByIp")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("RevokedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Token")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<long>("UserId")
+                        .HasColumnType("bigint");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("RefreshTokens");
                 });
 
             modelBuilder.Entity("TutoringSystem.Domain.Entities.RepeatedReservation", b =>
@@ -577,17 +601,6 @@ namespace TutoringSystem.Infrastructure.Data.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("TutoringSystem.Domain.Entities.Device", b =>
-                {
-                    b.HasOne("TutoringSystem.Domain.Entities.User", "User")
-                        .WithMany("Devices")
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("User");
-                });
-
             modelBuilder.Entity("TutoringSystem.Domain.Entities.Interval", b =>
                 {
                     b.HasOne("TutoringSystem.Domain.Entities.Availability", "Availability")
@@ -615,6 +628,17 @@ namespace TutoringSystem.Infrastructure.Data.Migrations
                     b.HasOne("TutoringSystem.Domain.Entities.User", "User")
                         .WithOne("PushNotificationToken")
                         .HasForeignKey("TutoringSystem.Domain.Entities.PushNotificationToken", "UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("TutoringSystem.Domain.Entities.RefreshToken", b =>
+                {
+                    b.HasOne("TutoringSystem.Domain.Entities.User", "User")
+                        .WithMany("RefreshTokens")
+                        .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -769,9 +793,9 @@ namespace TutoringSystem.Infrastructure.Data.Migrations
 
                     b.Navigation("Contact");
 
-                    b.Navigation("Devices");
-
                     b.Navigation("PushNotificationToken");
+
+                    b.Navigation("RefreshTokens");
                 });
 
             modelBuilder.Entity("TutoringSystem.Domain.Entities.Student", b =>

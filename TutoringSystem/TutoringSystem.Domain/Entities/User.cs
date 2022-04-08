@@ -25,7 +25,7 @@ namespace TutoringSystem.Domain.Entities
 
         public virtual ICollection<ActivationToken> ActivationTokens { get; set; }
 
-        public virtual ICollection<Device> Devices { get; set; }
+        public virtual ICollection<RefreshToken> RefreshTokens { get; set; }
 
         public User()
         {

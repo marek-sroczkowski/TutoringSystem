@@ -7,7 +7,8 @@ namespace TutoringSystem.Application.Dtos.Authentication
     {
         public AuthenticationStatus Status { get; set; }
         public UserDto User { get; set; }
-        public JwtTokenDto Token { get; set; }
+        public JwtTokenDto JwtToken { get; set; }
+        public string RefreshToken { get; set; }
 
         public AuthenticationResposneDto()
         {
@@ -18,11 +19,12 @@ namespace TutoringSystem.Application.Dtos.Authentication
             Status = status;
         }
 
-        public AuthenticationResposneDto(AuthenticationStatus status, UserDto user, JwtTokenDto token)
+        public AuthenticationResposneDto(AuthenticationStatus status, UserDto user, JwtTokenDto jwtToken, string refreshToken)
         {
             Status = status;
             User = user;
-            Token = token;
+            JwtToken = jwtToken;
+            RefreshToken = refreshToken;
         }
     }
 }
