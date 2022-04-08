@@ -10,6 +10,7 @@ using System.Reflection;
 using System.Text;
 using TutoringSystem.Application.Authorization;
 using TutoringSystem.Application.Dtos.AccountDtos;
+using TutoringSystem.Application.Dtos.Authentication;
 using TutoringSystem.Application.Dtos.ReportDtos;
 using TutoringSystem.Application.Dtos.SubjectDtos;
 using TutoringSystem.Application.Helpers;
@@ -134,6 +135,7 @@ namespace TutoringSystem.Application.DependencyInjection
             services.AddScoped<IValidator<UpdatedSubjectDto>, SubjectEditionValidator>();
             services.AddScoped<IValidator<RegisteredStudentDto>, RegisteredStudentValidator>();
             services.AddScoped<IValidator<PasswordDto>, PasswordChangeValidator>();
+            services.AddScoped<IValidator<JwtRefreshRequestDto>, RefreshTokenValidator>();
 
             return services;
         }
