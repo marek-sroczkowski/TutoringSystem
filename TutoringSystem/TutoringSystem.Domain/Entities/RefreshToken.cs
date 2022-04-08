@@ -10,6 +10,7 @@ namespace TutoringSystem.Domain.Entities
         public DateTime CreatedDate { get; set; }
         public string CreatedByIp { get; set; }
         public string DeviceIdentificator { get; set; }
+        public DateTime ExpiresDate { get; set; }
         public DateTime? RevokedDate { get; set; }
         public string RevokedByIp { get; set; }
         public string RevokedByDeviceId { get; set; }
