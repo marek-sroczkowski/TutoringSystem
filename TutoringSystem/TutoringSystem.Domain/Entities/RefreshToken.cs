@@ -1,11 +1,11 @@
 ﻿using System;
+using TutoringSystem.Domain.Entities.Base;
 using TutoringSystem.Domain.Extensions;
 
 namespace TutoringSystem.Domain.Entities
 {
-    public class RefreshToken
+    public class RefreshToken : Entity
     {
-        public long Id { get; set; }
         public string Token { get; set; }
         public DateTime CreatedDate { get; set; }
         public string CreatedByIp { get; set; }

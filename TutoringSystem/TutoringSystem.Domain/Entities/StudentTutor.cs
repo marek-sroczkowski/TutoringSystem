@@ -1,6 +1,8 @@
-﻿namespace TutoringSystem.Domain.Entities
+﻿using TutoringSystem.Domain.Entities.Base;
+
+namespace TutoringSystem.Domain.Entities
 {
-    public class StudentTutor
+    public class StudentTutor : Entity
     {
         public long StudentId { get; set; }
         public virtual Student Student { get; set; }

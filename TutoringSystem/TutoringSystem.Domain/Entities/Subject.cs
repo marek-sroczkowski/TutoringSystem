@@ -1,11 +1,11 @@
 ﻿using System.Collections.Generic;
+using TutoringSystem.Domain.Entities.Base;
 using TutoringSystem.Domain.Entities.Enums;
 
 namespace TutoringSystem.Domain.Entities
 {
-    public class Subject
+    public class Subject : Entity
     {
-        public long Id { get; set; }
         public string Name { get; set; }
         public string Description { get; set; }
         public bool IsActive { get; set; }

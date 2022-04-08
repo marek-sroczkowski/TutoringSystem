@@ -1,8 +1,9 @@
-﻿namespace TutoringSystem.Domain.Entities
+﻿using TutoringSystem.Domain.Entities.Base;
+
+namespace TutoringSystem.Domain.Entities
 {
-    public class PhoneNumber
+    public class PhoneNumber : Entity
     {
-        public long Id { get; set; }
         public string Owner { get; set; }
         public string Number { get; set; }
         public bool IsActive { get; set; }

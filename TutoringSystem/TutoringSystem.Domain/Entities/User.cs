@@ -1,13 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using TutoringSystem.Domain.Entities.Base;
 using TutoringSystem.Domain.Entities.Enums;
 using TutoringSystem.Domain.Extensions;
 
 namespace TutoringSystem.Domain.Entities
 {
-    public class User
+    public class User : Entity
     {
-        public long Id { get; set; }
         public string Username { get; set; }
         public string PasswordHash { get; set; }
         public string FirstName { get; set; }

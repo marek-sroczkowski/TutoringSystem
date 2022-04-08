@@ -1,10 +1,10 @@
 ﻿using System.Collections.Generic;
+using TutoringSystem.Domain.Entities.Base;
 
 namespace TutoringSystem.Domain.Entities
 {
-    public class Contact
+    public class Contact : Entity
     {
-        public long Id { get; set; }
         public string Email { get; set; }
         public string DiscordName { get; set; }
 
