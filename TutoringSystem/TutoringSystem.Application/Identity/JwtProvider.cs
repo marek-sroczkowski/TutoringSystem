@@ -19,7 +19,7 @@ namespace TutoringSystem.Application.Identity
             this.jwtOptions = jwtOptions;
         }
 
-        public JwtTokenDto GenerateJwtToken(UserDto user)
+        public TokenDto GenerateJwtToken(UserDto user)
         {
             var claims = new List<Claim>()
             {
@@ -44,7 +44,7 @@ namespace TutoringSystem.Application.Identity
 
             var tokenHandler = new JwtSecurityTokenHandler();
 
-            return new JwtTokenDto
+            return new TokenDto
             {
                 Token = tokenHandler.WriteToken(token),
                 ExpirationDate = expires

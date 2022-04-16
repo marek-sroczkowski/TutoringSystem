@@ -135,7 +135,7 @@ namespace TutoringSystem.Application.DependencyInjection
             services.AddScoped<IValidator<UpdatedSubjectDto>, SubjectEditionValidator>();
             services.AddScoped<IValidator<RegisteredStudentDto>, RegisteredStudentValidator>();
             services.AddScoped<IValidator<PasswordDto>, PasswordChangeValidator>();
-            services.AddScoped<IValidator<JwtRefreshRequestDto>, RefreshTokenValidator>();
+            services.AddScoped<IValidator<TokenRefreshRequestDto>, RefreshTokenValidator>();
 
             return services;
         }

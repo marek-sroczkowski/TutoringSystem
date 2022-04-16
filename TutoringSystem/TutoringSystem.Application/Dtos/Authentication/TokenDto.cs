@@ -5,14 +5,14 @@ using TutoringSystem.Domain.Entities;
 
 namespace TutoringSystem.Application.Dtos.Authentication
 {
-    public class RefreshTokenDto : IMap
+    public class TokenDto : IMap
     {
         public string Token { get; set; }
-        public DateTime ExpiresDate { get; set; }
+        public DateTime ExpirationDate { get; set; }
 
         public void Mapping(Profile profile)
         {
-            profile.CreateMap<RefreshToken, RefreshTokenDto>();
+            profile.CreateMap<RefreshToken, TokenDto>();
         }
     }
 }

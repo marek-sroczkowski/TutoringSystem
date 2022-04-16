@@ -47,7 +47,7 @@ namespace TutoringSystem.Application.Services
             var userDto = mapper.Map<UserDto>(user);
             var token = jwtProvider.GenerateJwtToken(userDto);
             await SetLastLoginDateAsync(user);
-            var refreshToken = await refreshTokenService.AddRefreshToken(user.Id, authentication.DeviceIdentificator, clientIp);
+            var refreshToken = await refreshTokenService.AddRefreshTokenAsync(user.Id, authentication.DeviceIdentificator, clientIp);
 
             if (user.IsActive && !user.IsEnable && user.Role == Role.Student && user.PasswordHash is null)
             {

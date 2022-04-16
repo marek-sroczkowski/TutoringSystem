@@ -5,6 +5,6 @@ namespace TutoringSystem.Application.Identity
 {
     public interface IJwtProvider
     {
-        JwtTokenDto GenerateJwtToken(UserDto user);
+        TokenDto GenerateJwtToken(UserDto user);
     }
 }

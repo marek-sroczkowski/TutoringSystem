@@ -1,6 +1,5 @@
 ﻿using AutoMapper;
 using System;
-using System.Linq;
 using System.Security.Cryptography;
 using System.Threading.Tasks;
 using TutoringSystem.Application.Dtos.AccountDtos;
@@ -31,27 +30,44 @@ namespace TutoringSystem.Application.Services
             this.mapper = mapper;
         }
 
-        public async Task<JwtTokenDto> GenerateRefreshedJwtTokenAsync(long userId, JwtRefreshRequestDto jwtRefreshRequest)
+        public async Task<TokenDto> GenerateRefreshedJwtTokenAsync(TokenRefreshRequestDto refreshData)
         {
-            var user = await userRepository.GetUserAsync(u => u.Id == userId, isEagerLoadingEnabled: true);
-            var userToken = user.RefreshTokens.FirstOrDefault(t => t.IsActive);
+            var oldToken = await GetRefreshToken(refreshData);
+            var user = await userRepository.GetUserAsync(u => u.Id == oldToken.UserId, isEagerLoadingEnabled: true);
 
             return jwtProvider.GenerateJwtToken(mapper.Map<UserDto>(user));
         }
 
-        public async Task<RefreshTokenDto> AddRefreshToken(long userId, string deviceIdentificator, string clientIp)
+        public async Task<TokenDto> AddRefreshTokenAsync(TokenRefreshRequestDto refreshData, string clientIp)
+        {
+            var oldToken = await GetRefreshToken(refreshData);
+            var newToken = GenerateRefreshToken(oldToken.UserId, refreshData.DeviceIdentificator, clientIp);
+            await refreshTokenRepository.AddTokenAsync(newToken);
+            await RemoveOldRefreshToken(oldToken, newToken);
+
+            return mapper.Map<TokenDto>(newToken);
+        }
+
+        public async Task<TokenDto> AddRefreshTokenAsync(long userId, string deviceIdentificator, string clientIp)
         {
             var oldToken = await GetTokenByUserAsync(userId, deviceIdentificator);
             var newToken = GenerateRefreshToken(userId, deviceIdentificator, clientIp);
             await refreshTokenRepository.AddTokenAsync(newToken);
             await RemoveOldRefreshToken(oldToken, newToken);
 
-            return mapper.Map<RefreshTokenDto>(newToken);
+            return mapper.Map<TokenDto>(newToken);
         }
 
-        public async Task<RefreshToken> GetTokenByUserAsync(long userId, string deviceIdentificator)
+        private async Task<RefreshToken> GetTokenByUserAsync(long userId, string deviceIdentificator)
         {
-            var token = await refreshTokenRepository.GetTokenAsync(t => t.UserId == userId && t.IsActive && t.DeviceIdentificator == deviceIdentificator);
+            var token = await refreshTokenRepository.GetTokenAsync(t => t.UserId == userId && t.DeviceIdentificator == deviceIdentificator && t.IsActive);
+
+            return token;
+        }
+
+        private async Task<RefreshToken> GetRefreshToken(TokenRefreshRequestDto refreshData)
+        {
+            var token = await refreshTokenRepository.GetTokenAsync(t => t.Token == refreshData.Token && t.DeviceIdentificator == refreshData.DeviceIdentificator && t.IsActive);
 
             return token;
         }
@@ -83,7 +99,7 @@ namespace TutoringSystem.Application.Services
                 CreatedByIp = clientIp,
                 DeviceIdentificator = deviceIdentificator,
                 UserId = userId,
-                ExpiresDate = DateTime.Now.ToLocal().AddDays(30),
+                ExpirationDate = DateTime.Now.ToLocal().AddDays(30),
             };
         }
     }
