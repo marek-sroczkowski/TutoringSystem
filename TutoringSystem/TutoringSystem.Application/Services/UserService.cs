@@ -110,9 +110,7 @@ namespace TutoringSystem.Application.Services
                 return false;
             }
 
-            emailService.SendEmail(new ActivationEmailDto(user.Contact.Email, user.FirstName, generatedToken.TokenContent));
-
-            return true;
+            return await emailService.SendActivationCodeAsync(new ActivationEmailDto(user.Contact.Email, user.FirstName, generatedToken.TokenContent));
         }
 
         public async Task<bool> DeactivateUserAsync(long userId)

@@ -1,9 +1,10 @@
-﻿using TutoringSystem.Application.Dtos.EmailDtos;
+﻿using System.Threading.Tasks;
+using TutoringSystem.Application.Dtos.EmailDtos;
 
 namespace TutoringSystem.Application.Services.Interfaces
 {
     public interface IEmailService
     {
-        void SendEmail(ActivationEmailDto activationEmail);
+        Task<bool> SendActivationCodeAsync(ActivationEmailDto activationEmail);
     }
 }
