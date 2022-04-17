@@ -1,33 +1,34 @@
 ﻿using MailKit.Net.Smtp;
 using MailKit.Security;
-using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Options;
 using MimeKit;
 using MimeKit.Text;
 using TutoringSystem.Application.Dtos.EmailDtos;
+using TutoringSystem.Application.Helpers;
 using TutoringSystem.Application.Services.Interfaces;
 
 namespace TutoringSystem.Application.Services
 {
     public class EmailService : IEmailService
     {
-        private readonly IConfiguration configuration;
+        private readonly AppSettings settings;
 
-        public EmailService(IConfiguration configuration)
+        public EmailService(IOptions<AppSettings> settings)
         {
-            this.configuration = configuration;
+            this.settings = settings.Value;
         }
 
         public void SendEmail(ActivationEmailDto activationEmail)
         {
             var email = new MimeMessage();
-            email.From.Add(MailboxAddress.Parse(configuration.GetSection("EmailSender").GetValue<string>("Email")));
+            email.From.Add(MailboxAddress.Parse(settings.SmtpEmail));
             email.To.Add(MailboxAddress.Parse(activationEmail.RecipientEmail));
-            email.Subject = configuration.GetSection("EmailSender").GetValue<string>("Subject");
+            email.Subject = settings.ActivationEmailSubject;
             email.Body = new TextPart(TextFormat.Html) { Text = GetActivationEmailContent(activationEmail.RecipientName, activationEmail.ActivationToken), };
 
             using var smtp = new SmtpClient();
-            smtp.Connect("smtp.gmail.com", 587, SecureSocketOptions.StartTls);
-            smtp.Authenticate(configuration.GetSection("EmailSender").GetValue<string>("Email"), configuration.GetSection("EmailSender").GetValue<string>("Password"));
+            smtp.Connect(settings.SmtpHost, settings.SmtpPort, SecureSocketOptions.StartTls);
+            smtp.Authenticate(settings.SmtpEmail, settings.SmtpPassword);
             smtp.Send(email);
             smtp.Disconnect(true);
         }

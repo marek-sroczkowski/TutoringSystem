@@ -1,10 +1,12 @@
 ﻿using AutoMapper;
+using Microsoft.Extensions.Options;
 using System;
 using System.Security.Cryptography;
 using System.Threading.Tasks;
 using TutoringSystem.Application.Dtos.AccountDtos;
 using TutoringSystem.Application.Dtos.Authentication;
 using TutoringSystem.Application.Extensions;
+using TutoringSystem.Application.Helpers;
 using TutoringSystem.Application.Identity;
 using TutoringSystem.Application.Services.Interfaces;
 using TutoringSystem.Domain.Entities;
@@ -16,16 +18,19 @@ namespace TutoringSystem.Application.Services
     {
         private readonly IUserRepository userRepository;
         private readonly IRefreshTokenRepository refreshTokenRepository;
+        private readonly AppSettings settings;
         private readonly IJwtProvider jwtProvider;
         private readonly IMapper mapper;
 
         public RefreshTokenService(IUserRepository userRepository,
             IRefreshTokenRepository refreshTokenRepository,
+            IOptions<AppSettings> settings,
             IJwtProvider jwtProvider,
             IMapper mapper)
         {
             this.userRepository = userRepository;
             this.refreshTokenRepository = refreshTokenRepository;
+            this.settings = settings.Value;
             this.jwtProvider = jwtProvider;
             this.mapper = mapper;
         }
@@ -87,7 +92,7 @@ namespace TutoringSystem.Application.Services
             await refreshTokenRepository.RemoveTokenAsync(oldToken);
         }
 
-        private static RefreshToken GenerateRefreshToken(long userId, string deviceIdentificator, string clientIp)
+        private RefreshToken GenerateRefreshToken(long userId, string deviceIdentificator, string clientIp)
         {
             var randomNumber = new byte[32];
             using var rng = RandomNumberGenerator.Create();
@@ -99,7 +104,7 @@ namespace TutoringSystem.Application.Services
                 CreatedByIp = clientIp,
                 DeviceIdentificator = deviceIdentificator,
                 UserId = userId,
-                ExpirationDate = DateTime.Now.ToLocal().AddDays(30),
+                ExpirationDate = DateTime.Now.ToLocal().AddDays(settings.RefreshTokenExpireDays),
             };
         }
     }

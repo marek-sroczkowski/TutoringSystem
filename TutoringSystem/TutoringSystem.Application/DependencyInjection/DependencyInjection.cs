@@ -34,6 +34,7 @@ namespace TutoringSystem.Application.DependencyInjection
             services.AddScheduleTasks();
             services.AddValidators();
             services.AddSortHelpers();
+            services.AddSettings(configuration);
 
             return services;
         }
@@ -75,9 +76,8 @@ namespace TutoringSystem.Application.DependencyInjection
 
         public static IServiceCollection AddAuthentication(this IServiceCollection services, IConfiguration configuration)
         {
-            var jwtOptions = new JwtOptions();
-            configuration.GetSection("jwt").Bind(jwtOptions);
-            services.AddSingleton(jwtOptions);
+            var settings = new AppSettings();
+            configuration.GetSection("AppSettings").Bind(settings);
             services.AddAuthentication(options =>
             {
                 options.DefaultAuthenticateScheme = "Bearer";
@@ -88,9 +88,9 @@ namespace TutoringSystem.Application.DependencyInjection
                 cfg.RequireHttpsMetadata = false;
                 cfg.TokenValidationParameters = new TokenValidationParameters
                 {
-                    ValidIssuer = jwtOptions.JwtIssuer,
-                    ValidAudience = jwtOptions.JwtIssuer,
-                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtOptions.JwtKey))
+                    ValidIssuer = settings.JwtIssuer,
+                    ValidAudience = settings.JwtIssuer,
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(settings.JwtKey))
                 };
             });
 
@@ -148,6 +148,13 @@ namespace TutoringSystem.Application.DependencyInjection
             services.AddScoped<ISortHelper<PlaceReportDto>, SortHelper<PlaceReportDto>>();
             services.AddScoped<ISortHelper<SubjectCategoryReportDto>, SortHelper<SubjectCategoryReportDto>>();
             services.AddScoped<ISortHelper<Reservation>, SortHelper<Reservation>>();
+
+            return services;
+        }
+
+        public static IServiceCollection AddSettings(this IServiceCollection services, IConfiguration configuration)
+        {
+            services.Configure<AppSettings>(configuration.GetSection("AppSettings"));
 
             return services;
         }

@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using System;
 using TutoringSystem.Application.Mapping;
 using TutoringSystem.Domain.Entities;
 
@@ -8,16 +9,7 @@ namespace TutoringSystem.Application.Dtos.ActivationTokenDtos
     {
         public string TokenContent { get; set; }
         public long UserId { get; set; }
-
-        public NewActivationTokenDto()
-        {
-        }
-
-        public NewActivationTokenDto(string tokenContent, long userId)
-        {
-            TokenContent = tokenContent;
-            UserId = userId;
-        }
+        public DateTime ExpirationDate { get; set; }
 
         public void Mapping(Profile profile)
         {

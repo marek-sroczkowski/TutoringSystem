@@ -1,4 +1,5 @@
-﻿using Microsoft.IdentityModel.Tokens;
+﻿using Microsoft.Extensions.Options;
+using Microsoft.IdentityModel.Tokens;
 using System;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
@@ -7,16 +8,17 @@ using System.Text;
 using TutoringSystem.Application.Dtos.AccountDtos;
 using TutoringSystem.Application.Dtos.Authentication;
 using TutoringSystem.Application.Extensions;
+using TutoringSystem.Application.Helpers;
 
 namespace TutoringSystem.Application.Identity
 {
     public class JwtProvider : IJwtProvider
     {
-        private readonly JwtOptions jwtOptions;
+        private readonly AppSettings settings;
 
-        public JwtProvider(JwtOptions jwtOptions)
+        public JwtProvider(IOptions<AppSettings> settings)
         {
-            this.jwtOptions = jwtOptions;
+            this.settings = settings.Value;
         }
 
         public TokenDto GenerateJwtToken(UserDto user)
@@ -28,15 +30,14 @@ namespace TutoringSystem.Application.Identity
                 new Claim(ClaimTypes.Name, user.Username),
             };
 
-            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtOptions.JwtKey));
+            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(settings.JwtKey));
             var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
-
-            var expires = DateTime.Now.ToLocal().AddDays(jwtOptions.JwtExpireDays);
+            var expires = DateTime.Now.ToLocal().AddDays(settings.JwtExpireDays);
 
             var token = new JwtSecurityToken
             (
-                jwtOptions.JwtIssuer,
-                jwtOptions.JwtIssuer,
+                settings.JwtIssuer,
+                settings.JwtIssuer,
                 claims,
                 expires: expires,
                 signingCredentials: creds
