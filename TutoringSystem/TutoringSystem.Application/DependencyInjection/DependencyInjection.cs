@@ -10,6 +10,7 @@ using System.Reflection;
 using System.Text;
 using TutoringSystem.Application.Authorization;
 using TutoringSystem.Application.Dtos.AccountDtos;
+using TutoringSystem.Application.Dtos.Authentication;
 using TutoringSystem.Application.Dtos.ReportDtos;
 using TutoringSystem.Application.Dtos.SubjectDtos;
 using TutoringSystem.Application.Helpers;
@@ -40,6 +41,7 @@ namespace TutoringSystem.Application.DependencyInjection
         public static IServiceCollection AddApplicationServices(this IServiceCollection services)
         {
             services.AddScoped<IUserService, UserService>();
+            services.AddScoped<IAuthenticationService, AuthenticationService>();
             services.AddScoped<IAdditionalOrderService, AdditionalOrderService>();
             services.AddScoped<IReservationService, ReservationService>();
             services.AddScoped<ISingleReservationService, SingleReservationService>();
@@ -59,6 +61,7 @@ namespace TutoringSystem.Application.DependencyInjection
             services.AddScoped<IStudentTutorRequestNotificationService, StudentTutorRequestNotificationService>();
             services.AddScoped<IStudentRequestService, StudentRequestService>();
             services.AddScoped<IRepeatedReservationService, RepeatedReservationService>();
+            services.AddScoped<IRefreshTokenService, RefreshTokenService>();
 
             return services;
         }
@@ -111,6 +114,7 @@ namespace TutoringSystem.Application.DependencyInjection
         public static IServiceCollection AddScheduleTasks(this IServiceCollection services)
         {
             services.AddSingleton<IHostedService, RecurringReservationSynchronization>();
+            services.AddSingleton<IHostedService, InactivedAccountsDeletion>();
 
             return services;
         }
@@ -131,6 +135,7 @@ namespace TutoringSystem.Application.DependencyInjection
             services.AddScoped<IValidator<UpdatedSubjectDto>, SubjectEditionValidator>();
             services.AddScoped<IValidator<RegisteredStudentDto>, RegisteredStudentValidator>();
             services.AddScoped<IValidator<PasswordDto>, PasswordChangeValidator>();
+            services.AddScoped<IValidator<TokenRefreshRequestDto>, RefreshTokenValidator>();
 
             return services;
         }

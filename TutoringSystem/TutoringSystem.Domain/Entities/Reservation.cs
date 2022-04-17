@@ -1,11 +1,11 @@
 ﻿using System;
+using TutoringSystem.Domain.Entities.Base;
 using TutoringSystem.Domain.Entities.Enums;
 
 namespace TutoringSystem.Domain.Entities
 {
-    public class Reservation
+    public class Reservation : Entity
     {
-        public long Id { get; set; }
         public double Cost { get; set; }
         public DateTime StartTime { get; set; }
         public int Duration { get; set; }

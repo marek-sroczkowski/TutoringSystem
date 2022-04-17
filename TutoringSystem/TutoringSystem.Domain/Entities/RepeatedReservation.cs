@@ -1,13 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using TutoringSystem.Domain.Entities.Base;
 using TutoringSystem.Domain.Entities.Enums;
 using TutoringSystem.Domain.Extensions;
 
 namespace TutoringSystem.Domain.Entities
 {
-    public class RepeatedReservation
+    public class RepeatedReservation : Entity
     {
-        public long Id { get; set; }
         public DateTime StartTime { get; set; }
         public double Duration { get; set; }
         public ReservationPlace Place { get; set; }

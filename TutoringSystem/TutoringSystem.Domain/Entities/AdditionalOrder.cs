@@ -1,12 +1,12 @@
 ﻿using System;
+using TutoringSystem.Domain.Entities.Base;
 using TutoringSystem.Domain.Entities.Enums;
 using TutoringSystem.Domain.Extensions;
 
 namespace TutoringSystem.Domain.Entities
 {
-    public class AdditionalOrder
+    public class AdditionalOrder : Entity
     {
-        public long Id { get; set; }
         public string Name { get; set; }
         public DateTime ReceiptDate { get; set; }
         public DateTime Deadline { get; set; }

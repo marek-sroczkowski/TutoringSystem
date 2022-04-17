@@ -1,10 +1,10 @@
 ﻿using System;
+using TutoringSystem.Domain.Entities.Base;
 
 namespace TutoringSystem.Domain.Entities
 {
-    public class PushNotificationToken
+    public class PushNotificationToken : Entity
     {
-        public long Id { get; set; }
         public DateTime ModificationDate { get; set; }
         public string Token { get; set; }
 

@@ -3,9 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
 using System.Threading.Tasks;
 using TutoringSystem.Application.Dtos.AccountDtos;
-using TutoringSystem.Application.Dtos.Enums;
 using TutoringSystem.Application.Extensions;
-using TutoringSystem.Application.Identity;
 using TutoringSystem.Application.Services.Interfaces;
 using TutoringSystem.Domain.Entities.Enums;
 
@@ -17,12 +15,10 @@ namespace TutoringSystem.API.Controllers
     public class AccountController: ControllerBase
     {
         private readonly IUserService userService;
-        private readonly IJwtProvider jwtProvider;
 
-        public AccountController(IUserService userService, IJwtProvider jwtProvider)
+        public AccountController(IUserService userService)
         {
             this.userService = userService;
-            this.jwtProvider = jwtProvider;
         }
 
         [SwaggerOperation(Summary = "Registers a new tutor")]
@@ -55,23 +51,6 @@ namespace TutoringSystem.API.Controllers
             bool created = createdStudent != null && await userService.SendNewActivationTokenAsync(createdStudent.Id);
 
             return created ? Ok() : BadRequest("New student could not be registered");
-        }
-
-        [SwaggerOperation(Summary = "Generates a token when logging in successfully")]
-        [HttpPost("login")]
-        [AllowAnonymous]
-        public async Task<ActionResult<LoginResposneDto>> Login([FromBody] LoginUserDto model)
-        {
-            var loginResult = await userService.TryLoginAsync(model);
-            if (loginResult.LoginStatus.Equals(LoginStatus.InvalidUsernameOrPassword))
-            {
-                return Ok(loginResult);
-            }
-
-            var token = jwtProvider.GenerateJwtToken(loginResult.User);
-            Response.Headers.Add("Authorization", token);
-
-            return Ok(loginResult);
         }
 
         [SwaggerOperation(Summary = "Gets role of the currently logged user")]

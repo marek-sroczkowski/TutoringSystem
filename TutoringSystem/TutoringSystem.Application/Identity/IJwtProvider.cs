@@ -1,9 +1,10 @@
 ﻿using TutoringSystem.Application.Dtos.AccountDtos;
+using TutoringSystem.Application.Dtos.Authentication;
 
 namespace TutoringSystem.Application.Identity
 {
     public interface IJwtProvider
     {
-        string GenerateJwtToken(UserDto user);
+        TokenDto GenerateJwtToken(UserDto user);
     }
 }

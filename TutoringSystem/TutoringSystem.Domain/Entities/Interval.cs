@@ -1,10 +1,10 @@
 ﻿using System;
+using TutoringSystem.Domain.Entities.Base;
 
 namespace TutoringSystem.Domain.Entities
 {
-    public class Interval
+    public class Interval : Entity
     {
-        public long Id { get; set; }
         public DateTime StartTime { get; set; }
         public DateTime EndTime { get; set; }
 

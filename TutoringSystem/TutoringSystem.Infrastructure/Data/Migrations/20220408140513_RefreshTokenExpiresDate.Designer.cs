@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using TutoringSystem.Infrastructure.Data;
 
 namespace TutoringSystem.Infrastructure.Data.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20220408140513_RefreshTokenExpiresDate")]
+    partial class RefreshTokenExpiresDate
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -255,7 +257,7 @@ namespace TutoringSystem.Infrastructure.Data.Migrations
                     b.Property<string>("DeviceIdentificator")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<DateTime>("ExpirationDate")
+                    b.Property<DateTime>("ExpiresDate")
                         .HasColumnType("datetime2");
 
                     b.Property<bool>("IsActive")
@@ -384,10 +386,11 @@ namespace TutoringSystem.Infrastructure.Data.Migrations
 
             modelBuilder.Entity("TutoringSystem.Domain.Entities.StudentTutor", b =>
                 {
-                    b.Property<long>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+                    b.Property<long>("StudentId")
+                        .HasColumnType("bigint");
+
+                    b.Property<long>("TutorId")
+                        .HasColumnType("bigint");
 
                     b.Property<double>("HourlRate")
                         .HasColumnType("float");
@@ -398,15 +401,7 @@ namespace TutoringSystem.Infrastructure.Data.Migrations
                     b.Property<string>("Note")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<long>("StudentId")
-                        .HasColumnType("bigint");
-
-                    b.Property<long>("TutorId")
-                        .HasColumnType("bigint");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("StudentId");
+                    b.HasKey("StudentId", "TutorId");
 
                     b.HasIndex("TutorId");
 

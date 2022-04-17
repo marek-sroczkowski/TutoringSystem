@@ -5,6 +5,7 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 using TutoringSystem.Application.Dtos.AccountDtos;
+using TutoringSystem.Application.Dtos.Authentication;
 using TutoringSystem.Application.Extensions;
 
 namespace TutoringSystem.Application.Identity
@@ -18,7 +19,7 @@ namespace TutoringSystem.Application.Identity
             this.jwtOptions = jwtOptions;
         }
 
-        public string GenerateJwtToken(UserDto user)
+        public TokenDto GenerateJwtToken(UserDto user)
         {
             var claims = new List<Claim>()
             {
@@ -42,7 +43,12 @@ namespace TutoringSystem.Application.Identity
             );
 
             var tokenHandler = new JwtSecurityTokenHandler();
-            return tokenHandler.WriteToken(token);
+
+            return new TokenDto
+            {
+                Token = tokenHandler.WriteToken(token),
+                ExpirationDate = expires
+            };
         }
     }
 }

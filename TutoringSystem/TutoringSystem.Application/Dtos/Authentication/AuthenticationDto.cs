@@ -2,16 +2,17 @@
 using TutoringSystem.Application.Mapping;
 using TutoringSystem.Domain.Entities;
 
-namespace TutoringSystem.Application.Dtos.AccountDtos
+namespace TutoringSystem.Application.Dtos.Authentication
 {
-    public class LoginUserDto : IMap
+    public class AuthenticationDto : IMap
     {
         public string Username { get; set; }
         public string Password { get; set; }
+        public string DeviceIdentificator { get; set; }
 
         public void Mapping(Profile profile)
         {
-            profile.CreateMap<LoginUserDto, User>();
+            profile.CreateMap<AuthenticationDto, User>();
         }
     }
 }

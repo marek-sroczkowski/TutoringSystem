@@ -16,9 +16,9 @@ namespace TutoringSystem.Application.BackgroundServices
         protected override async Task Process()
         {
             using var scope = serviceScopeFactory.CreateScope();
-            await ProcessInScope(scope.ServiceProvider);
+            await ProcessInScopeAsync(scope.ServiceProvider);
         }
 
-        public abstract Task ProcessInScope(IServiceProvider scopeServiceProvider);
+        public abstract Task ProcessInScopeAsync(IServiceProvider scopeServiceProvider);
     }
 }

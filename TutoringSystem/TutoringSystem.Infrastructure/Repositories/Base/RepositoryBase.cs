@@ -4,12 +4,14 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
+using TutoringSystem.Domain.Entities.Base;
 using TutoringSystem.Domain.Repositories;
 using TutoringSystem.Infrastructure.Data;
+using TutoringSystem.Infrastructure.Extensions;
 
 namespace TutoringSystem.Infrastructure.Repositories
 {
-    public abstract class RepositoryBase<TEntity> : IRepositoryBase<TEntity> where TEntity : class
+    public abstract class RepositoryBase<TEntity> : IRepositoryBase<TEntity> where TEntity : Entity
 	{
 		protected AppDbContext DbContext { get; set; }
 
@@ -37,6 +39,7 @@ namespace TutoringSystem.Infrastructure.Repositories
 
 		public void Update(TEntity entity)
 		{
+			DbContext.DetachLocal(entity, entity.Id);
 			DbContext.Set<TEntity>().Update(entity);
 		}
 
@@ -47,6 +50,7 @@ namespace TutoringSystem.Infrastructure.Repositories
 
 		public void Delete(TEntity entity)
 		{
+			DbContext.DetachLocal(entity, entity.Id);
 			DbContext.Set<TEntity>().Remove(entity);
 		}
 

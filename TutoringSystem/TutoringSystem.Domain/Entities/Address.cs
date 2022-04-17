@@ -1,8 +1,9 @@
-﻿namespace TutoringSystem.Domain.Entities
+﻿using TutoringSystem.Domain.Entities.Base;
+
+namespace TutoringSystem.Domain.Entities
 {
-    public class Address
+    public class Address : Entity
     {
-        public long Id { get; set; }
         public string Street { get; set; }
         public string HouseAndFlatNumber { get; set; }
         public string City { get; set; }

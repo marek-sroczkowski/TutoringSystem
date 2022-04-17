@@ -1,11 +1,11 @@
 ﻿using System;
+using TutoringSystem.Domain.Entities.Base;
 using TutoringSystem.Domain.Extensions;
 
 namespace TutoringSystem.Domain.Entities
 {
-    public class StudentTutorRequest
+    public class StudentTutorRequest : Entity
     {
-        public long Id { get; set; }
         public DateTime CreatedDate { get; set; }
         public bool IsAccepted { get; set; }
         public bool IsActive { get; set; }

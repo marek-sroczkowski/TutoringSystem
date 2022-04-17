@@ -147,6 +147,7 @@ namespace TutoringSystem.Infrastructure.Repositories
                 .Include(u => u.Address)
                 .Include(u => u.ActivationTokens)
                 .Include(u => u.PushNotificationToken)
+                .Include(u => u.RefreshTokens)
                 .FirstOrDefaultAsync();
 
             return user;

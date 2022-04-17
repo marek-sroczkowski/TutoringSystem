@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using TutoringSystem.Domain.Entities.Base;
 
 namespace TutoringSystem.Domain.Entities
 {
-    public class Availability
+    public class Availability : Entity
     {
-        public long Id { get; set; }
         public DateTime Date { get; set; }
         public int BreakTime { get; set; }
 
