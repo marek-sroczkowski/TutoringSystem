@@ -7,8 +7,6 @@
         public int JwtExpireDays { get; set; }
         public int RefreshTokenExpireDays { get; set; }
         public int ActivationTokenExpireDays { get; set; }
-        public string GoogleOAuthClientId { get; set; }
-        public string GoogleOAuthClientSecret { get; set; }
         public string SmtpEmail { get; set; }
         public string SmtpPassword { get; set; }
         public string SmtpHost { get; set; }

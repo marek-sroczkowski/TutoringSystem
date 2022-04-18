@@ -27,9 +27,12 @@ namespace TutoringSystem.API.Controllers
         public async Task<ActionResult> RegisterTutor([FromBody] RegisteredTutorDto model)
         {
             var createdTutor = await userService.RegisterTutorAsync(model);
-            bool created = createdTutor != null && await userService.SendNewActivationTokenAsync(createdTutor.Id);
+            if (createdTutor != null)
+            {
+                await userService.SendNewActivationTokenAsync(createdTutor.Id);
+            }
 
-            return created ? Ok() : BadRequest("New tutor could not be registered");
+            return createdTutor != null ? Ok() : BadRequest("New tutor could not be registered");
         }
 
         [SwaggerOperation(Summary = "Creates a new student")]
@@ -48,9 +51,12 @@ namespace TutoringSystem.API.Controllers
         public async Task<ActionResult> RegisterStudent([FromBody] RegisteredStudentDto model)
         {
             var createdStudent = await userService.RegisterStudentAsync(User.GetUserId(), model);
-            bool created = createdStudent != null && await userService.SendNewActivationTokenAsync(createdStudent.Id);
+            if (createdStudent != null)
+            {
+                await userService.SendNewActivationTokenAsync(createdStudent.Id);
+            }
 
-            return created ? Ok() : BadRequest("New student could not be registered");
+            return createdStudent != null ? Ok() : BadRequest("New student could not be registered");
         }
 
         [SwaggerOperation(Summary = "Gets role of the currently logged user")]
