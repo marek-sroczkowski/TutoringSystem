@@ -40,6 +40,7 @@ namespace TutoringSystem.Infrastructure.DependencyInjection
             services.AddScoped<IStudentTutorRequestRepository, StudentTutorRequestRepository>();
             services.AddScoped<IPushNotificationTokenRepository, PushNotificationTokenRepository>();
             services.AddScoped<IRefreshTokenRepository, RefreshTokenRepository>();
+            services.AddScoped<IPasswordResetCodeRepository, PasswordResetCodeRepository>();
 
             return services;
         }

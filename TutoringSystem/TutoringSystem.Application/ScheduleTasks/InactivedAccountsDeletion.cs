@@ -14,7 +14,7 @@ namespace TutoringSystem.Application.ScheduleTasks
         {
         }
 
-        protected override string Schedule => "05 23 * * *";
+        protected override string Schedule => "30 23 * * *";
 
         public override async Task ProcessInScopeAsync(IServiceProvider scopeServiceProvider)
         {

@@ -1,5 +1,5 @@
 ﻿using System.Threading.Tasks;
-using TutoringSystem.Application.Dtos.AccountDtos;
+using TutoringSystem.Application.Dtos.Account;
 using TutoringSystem.Application.Dtos.StudentDtos;
 using TutoringSystem.Application.Dtos.TutorDtos;
 
@@ -16,5 +16,8 @@ namespace TutoringSystem.Application.Services.Interfaces
         Task<bool> UpdateGeneralUserInfoAsync(long userId, UpdatedUserDto updatedUser);
         Task<ShortUserDto> GetGeneralUserInfoAsync(long userId);
         Task<StudentDto> RegisterStudentAsync(long userId, RegisteredStudentDto student);
+        Task<PasswordResetCodeSendingResultDto> SendPasswordResetCodeAsync(string email);
+        Task<PasswordResetCodeValidationResultDto> ValidatePasswordResetCodeAsync(PasswordResetCodeDto resetCode);
+        Task<bool> ResetPasswordAsync(NewPasswordDto newPassword);
     }
 }

@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
 using System.Threading.Tasks;
-using TutoringSystem.Application.Dtos.AccountDtos;
+using TutoringSystem.Application.Dtos.Account;
 using TutoringSystem.Application.Extensions;
 using TutoringSystem.Application.Services.Interfaces;
 using TutoringSystem.Domain.Entities.Enums;
@@ -127,6 +127,36 @@ namespace TutoringSystem.API.Controllers
             var user = await userService.GetGeneralUserInfoAsync(User.GetUserId());
 
             return Ok(user);
+        }
+
+        [SwaggerOperation(Summary = "Sends a new code to reset the user's password")]
+        [HttpPost("password/reset/code")]
+        [AllowAnonymous]
+        public async Task<ActionResult<PasswordResetCodeSendingResultDto>> SendPasswordResetCode([FromBody] EmailDto email)
+        {
+            var result = await userService.SendPasswordResetCodeAsync(email.Email);
+
+            return Ok(result);
+        }
+
+        [SwaggerOperation(Summary = "Validates the correctness of the password recovery code")]
+        [HttpPost("password/reset/validate")]
+        [AllowAnonymous]
+        public async Task<ActionResult<PasswordResetCodeValidationResultDto>> ValidatePasswordResetCode([FromBody] PasswordResetCodeDto code)
+        {
+            var result = await userService.ValidatePasswordResetCodeAsync(code);
+
+            return Ok(result);
+        }
+
+        [SwaggerOperation(Summary = "Sets a new password based on the recovery code")]
+        [HttpPatch("password/reset")]
+        [AllowAnonymous]
+        public async Task<ActionResult> ResetPassword([FromBody] NewPasswordDto newPassword)
+        {
+            var reset = await userService.ResetPasswordAsync(newPassword);
+
+            return reset ? NoContent() : BadRequest("Password could be not reset");
         }
     }
 }

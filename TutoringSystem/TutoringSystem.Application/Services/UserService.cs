@@ -1,14 +1,17 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.Options;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using TutoringSystem.Application.Dtos.AccountDtos;
+using TutoringSystem.Application.Dtos.Account;
 using TutoringSystem.Application.Dtos.EmailDtos;
+using TutoringSystem.Application.Dtos.Enums;
 using TutoringSystem.Application.Dtos.StudentDtos;
 using TutoringSystem.Application.Dtos.TutorDtos;
 using TutoringSystem.Application.Extensions;
+using TutoringSystem.Application.Helpers;
 using TutoringSystem.Application.Services.Interfaces;
 using TutoringSystem.Domain.Entities;
 using TutoringSystem.Domain.Repositories;
@@ -20,26 +23,35 @@ namespace TutoringSystem.Application.Services
         private readonly IUserRepository userRepository;
         private readonly ITutorRepository tutorRepository;
         private readonly IStudentRepository studentRepository;
+        private readonly IContactRepository contactRepository;
+        private readonly IPasswordResetCodeRepository passwordResetCodeRepository;
         private readonly IEmailService emailService;
         private readonly IActivationTokenService activationTokenService;
         private readonly IMapper mapper;
         private readonly IPasswordHasher<User> passwordHasher;
+        private readonly AppSettings settings;
 
         public UserService(IUserRepository userRepository,
             ITutorRepository tutorRepository,
             IStudentRepository studentRepository,
+            IContactRepository contactRepository,
+            IPasswordResetCodeRepository passwordResetCodeRepository,
             IEmailService emailService,
             IActivationTokenService activationTokenService,
             IMapper mapper,
-            IPasswordHasher<User> passwordHasher)
+            IPasswordHasher<User> passwordHasher,
+            IOptions<AppSettings> settings)
         {
             this.userRepository = userRepository;
             this.tutorRepository = tutorRepository;
             this.studentRepository = studentRepository;
+            this.contactRepository = contactRepository;
+            this.passwordResetCodeRepository = passwordResetCodeRepository;
             this.emailService = emailService;
             this.activationTokenService = activationTokenService;
             this.mapper = mapper;
             this.passwordHasher = passwordHasher;
+            this.settings = settings.Value;
         }
 
         public async Task<bool> CreateNewStudentAsync(long tutorId, NewStudentDto student)
@@ -141,6 +153,76 @@ namespace TutoringSystem.Application.Services
             var user = await userRepository.GetUserAsync(u => u.Id.Equals(userId));
 
             return mapper.Map<ShortUserDto>(user);
+        }
+
+        public async Task<PasswordResetCodeSendingResultDto> SendPasswordResetCodeAsync(string email)
+        {
+            var contact = await contactRepository.GetContactAsync(c => c.Email == email);
+            if (contact is null)
+            {
+                return new PasswordResetCodeSendingResultDto(PasswordResetCodeSendingResult.InvalidEmail);
+            }
+
+            await DeactivateOldCodeAsync(contact.UserId);
+            var code = GetPasswordResetCode(contact.UserId, email);
+            await passwordResetCodeRepository.AddCodeAsync(code);
+            var passResetEmail = new PasswordResetEmailDto(email, code.Code);
+            var sent = await emailService.SendPasswordResetCodeAsync(passResetEmail);
+
+            return sent
+                ? new PasswordResetCodeSendingResultDto(PasswordResetCodeSendingResult.Success)
+                : new PasswordResetCodeSendingResultDto(PasswordResetCodeSendingResult.InternalError);
+        }
+
+        public async Task<PasswordResetCodeValidationResultDto> ValidatePasswordResetCodeAsync(PasswordResetCodeDto resetCode)
+        {
+            var contact = await contactRepository.GetContactAsync(c => c.Email == resetCode.Email);
+            if (contact is null)
+            {
+                return new PasswordResetCodeValidationResultDto(PasswordResetCodeValidationResult.IncorrectCode);
+            }
+
+            var code = await passwordResetCodeRepository.GetCodeAsync(c => c.Code == resetCode.Code && c.Email == resetCode.Email && c.UserId == contact.UserId && c.IsActive);
+            if (code is null)
+            {
+                return new PasswordResetCodeValidationResultDto(PasswordResetCodeValidationResult.IncorrectCode);
+            }
+
+            return code.ExpirationDate < DateTime.Now.ToLocal()
+                ? new PasswordResetCodeValidationResultDto(PasswordResetCodeValidationResult.ExpiredToken)
+                : new PasswordResetCodeValidationResultDto(PasswordResetCodeValidationResult.Success);
+        }
+
+        public async Task<bool> ResetPasswordAsync(NewPasswordDto newPassword)
+        {
+            var contact = await contactRepository.GetContactAsync(c => c.Email == newPassword.Email);
+            var user = await userRepository.GetUserAsync(u => u.Id == contact.UserId);
+            user.PasswordHash = passwordHasher.HashPassword(user, newPassword.Password);
+
+            return await userRepository.UpdateUserAsync(user);
+        }
+
+        private async Task DeactivateOldCodeAsync(long userId)
+        {
+            var code = await passwordResetCodeRepository.GetCodeAsync(c => c.UserId == userId && c.IsActive);
+            if (code is null)
+            {
+                return;
+            }
+
+            code.ExpirationDate = DateTime.Now.ToLocal();
+            await passwordResetCodeRepository.RemoveCodeAsync(code);
+        }
+
+        private PasswordResetCode GetPasswordResetCode(long userId, string email)
+        {
+            return new PasswordResetCode
+            {
+                Code = new Random().Next(10000, 100000).ToString(),
+                Email = email,
+                UserId = userId,
+                ExpirationDate = DateTime.Now.ToLocal().AddDays(settings.PasswordResetCodeExpireDays)
+            };
         }
     }
 }

@@ -26,6 +26,7 @@ namespace TutoringSystem.Infrastructure.Data
         public virtual DbSet<StudentTutorRequest> StudentTutorRequests { get; set; }
         public virtual DbSet<PushNotificationToken> PushNotificationTokens { get; set; }
         public virtual DbSet<RefreshToken> RefreshTokens { get; set; }
+        public virtual DbSet<PasswordResetCode> PasswordResetCodes { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

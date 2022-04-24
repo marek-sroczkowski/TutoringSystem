@@ -22,10 +22,9 @@ namespace TutoringSystem.Domain.Entities
         public virtual Contact Contact { get; set; }
         public virtual Address Address { get; set; }
         public virtual PushNotificationToken PushNotificationToken { get; set; }
-
         public virtual ICollection<ActivationToken> ActivationTokens { get; set; }
-
         public virtual ICollection<RefreshToken> RefreshTokens { get; set; }
+        public virtual ICollection<PasswordResetCode> PasswordResetCodes { get; set; }
 
         public User()
         {
