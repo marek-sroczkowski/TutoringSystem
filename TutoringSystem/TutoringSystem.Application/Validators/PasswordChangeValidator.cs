@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using System.Linq;
 using System.Text.RegularExpressions;
-using TutoringSystem.Application.Dtos.AccountDtos;
+using TutoringSystem.Application.Dtos.Account;
 using TutoringSystem.Application.Dtos.Enums;
 using TutoringSystem.Application.Extensions;
 using TutoringSystem.Domain.Entities;
@@ -18,22 +18,25 @@ namespace TutoringSystem.Application.Validators
             var userId = httpContext.HttpContext.User.GetUserId();
             var user = userRepository.GetUsersCollection(u => u.Id.Equals(userId)).First();
 
-            RuleFor(p => p.OldPassword).Custom((value, context) =>
+            ValidateOldPassword(passwordHasher, user);
+            ValidatePasswordsEquality();
+            ValidatePasswordsRequirements();
+            ValidatePasswordsDuplications(passwordHasher, user);
+        }
+
+        private void ValidatePasswordsDuplications(IPasswordHasher<User> passwordHasher, User user)
+        {
+            RuleFor(p => p.NewPassword).Custom((value, context) =>
             {
-                if(passwordHasher.VerifyHashedPassword(user, user.PasswordHash, value) != PasswordVerificationResult.Success)
+                if (passwordHasher.VerifyHashedPassword(user, user.PasswordHash, value) == PasswordVerificationResult.Success)
                 {
-                    context.AddFailure("passwordErrors", WrongPasswordStatus.InvalidOldPassword.ToString());
+                    context.AddFailure("passwordErrors", WrongPasswordStatus.DuplicateOfOld.ToString());
                 }
             });
+        }
 
-            RuleFor(p => p).Custom((value, context) =>
-            {
-                if (value.NewPassword != value.ConfirmPassword)
-                {
-                    context.AddFailure("passwordErrors", WrongPasswordStatus.PasswordsVary.ToString());
-                }
-            });
-
+        private void ValidatePasswordsRequirements()
+        {
             RuleFor(p => p.NewPassword).Custom((value, context) =>
             {
                 if (!Regex.IsMatch(value, @"^(?=.*[0-9])(?=.*[A-Za-z]).{6,32}$"))
@@ -41,12 +44,26 @@ namespace TutoringSystem.Application.Validators
                     context.AddFailure("passwordErrors", WrongPasswordStatus.NotMeetRequirements.ToString());
                 }
             });
+        }
 
-            RuleFor(p => p.NewPassword).Custom((value, context) =>
+        private void ValidatePasswordsEquality()
+        {
+            RuleFor(p => p).Custom((value, context) =>
             {
-                if (passwordHasher.VerifyHashedPassword(user, user.PasswordHash, value) == PasswordVerificationResult.Success)
+                if (value.NewPassword != value.ConfirmPassword)
                 {
-                    context.AddFailure("passwordErrors", WrongPasswordStatus.DuplicateOfOld.ToString());
+                    context.AddFailure("passwordErrors", WrongPasswordStatus.PasswordsVary.ToString());
+                }
+            });
+        }
+
+        private void ValidateOldPassword(IPasswordHasher<User> passwordHasher, User user)
+        {
+            RuleFor(p => p.OldPassword).Custom((value, context) =>
+            {
+                if (passwordHasher.VerifyHashedPassword(user, user.PasswordHash, value) != PasswordVerificationResult.Success)
+                {
+                    context.AddFailure("passwordErrors", WrongPasswordStatus.InvalidOldPassword.ToString());
                 }
             });
         }
