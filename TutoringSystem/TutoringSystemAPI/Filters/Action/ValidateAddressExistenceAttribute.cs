@@ -28,7 +28,7 @@ namespace TutoringSystem.API.Filters.Action
                     var address = context.ActionArguments["model"] as UpdatedAddressDto;
                     if (address != null)
                     {
-                        if (!addressRepository.IsAddressExist(a => a.Id.Equals(address.Id)))
+                        if (!addressRepository.AddressExists(a => a.Id.Equals(address.Id)))
                         {
                             context.Result = new NotFoundObjectResult(address.Id);
                             return;

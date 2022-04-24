@@ -27,7 +27,7 @@ namespace TutoringSystem.API.Filters.Action
                     var tutorId = context.ActionArguments["tutorId"] as long?;
                     if (tutorId.HasValue)
                     {
-                        if (!tutorRepository.IsTutorExist(t => t.Id.Equals(tutorId.Value)))
+                        if (!tutorRepository.TutorExists(t => t.Id.Equals(tutorId.Value)))
                         {
                             context.Result = new NotFoundObjectResult(tutorId.Value);
                             return;

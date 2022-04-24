@@ -28,7 +28,7 @@ namespace TutoringSystem.API.Filters.Action
                     var phone = context.ActionArguments["model"] as UpdatedPhoneNumberDto;
                     if (phone != null)
                     {
-                        if (!phoneNumberRepository.IsPhoneNumberExist(p => p.Id.Equals(phone.Id)))
+                        if (!phoneNumberRepository.PhoneNumberExists(p => p.Id.Equals(phone.Id)))
                         {
                             context.Result = new NotFoundObjectResult(phone.Id);
                             return;
@@ -40,7 +40,7 @@ namespace TutoringSystem.API.Filters.Action
                     var phoneId = context.ActionArguments["phoneNumberId"] as long?;
                     if (phoneId.HasValue)
                     {
-                        if (!phoneNumberRepository.IsPhoneNumberExist(p => p.Id.Equals(phoneId.Value)))
+                        if (!phoneNumberRepository.PhoneNumberExists(p => p.Id.Equals(phoneId.Value)))
                         {
                             context.Result = new NotFoundObjectResult(phoneId.Value);
                             return;

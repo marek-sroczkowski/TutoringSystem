@@ -28,7 +28,7 @@ namespace TutoringSystem.API.Filters.Action
                     var reservationId = context.ActionArguments["reservationId"] as long?;
                     if (reservationId.HasValue)
                     {
-                        if (!reservationRepository.IsReservationExist(r => r.Id.Equals(reservationId.Value)))
+                        if (!reservationRepository.ReservationExists(r => r.Id.Equals(reservationId.Value)))
                         {
                             context.Result = new NotFoundObjectResult(reservationId.Value);
                             return;
@@ -40,7 +40,7 @@ namespace TutoringSystem.API.Filters.Action
                     var reservation = context.ActionArguments["model"] as UpdatedTutorReservationDto;
                     if (reservation != null)
                     {
-                        if (!reservationRepository.IsReservationExist(r => r.Id.Equals(reservation.Id)))
+                        if (!reservationRepository.ReservationExists(r => r.Id.Equals(reservation.Id)))
                         {
                             context.Result = new NotFoundObjectResult(reservation.Id);
                             return;

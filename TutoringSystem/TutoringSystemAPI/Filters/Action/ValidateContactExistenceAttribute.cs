@@ -28,7 +28,7 @@ namespace TutoringSystem.API.Filters.Action
                     var contact = context.ActionArguments["model"] as UpdatedContactDto;
                     if (contact != null)
                     {
-                        if (!contactRepository.IsContackExist(c => c.Id.Equals(contact.Id)))
+                        if (!contactRepository.IsContactExist(c => c.Id.Equals(contact.Id)))
                         {
                             context.Result = new NotFoundObjectResult(contact.Id);
                             return;
@@ -40,7 +40,7 @@ namespace TutoringSystem.API.Filters.Action
                     var contactId = context.ActionArguments["contactId"] as long?;
                     if (contactId.HasValue)
                     {
-                        if (!contactRepository.IsContackExist(c => c.Id.Equals(contactId.Value)))
+                        if (!contactRepository.IsContactExist(c => c.Id.Equals(contactId.Value)))
                         {
                             context.Result = new NotFoundObjectResult(contactId.Value);
                             return;

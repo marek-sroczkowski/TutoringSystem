@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 using System.Threading.Tasks;
-using TutoringSystem.Application.Dtos.AdditionalOrderDtos;
+using TutoringSystem.Application.Dtos.Order;
 using TutoringSystem.Domain.Repositories;
 
 namespace TutoringSystem.API.Filters.Action
@@ -28,7 +28,7 @@ namespace TutoringSystem.API.Filters.Action
                     var orderId = context.ActionArguments["orderId"] as long?;
                     if (orderId.HasValue)
                     {
-                        if (!additionalOrderRepository.IsOrderExist(o => o.Id.Equals(orderId.Value)))
+                        if (!additionalOrderRepository.OrderExists(o => o.Id.Equals(orderId.Value)))
                         {
                             context.Result = new NotFoundObjectResult(orderId.Value);
                             return;
@@ -40,7 +40,7 @@ namespace TutoringSystem.API.Filters.Action
                     var order = context.ActionArguments["model"] as UpdatedOrderDto;
                     if(order != null)
                     {
-                        if (!additionalOrderRepository.IsOrderExist(o => o.Id.Equals(order.Id)))
+                        if (!additionalOrderRepository.OrderExists(o => o.Id.Equals(order.Id)))
                         {
                             context.Result = new NotFoundObjectResult(order.Id);
                             return;

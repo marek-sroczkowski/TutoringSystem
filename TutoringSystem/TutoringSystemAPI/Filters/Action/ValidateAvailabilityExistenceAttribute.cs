@@ -28,7 +28,7 @@ namespace TutoringSystem.API.Filters.Action
                     var availabilityId = context.ActionArguments["availabilityId"] as long?;
                     if (availabilityId.HasValue)
                     {
-                        if (!availabilityRepository.IsAvailabilityExist(a => a.Id.Equals(availabilityId.Value)))
+                        if (!availabilityRepository.AvailabilityExists(a => a.Id.Equals(availabilityId.Value)))
                         {
                             context.Result = new NotFoundObjectResult(availabilityId.Value);
                             return;
@@ -40,7 +40,7 @@ namespace TutoringSystem.API.Filters.Action
                     var availability = context.ActionArguments["model"] as UpdatedAvailabilityDto;
                     if (availability != null)
                     {
-                        if (!availabilityRepository.IsAvailabilityExist(a => a.Id.Equals(availability.Id)))
+                        if (!availabilityRepository.AvailabilityExists(a => a.Id.Equals(availability.Id)))
                         {
                             context.Result = new NotFoundObjectResult(availability.Id);
                             return;
