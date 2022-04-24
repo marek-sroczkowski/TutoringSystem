@@ -62,7 +62,7 @@ namespace TutoringSystem.Infrastructure.Repositories
             return await addresses.ToListAsync();
         }
 
-        public bool IsAddressExist(Expression<Func<Address, bool>> expression)
+        public bool AddressExists(Expression<Func<Address, bool>> expression)
         {
             bool exist = Contains(expression);
 

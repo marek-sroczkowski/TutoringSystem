@@ -73,7 +73,7 @@ namespace TutoringSystem.Infrastructure.Repositories
             return await orders.ToListAsync();
         }
 
-        public bool IsOrderExist(Expression<Func<AdditionalOrder, bool>> expression, bool? isActive = true)
+        public bool OrderExists(Expression<Func<AdditionalOrder, bool>> expression, bool? isActive = true)
         {
             if (isActive.HasValue)
             {

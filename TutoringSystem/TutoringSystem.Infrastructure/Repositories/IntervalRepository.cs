@@ -57,7 +57,7 @@ namespace TutoringSystem.Infrastructure.Repositories
             return await intervals.ToListAsync();
         }
 
-        public bool IsIntervalExist(Expression<Func<Interval, bool>> expression)
+        public bool IntervalExists(Expression<Func<Interval, bool>> expression)
         {
             bool exist = Contains(expression);
 

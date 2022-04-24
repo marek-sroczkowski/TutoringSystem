@@ -57,7 +57,7 @@ namespace TutoringSystem.Infrastructure.Repositories
             return await contact.ToListAsync();
         }
 
-        public bool IsTokenExist(Expression<Func<PushNotificationToken, bool>> expression)
+        public bool TokenExists(Expression<Func<PushNotificationToken, bool>> expression)
         {
             var exist = Contains(expression);
 

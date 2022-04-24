@@ -57,7 +57,7 @@ namespace TutoringSystem.Infrastructure.Repositories
             return await availabilities.ToListAsync();
         }
 
-        public bool IsAvailabilityExist(Expression<Func<Availability, bool>> expression)
+        public bool AvailabilityExists(Expression<Func<Availability, bool>> expression)
         {
             bool exist = Contains(expression);
 

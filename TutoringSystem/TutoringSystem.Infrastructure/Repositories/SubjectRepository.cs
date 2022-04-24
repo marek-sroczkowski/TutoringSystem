@@ -73,7 +73,7 @@ namespace TutoringSystem.Infrastructure.Repositories
             return await subjects.ToListAsync();
         }
 
-        public bool IsSubjectExist(Expression<Func<Subject, bool>> expression, bool? isActive = true)
+        public bool SubjectExists(Expression<Func<Subject, bool>> expression, bool? isActive = true)
         {
             if (isActive.HasValue)
             {

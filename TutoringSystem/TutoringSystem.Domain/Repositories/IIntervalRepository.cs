@@ -14,7 +14,7 @@ namespace TutoringSystem.Domain.Repositories
         Task<Interval> GetIntervalAsync(Expression<Func<Interval, bool>> expression, bool isEagerLoadingEnabled = false);
         IQueryable<Interval> GetIntervalsCollection(Expression<Func<Interval, bool>> expression, bool isEagerLoadingEnabled = false);
         Task<IEnumerable<Interval>> GetIntervalsCollectionAsync(Expression<Func<Interval, bool>> expression, bool isEagerLoadingEnabled = false);
-        bool IsIntervalExist(Expression<Func<Interval, bool>> expression);
+        bool IntervalExists(Expression<Func<Interval, bool>> expression);
         Task<bool> RemoveIntervalAsync(Interval interval);
         Task<bool> UpdateIntervalAsync(Interval interval);
         Task<bool> UpdateIntervalsCollectionAsync(IEnumerable<Interval> intervals);

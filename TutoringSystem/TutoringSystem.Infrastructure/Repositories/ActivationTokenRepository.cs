@@ -73,7 +73,7 @@ namespace TutoringSystem.Infrastructure.Repositories
             return await tokens.ToListAsync();
         }
 
-        public bool IsTokenExist(Expression<Func<ActivationToken, bool>> expression, bool? isActive = true)
+        public bool TokenExists(Expression<Func<ActivationToken, bool>> expression, bool? isActive = true)
         {
             if (isActive.HasValue)
             {

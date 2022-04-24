@@ -14,7 +14,7 @@ namespace TutoringSystem.Domain.Repositories
         Task<SingleReservation> GetReservationAsync(Expression<Func<SingleReservation, bool>> expression, bool? isActive = true, bool isEagerLoadingEnabled = false);
         IQueryable<SingleReservation> GetReservationsCollection(Expression<Func<SingleReservation, bool>> expression, bool? isActive = true, bool isEagerLoadingEnabled = false);
         Task<IEnumerable<SingleReservation>> GetReservationsCollectionAsync(Expression<Func<SingleReservation, bool>> expression, bool? isActive = true, bool isEagerLoadingEnabled = false);
-        bool IsReservationExist(Expression<Func<SingleReservation, bool>> expression, bool? isActive = true);
+        bool ReservationExists(Expression<Func<SingleReservation, bool>> expression, bool? isActive = true);
         Task<bool> RemoveReservationAsync(SingleReservation reservation);
         Task<bool> UpdateReservationAsync(SingleReservation updatedReservation);
         Task<bool> UpdateReservationsCollectionAsync(IEnumerable<SingleReservation> reservations);

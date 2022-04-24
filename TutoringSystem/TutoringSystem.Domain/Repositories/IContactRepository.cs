@@ -14,7 +14,7 @@ namespace TutoringSystem.Domain.Repositories
         Task<Contact> GetContactAsync(Expression<Func<Contact, bool>> expression, bool isEagerLoadingEnabled = false);
         IQueryable<Contact> GetContactsCollection(Expression<Func<Contact, bool>> expression, bool isEagerLoadingEnabled = false);
         Task<IEnumerable<Contact>> GetContactsCollectionAsync(Expression<Func<Contact, bool>> expression, bool isEagerLoadingEnabled = false);
-        bool IsContackExist(Expression<Func<Contact, bool>> expression);
+        bool IsContactExist(Expression<Func<Contact, bool>> expression);
         Task<bool> RemoveContactAsync(Contact contact);
         Task<bool> UpdateContactAsync(Contact updatedContact);
         Task<bool> UpdateContactsCollectionAsync(IEnumerable<Contact> contacts);

@@ -14,7 +14,7 @@ namespace TutoringSystem.Domain.Repositories
         Task<AdditionalOrder> GetOrderAsync(Expression<Func<AdditionalOrder, bool>> expression, bool? isActive = true, bool isEagerLoadingEnabled = false);
         IQueryable<AdditionalOrder> GetOrdersCollection(Expression<Func<AdditionalOrder, bool>> expression, bool? isActive = true, bool isEagerLoadingEnabled = false);
         Task<IEnumerable<AdditionalOrder>> GetOrdersCollectionAsync(Expression<Func<AdditionalOrder, bool>> expression, bool? isActive = true, bool isEagerLoadingEnabled = false);
-        bool IsOrderExist(Expression<Func<AdditionalOrder, bool>> expression, bool? isActive = true);
+        bool OrderExists(Expression<Func<AdditionalOrder, bool>> expression, bool? isActive = true);
         Task<bool> RemoveOrderAsync(AdditionalOrder order);
         Task<bool> UpdateOrderAsync(AdditionalOrder updatedOrder);
         Task<bool> UpdateOrdersCollectionAsync(IEnumerable<AdditionalOrder> orders);

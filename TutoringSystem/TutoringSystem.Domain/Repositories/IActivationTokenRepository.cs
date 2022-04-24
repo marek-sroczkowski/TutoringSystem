@@ -14,7 +14,7 @@ namespace TutoringSystem.Domain.Repositories
         Task<ActivationToken> GetTokenAsync(Expression<Func<ActivationToken, bool>> expression, bool? isActive = true, bool isEagerLoadingEnabled = false);
         IQueryable<ActivationToken> GetTokensCollection(Expression<Func<ActivationToken, bool>> expression, bool? isActive = true, bool isEagerLoadingEnabled = false);
         Task<IEnumerable<ActivationToken>> GetTokensCollectionAsync(Expression<Func<ActivationToken, bool>> expression, bool? isActive = true, bool isEagerLoadingEnabled = false);
-        bool IsTokenExist(Expression<Func<ActivationToken, bool>> expression, bool? isActive = true);
+        bool TokenExists(Expression<Func<ActivationToken, bool>> expression, bool? isActive = true);
         Task<bool> RemoveActivationTokenAsync(ActivationToken token);
         Task<bool> UpdateActivationTokenAsync(ActivationToken token);
         Task<bool> UpdateTokensCollectionAsync(IEnumerable<ActivationToken> tokens);

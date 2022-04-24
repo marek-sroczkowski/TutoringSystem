@@ -73,7 +73,7 @@ namespace TutoringSystem.Infrastructure.Repositories
             return await result.ToListAsync();
         }
 
-        public bool IsStudentTutorExist(Expression<Func<StudentTutor, bool>> expression, bool? isActive = true)
+        public bool StudentTutorExists(Expression<Func<StudentTutor, bool>> expression, bool? isActive = true)
         {
             if (isActive.HasValue)
             {

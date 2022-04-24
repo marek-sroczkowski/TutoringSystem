@@ -62,7 +62,7 @@ namespace TutoringSystem.Infrastructure.Repositories
             return await contacts.ToListAsync();
         }
 
-        public bool IsContackExist(Expression<Func<Contact, bool>> expression)
+        public bool IsContactExist(Expression<Func<Contact, bool>> expression)
         {
             bool exist = Contains(expression);
 

@@ -73,7 +73,7 @@ namespace TutoringSystem.Infrastructure.Repositories
             return await phones.ToListAsync();
         }
 
-        public bool IsPhoneNumberExist(Expression<Func<PhoneNumber, bool>> expression, bool? isActive = true)
+        public bool PhoneNumberExists(Expression<Func<PhoneNumber, bool>> expression, bool? isActive = true)
         {
             if (isActive.HasValue)
             {

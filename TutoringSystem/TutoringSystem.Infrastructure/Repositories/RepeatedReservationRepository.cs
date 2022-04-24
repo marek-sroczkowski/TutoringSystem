@@ -73,7 +73,7 @@ namespace TutoringSystem.Infrastructure.Repositories
             return await reservations.ToListAsync();
         }
 
-        public bool IsReservationExist(Expression<Func<RepeatedReservation, bool>> expression, bool? isActive = true)
+        public bool ReservationExists(Expression<Func<RepeatedReservation, bool>> expression, bool? isActive = true)
         {
             if (isActive.HasValue)
             {

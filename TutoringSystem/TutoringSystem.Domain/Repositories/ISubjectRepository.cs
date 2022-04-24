@@ -14,7 +14,7 @@ namespace TutoringSystem.Domain.Repositories
         Task<Subject> GetSubjectAsync(Expression<Func<Subject, bool>> expression, bool? isActive = true, bool isEagerLoadingEnabled = false);
         IQueryable<Subject> GetSubjectsCollection(Expression<Func<Subject, bool>> expression, bool? isActive = true, bool isEagerLoadingEnabled = false);
         Task<IEnumerable<Subject>> GetSubjectsCollectionAsync(Expression<Func<Subject, bool>> expression, bool? isActive = true, bool isEagerLoadingEnabled = false);
-        bool IsSubjectExist(Expression<Func<Subject, bool>> expression, bool? isActive = true);
+        bool SubjectExists(Expression<Func<Subject, bool>> expression, bool? isActive = true);
         Task<bool> RemoveSubjectAsync(Subject subject);
         Task<bool> UpdateSubjectAsync(Subject updatedSubject);
         Task<bool> UpdateSubjectsCollectionAsync(IEnumerable<Subject> subjects);
