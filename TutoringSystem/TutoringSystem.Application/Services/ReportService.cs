@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
-using TutoringSystem.Application.Dtos.ReportDtos;
 using TutoringSystem.Application.Helpers;
-using TutoringSystem.Application.Parameters;
+using TutoringSystem.Application.Models.Dtos.Report;
+using TutoringSystem.Application.Models.Parameters;
 using TutoringSystem.Application.Services.Interfaces;
 using TutoringSystem.Domain.Entities;
 using TutoringSystem.Domain.Entities.Enums;
@@ -151,7 +151,7 @@ namespace TutoringSystem.Application.Services
 
         private async Task<SubjectCategoryReportDto> GetSubjectCategorySummaryAsync(long tutorId, SubjectCategory category, ReportParameters parameters)
         {
-            if (!subjectRepository.IsSubjectExist(r => r.TutorId.Equals(tutorId) && r.Category.Equals(category)))
+            if (!subjectRepository.SubjectExists(r => r.TutorId.Equals(tutorId) && r.Category.Equals(category)))
             {
                 return null;
             }
@@ -169,7 +169,7 @@ namespace TutoringSystem.Application.Services
 
         private async Task<PlaceReportDto> GetPlaceSummary(long tutorId, ReservationPlace place, ReportParameters parameters)
         {
-            if (!reservationRepository.IsReservationExist(r => r.TutorId.Equals(tutorId) && r.Place.Equals(place)))
+            if (!reservationRepository.ReservationExists(r => r.TutorId.Equals(tutorId) && r.Place.Equals(place)))
             {
                 return null;
             }

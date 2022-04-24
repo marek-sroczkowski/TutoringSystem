@@ -4,9 +4,9 @@ using Swashbuckle.AspNetCore.Annotations;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using TutoringSystem.API.Filters.Action;
-using TutoringSystem.Application.Dtos.Enums;
-using TutoringSystem.Application.Dtos.StudentRequestDtos;
 using TutoringSystem.Application.Extensions;
+using TutoringSystem.Application.Models.Dtos.StudentRequest;
+using TutoringSystem.Application.Models.Enums;
 using TutoringSystem.Application.Services.Interfaces;
 
 namespace TutoringSystem.API.Controllers

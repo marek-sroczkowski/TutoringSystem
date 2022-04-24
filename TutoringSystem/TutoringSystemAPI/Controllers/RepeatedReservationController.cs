@@ -3,8 +3,8 @@ using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using TutoringSystem.Application.Dtos.ReservationDtos;
 using TutoringSystem.Application.Extensions;
+using TutoringSystem.Application.Models.Dtos.Reservation;
 using TutoringSystem.Application.Services.Interfaces;
 
 namespace TutoringSystem.API.Controllers

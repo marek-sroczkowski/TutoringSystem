@@ -2,10 +2,10 @@
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
 using System.Threading.Tasks;
-using TutoringSystem.Application.Dtos.AddressDtos;
 using TutoringSystem.Application.Services.Interfaces;
 using TutoringSystem.API.Filters.Action;
 using TutoringSystem.Application.Extensions;
+using TutoringSystem.Application.Models.Dtos.Address;
 
 namespace TutoringSystem.API.Controllers
 {

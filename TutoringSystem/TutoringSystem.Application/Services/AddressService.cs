@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
 using System.Threading.Tasks;
-using TutoringSystem.Application.Dtos.AddressDtos;
+using TutoringSystem.Application.Models.Dtos.Address;
 using TutoringSystem.Application.Services.Interfaces;
 using TutoringSystem.Domain.Repositories;
 

@@ -2,8 +2,9 @@
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
 using System.Threading.Tasks;
-using TutoringSystem.Application.Dtos.Authentication;
-using TutoringSystem.Application.Dtos.Enums;
+using TutoringSystem.Application.Models.Dtos.Authentication;
+using TutoringSystem.Application.Models.Dtos.Token;
+using TutoringSystem.Application.Models.Enums;
 using TutoringSystem.Application.Services.Interfaces;
 
 namespace TutoringSystem.API.Controllers

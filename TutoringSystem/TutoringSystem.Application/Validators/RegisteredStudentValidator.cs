@@ -1,5 +1,5 @@
 ﻿using FluentValidation;
-using TutoringSystem.Application.Dtos.Account;
+using TutoringSystem.Application.Models.Dtos.Account;
 using TutoringSystem.Domain.Repositories;
 
 namespace TutoringSystem.Application.Validators

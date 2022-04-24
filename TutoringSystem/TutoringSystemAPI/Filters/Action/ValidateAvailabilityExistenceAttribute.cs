@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 using System.Threading.Tasks;
-using TutoringSystem.Application.Dtos.AvailabilityDtos;
+using TutoringSystem.Application.Models.Dtos.Availability;
 using TutoringSystem.Domain.Repositories;
 
 namespace TutoringSystem.API.Filters.Action

@@ -3,9 +3,9 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using System.Linq;
 using System.Text.RegularExpressions;
-using TutoringSystem.Application.Dtos.Account;
-using TutoringSystem.Application.Dtos.Enums;
 using TutoringSystem.Application.Extensions;
+using TutoringSystem.Application.Models.Dtos.Password;
+using TutoringSystem.Application.Models.Enums;
 using TutoringSystem.Domain.Entities;
 using TutoringSystem.Domain.Repositories;
 

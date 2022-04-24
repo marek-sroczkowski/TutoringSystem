@@ -1,7 +1,7 @@
 ﻿using AutoMapper;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using TutoringSystem.Application.Dtos.PhoneNumberDtos;
+using TutoringSystem.Application.Models.Dtos.PhoneNumber;
 using TutoringSystem.Application.Services.Interfaces;
 using TutoringSystem.Domain.Entities;
 using TutoringSystem.Domain.Repositories;

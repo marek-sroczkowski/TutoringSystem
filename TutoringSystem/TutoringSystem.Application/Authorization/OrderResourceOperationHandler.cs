@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using System.Threading.Tasks;
-using TutoringSystem.Application.Dtos.AdditionalOrderDtos;
 using TutoringSystem.Application.Extensions;
+using TutoringSystem.Application.Models.Dtos.Order;
 
 namespace TutoringSystem.Application.Authorization
 {

@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 using System.Threading.Tasks;
-using TutoringSystem.Application.Dtos.Order;
+using TutoringSystem.Application.Models.Dtos.Order;
 using TutoringSystem.Domain.Repositories;
 
 namespace TutoringSystem.API.Filters.Action

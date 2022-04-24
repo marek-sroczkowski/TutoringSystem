@@ -1,7 +1,7 @@
 ﻿using FluentValidation;
 using Microsoft.AspNetCore.Http;
-using TutoringSystem.Application.Dtos.SubjectDtos;
 using TutoringSystem.Application.Extensions;
+using TutoringSystem.Application.Models.Dtos.Subject;
 using TutoringSystem.Domain.Repositories;
 
 namespace TutoringSystem.Application.Validators

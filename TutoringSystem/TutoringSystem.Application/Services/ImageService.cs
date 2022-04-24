@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using TutoringSystem.Application.Dtos.Image;
+using TutoringSystem.Application.Models.Dtos.Image;
 using TutoringSystem.Application.Services.Interfaces;
 using TutoringSystem.Domain.Repositories;
 

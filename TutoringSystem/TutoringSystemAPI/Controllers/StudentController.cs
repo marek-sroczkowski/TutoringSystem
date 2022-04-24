@@ -5,12 +5,12 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using TutoringSystem.Application.Extensions;
 using TutoringSystem.API.Filters.Action;
-using TutoringSystem.Application.Dtos.TutorDtos;
 using TutoringSystem.Application.Services.Interfaces;
-using TutoringSystem.Application.Dtos.StudentDtos;
-using TutoringSystem.Application.Dtos.Enums;
-using TutoringSystem.Application.Parameters;
 using Newtonsoft.Json;
+using TutoringSystem.Application.Models.Dtos.Student;
+using TutoringSystem.Application.Models.Dtos.Tutor;
+using TutoringSystem.Application.Models.Enums;
+using TutoringSystem.Application.Models.Parameters;
 
 namespace TutoringSystem.API.Controllers
 {

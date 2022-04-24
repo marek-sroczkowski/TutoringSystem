@@ -2,8 +2,10 @@
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
 using System.Threading.Tasks;
-using TutoringSystem.Application.Dtos.Account;
 using TutoringSystem.Application.Extensions;
+using TutoringSystem.Application.Models.Dtos.Account;
+using TutoringSystem.Application.Models.Dtos.Email;
+using TutoringSystem.Application.Models.Dtos.Password;
 using TutoringSystem.Application.Services.Interfaces;
 using TutoringSystem.Domain.Entities.Enums;
 

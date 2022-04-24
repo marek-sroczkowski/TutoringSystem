@@ -2,8 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using TutoringSystem.Application.Dtos.StudentDtos;
 using TutoringSystem.Application.Extensions;
+using TutoringSystem.Application.Models.Dtos.Student;
 using TutoringSystem.Domain.Repositories;
 
 namespace TutoringSystem.Application.Authorization

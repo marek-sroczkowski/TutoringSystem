@@ -1,7 +1,7 @@
 ﻿using FluentValidation;
 using System.Text.RegularExpressions;
-using TutoringSystem.Application.Dtos.Account;
-using TutoringSystem.Application.Dtos.Enums;
+using TutoringSystem.Application.Models.Dtos.Password;
+using TutoringSystem.Application.Models.Enums;
 using TutoringSystem.Domain.Repositories;
 
 namespace TutoringSystem.Application.Validators

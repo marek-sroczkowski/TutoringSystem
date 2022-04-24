@@ -1,5 +1,5 @@
 ﻿using System.Threading.Tasks;
-using TutoringSystem.Application.Dtos.EmailDtos;
+using TutoringSystem.Application.Models.Dtos.Email;
 
 namespace TutoringSystem.Application.Services.Interfaces
 {

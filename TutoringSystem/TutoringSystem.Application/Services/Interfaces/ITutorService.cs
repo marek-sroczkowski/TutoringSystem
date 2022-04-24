@@ -1,8 +1,8 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
-using TutoringSystem.Application.Dtos.TutorDtos;
 using TutoringSystem.Application.Helpers;
-using TutoringSystem.Application.Parameters;
+using TutoringSystem.Application.Models.Dtos.Tutor;
+using TutoringSystem.Application.Models.Parameters;
 
 namespace TutoringSystem.Application.Services.Interfaces
 {

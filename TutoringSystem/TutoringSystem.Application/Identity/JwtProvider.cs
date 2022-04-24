@@ -5,10 +5,10 @@ using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
-using TutoringSystem.Application.Dtos.AccountDtos;
-using TutoringSystem.Application.Dtos.Authentication;
 using TutoringSystem.Application.Extensions;
 using TutoringSystem.Application.Helpers;
+using TutoringSystem.Application.Models.Dtos.Account;
+using TutoringSystem.Application.Models.Dtos.Token;
 
 namespace TutoringSystem.Application.Identity
 {

@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using TutoringSystem.Application.Dtos.ReservationDtos;
+using TutoringSystem.Application.Models.Dtos.Reservation;
 using TutoringSystem.Application.Services.Interfaces;
 using TutoringSystem.Domain.Repositories;
 

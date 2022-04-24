@@ -4,10 +4,10 @@ using Swashbuckle.AspNetCore.Annotations;
 using System.Threading.Tasks;
 using TutoringSystem.Application.Extensions;
 using TutoringSystem.API.Filters.Action;
-using TutoringSystem.Application.Dtos.ReportDtos;
-using TutoringSystem.Application.Parameters;
 using TutoringSystem.Application.Services.Interfaces;
 using System.Collections.Generic;
+using TutoringSystem.Application.Models.Dtos.Report;
+using TutoringSystem.Application.Models.Parameters;
 
 namespace TutoringSystem.API.Controllers
 {

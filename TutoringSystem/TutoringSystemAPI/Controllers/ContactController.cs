@@ -4,8 +4,8 @@ using Swashbuckle.AspNetCore.Annotations;
 using System.Threading.Tasks;
 using TutoringSystem.Application.Extensions;
 using TutoringSystem.API.Filters.Action;
-using TutoringSystem.Application.Dtos.ContactDtos;
 using TutoringSystem.Application.Services.Interfaces;
+using TutoringSystem.Application.Models.Dtos.Contact;
 
 namespace TutoringSystem.API.Controllers
 {

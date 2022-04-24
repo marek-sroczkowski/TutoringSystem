@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
 using System.Threading.Tasks;
-using TutoringSystem.Application.Dtos.ContactDtos;
+using TutoringSystem.Application.Models.Dtos.Contact;
 using TutoringSystem.Application.Services.Interfaces;
 using TutoringSystem.Domain.Repositories;
 

@@ -1,7 +1,8 @@
 ﻿using System.Threading.Tasks;
-using TutoringSystem.Application.Dtos.Account;
-using TutoringSystem.Application.Dtos.StudentDtos;
-using TutoringSystem.Application.Dtos.TutorDtos;
+using TutoringSystem.Application.Models.Dtos.Account;
+using TutoringSystem.Application.Models.Dtos.Password;
+using TutoringSystem.Application.Models.Dtos.Student;
+using TutoringSystem.Application.Models.Dtos.Tutor;
 
 namespace TutoringSystem.Application.Services.Interfaces
 {

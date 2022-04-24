@@ -3,13 +3,13 @@ using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using TutoringSystem.Application.Dtos.AdditionalOrderDtos;
 using TutoringSystem.Application.Services.Interfaces;
 using TutoringSystem.Application.Authorization;
 using TutoringSystem.Domain.Entities.Enums;
-using TutoringSystem.Application.Parameters;
 using TutoringSystem.API.Filters.Action;
 using TutoringSystem.Application.Extensions;
+using TutoringSystem.Application.Models.Dtos.Order;
+using TutoringSystem.Application.Models.Parameters;
 
 namespace TutoringSystem.API.Controllers
 {

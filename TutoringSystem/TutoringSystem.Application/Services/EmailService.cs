@@ -5,8 +5,8 @@ using MimeKit;
 using MimeKit.Text;
 using System;
 using System.Threading.Tasks;
-using TutoringSystem.Application.Dtos.EmailDtos;
 using TutoringSystem.Application.Helpers;
+using TutoringSystem.Application.Models.Dtos.Email;
 using TutoringSystem.Application.Services.Interfaces;
 
 namespace TutoringSystem.Application.Services

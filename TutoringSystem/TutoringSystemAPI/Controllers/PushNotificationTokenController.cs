@@ -2,8 +2,8 @@
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
 using System.Threading.Tasks;
-using TutoringSystem.Application.Dtos.PushNotificationTokenDtos;
 using TutoringSystem.Application.Extensions;
+using TutoringSystem.Application.Models.Dtos.Token;
 using TutoringSystem.Application.Services.Interfaces;
 
 namespace TutoringSystem.API.Controllers

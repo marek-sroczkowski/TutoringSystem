@@ -1,7 +1,7 @@
 ﻿using System.Threading.Tasks;
-using TutoringSystem.Application.Dtos.AvailabilityDtos;
 using TutoringSystem.Application.Helpers;
-using TutoringSystem.Application.Parameters;
+using TutoringSystem.Application.Models.Dtos.Availability;
+using TutoringSystem.Application.Models.Parameters;
 
 namespace TutoringSystem.Application.Services.Interfaces
 {

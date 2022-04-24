@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using System.Threading.Tasks;
-using TutoringSystem.Application.Dtos.SubjectDtos;
 using TutoringSystem.Application.Extensions;
+using TutoringSystem.Application.Models.Dtos.Subject;
 
 namespace TutoringSystem.Application.Authorization
 {

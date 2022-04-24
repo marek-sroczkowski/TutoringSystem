@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
-using TutoringSystem.Application.Dtos.Image;
+using TutoringSystem.Application.Models.Dtos.Image;
 
 namespace TutoringSystem.Application.Services.Interfaces
 {

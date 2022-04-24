@@ -5,9 +5,9 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using TutoringSystem.API.Filters.Action;
 using TutoringSystem.Application.Authorization;
-using TutoringSystem.Application.Dtos.ReservationDtos;
 using TutoringSystem.Application.Extensions;
-using TutoringSystem.Application.Parameters;
+using TutoringSystem.Application.Models.Dtos.Reservation;
+using TutoringSystem.Application.Models.Parameters;
 using TutoringSystem.Application.Services.Interfaces;
 
 namespace TutoringSystem.API.Controllers

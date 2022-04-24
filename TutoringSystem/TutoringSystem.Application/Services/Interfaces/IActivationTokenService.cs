@@ -1,5 +1,5 @@
 ﻿using System.Threading.Tasks;
-using TutoringSystem.Application.Dtos.ActivationTokenDtos;
+using TutoringSystem.Application.Models.Dtos.Token;
 
 namespace TutoringSystem.Application.Services.Interfaces
 {

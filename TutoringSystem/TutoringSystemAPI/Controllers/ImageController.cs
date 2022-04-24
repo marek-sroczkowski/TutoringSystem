@@ -3,8 +3,8 @@ using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using TutoringSystem.Application.Dtos.Image;
 using TutoringSystem.Application.Extensions;
+using TutoringSystem.Application.Models.Dtos.Image;
 using TutoringSystem.Application.Services.Interfaces;
 
 namespace TutoringSystem.API.Controllers

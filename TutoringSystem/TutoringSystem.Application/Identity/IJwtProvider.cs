@@ -1,5 +1,5 @@
-﻿using TutoringSystem.Application.Dtos.AccountDtos;
-using TutoringSystem.Application.Dtos.Authentication;
+﻿using TutoringSystem.Application.Models.Dtos.Account;
+using TutoringSystem.Application.Models.Dtos.Token;
 
 namespace TutoringSystem.Application.Identity
 {

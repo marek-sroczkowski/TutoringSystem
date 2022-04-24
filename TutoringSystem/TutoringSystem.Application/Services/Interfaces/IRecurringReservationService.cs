@@ -1,8 +1,8 @@
 ﻿using System.Threading.Tasks;
-using TutoringSystem.Application.Dtos.Enums;
-using TutoringSystem.Application.Dtos.ReservationDtos;
 using TutoringSystem.Application.Helpers;
-using TutoringSystem.Application.Parameters;
+using TutoringSystem.Application.Models.Dtos.Reservation;
+using TutoringSystem.Application.Models.Enums;
+using TutoringSystem.Application.Models.Parameters;
 
 namespace TutoringSystem.Application.Services.Interfaces
 {

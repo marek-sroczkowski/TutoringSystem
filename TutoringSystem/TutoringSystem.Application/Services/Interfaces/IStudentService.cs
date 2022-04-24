@@ -1,9 +1,9 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
-using TutoringSystem.Application.Dtos.Enums;
-using TutoringSystem.Application.Dtos.StudentDtos;
 using TutoringSystem.Application.Helpers;
-using TutoringSystem.Application.Parameters;
+using TutoringSystem.Application.Models.Dtos.Student;
+using TutoringSystem.Application.Models.Enums;
+using TutoringSystem.Application.Models.Parameters;
 
 namespace TutoringSystem.Application.Services.Interfaces
 {
