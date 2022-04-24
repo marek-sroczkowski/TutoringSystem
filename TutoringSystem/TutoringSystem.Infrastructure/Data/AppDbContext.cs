@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using System.Reflection;
 using TutoringSystem.Domain.Entities;
 
 namespace TutoringSystem.Infrastructure.Data
@@ -30,30 +31,7 @@ namespace TutoringSystem.Infrastructure.Data
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<User>().ToTable("Users");
-            modelBuilder.Entity<Student>().ToTable("Students");
-            modelBuilder.Entity<Tutor>().ToTable("Tutors");
-
-            modelBuilder.Entity<Reservation>().ToTable("Reservations");
-            modelBuilder.Entity<SingleReservation>().ToTable("SingleReservations");
-            modelBuilder.Entity<RecurringReservation>().ToTable("RecurringReservations");
-
-            modelBuilder.Entity<Reservation>().HasOne(r => r.Tutor).WithMany(t => t.Reservations)
-                   .HasForeignKey(r => r.TutorId)
-                    .OnDelete(DeleteBehavior.NoAction);
-
-            modelBuilder.Entity<Tutor>()
-            .HasMany(t => t.Students)
-            .WithMany(s => s.Tutors)
-            .UsingEntity<StudentTutor>(
-                j => j
-                    .HasOne(st => st.Student)
-                    .WithMany(s => s.StudentTutors)
-                    .HasForeignKey(st => st.StudentId),
-                j => j
-                    .HasOne(st => st.Tutor)
-                    .WithMany(t => t.StudentTutors)
-                    .HasForeignKey(st => st.TutorId));
+            modelBuilder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
         }
     }
 }
