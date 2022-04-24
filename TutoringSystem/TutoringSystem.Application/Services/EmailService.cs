@@ -4,7 +4,6 @@ using Microsoft.Extensions.Options;
 using MimeKit;
 using MimeKit.Text;
 using System;
-using System.Diagnostics;
 using System.Threading.Tasks;
 using TutoringSystem.Application.Dtos.EmailDtos;
 using TutoringSystem.Application.Helpers;
@@ -28,8 +27,26 @@ namespace TutoringSystem.Application.Services
                 var email = new MimeMessage();
                 email.From.Add(MailboxAddress.Parse(settings.SmtpEmail));
                 email.To.Add(MailboxAddress.Parse(activationEmail.RecipientEmail));
-                email.Subject = settings.ActivationEmailSubject;
-                email.Body = new TextPart(TextFormat.Html) { Text = GetActivationEmailContent(activationEmail.RecipientName, activationEmail.ActivationToken), };
+                email.Subject = activationEmail.Subject;
+                email.Body = new TextPart(TextFormat.Html) { Text = activationEmail.Content, };
+
+                return await SendEmailAsync(email);
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+        }
+
+        public async Task<bool> SendPasswordResetCodeAsync(PasswordResetEmailDto resetEmail)
+        {
+            try
+            {
+                var email = new MimeMessage();
+                email.From.Add(MailboxAddress.Parse(settings.SmtpEmail));
+                email.To.Add(MailboxAddress.Parse(resetEmail.RecipientEmail));
+                email.Subject = resetEmail.Subject;
+                email.Body = new TextPart(TextFormat.Html) { Text = resetEmail.Content, };
 
                 return await SendEmailAsync(email);
             }
@@ -55,16 +72,6 @@ namespace TutoringSystem.Application.Services
             }
 
             return true;
-        }
-
-        private static string GetActivationEmailContent(string name, string activationToken)
-        {
-            return $"Witaj {name},<br>" +
-                $"Dziękuję za rejestracje w aplikacji MS Korepetytor.<br>" +
-                $"Twój kod aktywacyjny to <b>{activationToken}</b><br>" +
-                $"Jeśli nie aktywujesz konta przez 24h po rejestracji zostanie ono usunięte.<br><br>" +
-                $"W przypadku jakiś pytań zapraszam do kontaktu,<br>" +
-                $"Marek Sroczkowski - twórca aplikacji<br>";
         }
     }
 }

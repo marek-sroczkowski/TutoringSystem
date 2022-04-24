@@ -6,5 +6,6 @@ namespace TutoringSystem.Application.Services.Interfaces
     public interface IEmailService
     {
         Task<bool> SendActivationCodeAsync(ActivationEmailDto activationEmail);
+        Task<bool> SendPasswordResetCodeAsync(PasswordResetEmailDto resetEmail);
     }
 }
