@@ -14,8 +14,10 @@ namespace TutoringSystem.Application.Mapping
 
         private void ApplyMappingsFromAssembly(Assembly assembly)
         {
-            var types = assembly.GetExportedTypes().Where(x =>
-            typeof(IMap).IsAssignableFrom(x) && !x.IsInterface).ToList();
+            var types = assembly.GetExportedTypes()
+                .Where(x => typeof(IMap)
+                .IsAssignableFrom(x) && !x.IsInterface)
+                .ToList();
 
             foreach (var type in types)
             {
