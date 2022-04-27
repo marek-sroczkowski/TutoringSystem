@@ -5,6 +5,6 @@ namespace TutoringSystem.Application.Services.Interfaces
 {
     public interface IActivationTokenService
     {
-        Task<ActivationTokenDto> AddActivationTokenAsync(long userId);
+        Task<ActivationTokenDetailsDto> AddActivationTokenAsync(long userId);
     }
 }

@@ -25,7 +25,7 @@ namespace TutoringSystem.Application.Services
             this.mapper = mapper;
         }
 
-        public async Task<ActivationTokenDto> AddActivationTokenAsync(long userId)
+        public async Task<ActivationTokenDetailsDto> AddActivationTokenAsync(long userId)
         {
             await DeactivateTokenAsync(userId);
 
@@ -33,7 +33,7 @@ namespace TutoringSystem.Application.Services
             var token = mapper.Map<ActivationToken>(generatedToken);
             var created = await activationTokenRepository.AddTokenAsync(token);
 
-            return created ? mapper.Map<ActivationTokenDto>(token) : null;
+            return created ? mapper.Map<ActivationTokenDetailsDto>(token) : null;
         }
 
         private async Task DeactivateTokenAsync(long userId)

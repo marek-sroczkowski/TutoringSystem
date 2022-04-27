@@ -6,6 +6,7 @@ using TutoringSystem.Application.Extensions;
 using TutoringSystem.Application.Models.Dtos.Account;
 using TutoringSystem.Application.Models.Dtos.Email;
 using TutoringSystem.Application.Models.Dtos.Password;
+using TutoringSystem.Application.Models.Dtos.Token;
 using TutoringSystem.Application.Services.Interfaces;
 using TutoringSystem.Domain.Entities.Enums;
 
@@ -84,9 +85,9 @@ namespace TutoringSystem.API.Controllers
         [SwaggerOperation(Summary = "Activates the account of the currently logged in user by actiavtion token")]
         [HttpPost("activate")]
         [Authorize(Roles = "Tutor,Student")]
-        public async Task<ActionResult> ActivateAccountByToken(string token)
+        public async Task<ActionResult> ActivateAccountByToken(ActivationTokenDto token)
         {
-            var activated = await userService.ActivateUserByTokenAsync(User.GetUserId(), token);
+            var activated = await userService.ActivateUserByTokenAsync(User.GetUserId(), token.Content);
 
             return activated ? Ok() : BadRequest("Account could be not activated");
         }
