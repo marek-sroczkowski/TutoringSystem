@@ -11,7 +11,7 @@
             get => $"Witaj {RecipientName},<br>" +
                 $"Dziękuję za rejestracje w aplikacji MS Korepetytor.<br>" +
                 $"Twój kod aktywacyjny to <b>{ActivationToken}</b><br>" +
-                $"Jeśli nie aktywujesz konta przez 24h po rejestracji zostanie ono usunięte.<br><br>" +
+                $"Uwaga! Nieaktywowane konto zostanie usunięte między 24, a 48h po rejestracji.<br><br>" +
                 $"W przypadku jakiś pytań zapraszam do kontaktu,<br>" +
                 $"Marek Sroczkowski - twórca aplikacji<br>";
         }
