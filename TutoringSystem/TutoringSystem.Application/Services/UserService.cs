@@ -91,19 +91,10 @@ namespace TutoringSystem.Application.Services
         public async Task<bool> ActivateUserByTokenAsync(long userId, string token)
         {
             var user = await userRepository.GetUserAsync(u => u.Id.Equals(userId) && !u.IsEnable, isEagerLoadingEnabled: true);
-            if (user is null)
-            {
-                return false;
-            }
+            user.IsEnable = true;
 
             var now = DateTime.Now.ToLocal();
             var userToken = user.ActivationTokens.FirstOrDefault(t => t.ExpirationDate > now && t.TokenContent.Equals(token));
-            if (userToken is null)
-            {
-                return false;
-            }
-
-            user.IsEnable = true;
             userToken.ExpirationDate = DateTime.Now.ToLocal();
 
             return await userRepository.UpdateUserAsync(user);
